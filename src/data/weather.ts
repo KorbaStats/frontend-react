@@ -74,7 +74,7 @@ export const weather: Weather[] = matches.map((match) => {
   }
 })
 
-const weatherByMatchId = new Map(weather.map((w) => [w.match_id, w]))
+export const weatherByMatchId = new Map(weather.map((w) => [w.match_id, w]))
 
 export const teamWeatherScores: TeamWeatherScore[] = (() => {
   type Row = { teamId: number; condition: WeatherCondition; points: number }

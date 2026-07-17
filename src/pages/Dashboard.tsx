@@ -1,8 +1,10 @@
+import RecentMatches from "@/components/MatchesTable";
+
 function Dashboard() {
   return (
-    <div className="">
-      Tu będą kiedyś fajne rzeczy
-    </div>
+    <>
+      <RecentMatches />
+    </>
   );
 }
 
