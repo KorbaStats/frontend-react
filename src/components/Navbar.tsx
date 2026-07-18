@@ -21,6 +21,7 @@ const Navbar = () => {
         {navLinks.map((link, index) => (
           <Button
             key={link}
+            // TODO: change this later to work with routing
             variant={index === 0 ? "secondary" : "ghost"}
             size="sm"
           >

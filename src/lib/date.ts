@@ -1,4 +1,4 @@
-export function getFromattedDate(rawDate: string): string {
+export function getFormatedDate(rawDate: string): string {
   const dateObj = new Date(rawDate);
   return new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",

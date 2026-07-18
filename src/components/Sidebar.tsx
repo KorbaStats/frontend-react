@@ -1,7 +1,18 @@
-import { leagues } from "@/data/leagues"
+import { useEffect, useState } from "react";
+
+import { getLeagues } from "@/services/leaguesService";
+import type { LeagueWithFlag } from "@/data/leagues";
+
 import { Trophy } from "lucide-react"
 
 const Sidebar = () => {
+  const [leagues, setLeagues] = useState<LeagueWithFlag[]>([]);
+
+  useEffect(() => {
+    getLeagues()
+      .then((data) => setLeagues(data))
+  }, [])
+
   return (
     <aside className="sticky top-16 h-[calc(100vh-4rem)] hidden w-80 shrink-0 flex-col gap-4 overflow-y-auto p-4 sm:flex">
       <div className="rounded-2xl bg-card p-4 shadow-sm border border-border">

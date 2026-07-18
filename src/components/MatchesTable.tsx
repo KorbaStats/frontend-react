@@ -1,5 +1,7 @@
-import { getMatchesWithWeather } from "@/lib/matches";
-import { getFromattedDate, getLocalTime } from "@/lib/date";
+import { useEffect, useState } from "react";
+
+import { getRecentMatchesWithWeather, type MatchWithWeather } from "@/services/matchesService";
+import { getFormatedDate, getLocalTime } from "@/lib/date";
 
 import {
   Table,
@@ -10,7 +12,7 @@ import {
   TableRow,
 } from "./ui/table";
 
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 
 import {
   History,
@@ -69,7 +71,41 @@ const weatherConfig = {
 };
 
 const MatchesTable = () => {
-  const recentMatches = getMatchesWithWeather().sort((a, b) => b.datetime.localeCompare(a.datetime)).slice(0,10);
+  const [recentMatches, setRecentMatches] = useState<MatchWithWeather[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // simulates async data fetching (mock serivce)
+  useEffect(() => {
+    getRecentMatchesWithWeather()
+      .then((data) => setRecentMatches(data))
+      .catch((err) => {
+        setError(`Nie udało sie pobrać meczów.`)
+        console.error(err);
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  // loading and error states handling
+  if (isLoading) {
+    return (
+      <Card className="max-w-4xl mx-auto">
+        <CardContent className="py-10 text-center text-muted-foreground">
+          Ładowanie...
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error) {
+    return (
+      <Card className="max-w-4xl mx-auto">
+        <CardContent className="py-10 text-center text-muted-foreground">
+          {error}
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card className="max-w-4xl mx-auto">
@@ -78,17 +114,18 @@ const MatchesTable = () => {
           <History className="h-4 w-4 text-primary" />
           Ostatnie mecze
         </CardTitle>
+        <CardDescription>Mecze z panującymi warunkami pogodowymi</CardDescription>
       </CardHeader>
       <CardContent className="px-0">
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="pl-6">Gospodarze</TableHead>
-              <TableHead className="text-center">Wynik</TableHead>
-              <TableHead>Goście</TableHead>
-              <TableHead>Pogoda</TableHead>
-              <TableHead>Data</TableHead>
-              <TableHead className="pr-6">Stadion</TableHead>
+              <TableHead className="">Gospodarze</TableHead>
+              <TableHead className="">Wynik</TableHead>
+              <TableHead className="">Goście</TableHead>
+              <TableHead className="">Pogoda</TableHead>
+              <TableHead className="">Data</TableHead>
+              <TableHead className="">Stadion</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -118,7 +155,7 @@ const MatchesTable = () => {
                       </span>
                       <div className="flex flex-col leading-tight">
                         <span className="font-medium text-foreground">
-                          {m.weather.temperature_c}°C
+                          {m.weather?.temperature_c}°C
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {config.label}
@@ -129,7 +166,7 @@ const MatchesTable = () => {
                   <TableCell>
                     <div className="flex flex-col leading-tight">
                       <span className="font-medium text-foreground">
-                        {getFromattedDate(m.datetime)}
+                        {getFormatedDate(m.datetime)}
                       </span>
                       <span className="text-xs text-muted-foreground">
                         {getLocalTime(m.datetime)}
