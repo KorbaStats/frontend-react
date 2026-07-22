@@ -33,9 +33,8 @@ export async function getGoalsByWeatherCondition(): Promise<WeatherGoalsStat[]> 
 }
 
 export type WeatherGoalsInsights = {
-  best: WeatherGoalsStat
-  worst: WeatherGoalsStat
-  spread: number
+  bestWeatherForGoals: WeatherGoalsStat
+  worstWeatherForGoals: WeatherGoalsStat
 }
 
 export async function getWeatherGoalsInsights(): Promise<WeatherGoalsInsights> {
@@ -45,11 +44,9 @@ export async function getWeatherGoalsInsights(): Promise<WeatherGoalsInsights> {
 
   const best = sortedStats[0]
   const worst = sortedStats[sortedStats.length - 1]
-  const spread = best.avgGoals - worst.avgGoals
 
   return {
-    best,
-    worst,
-    spread
+    bestWeatherForGoals: best,
+    worstWeatherForGoals: worst,
   }
 }

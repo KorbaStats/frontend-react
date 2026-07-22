@@ -43,7 +43,6 @@
 
 :root {
   --radius: 0.75rem;
-  /* Główne jasne tło - leciutko kremowo-zielonkawe */
   --background: oklch(0.98 0.005 150);
   --foreground: oklch(0.2 0.03 150);
   --card: oklch(1 0 0);
@@ -51,18 +50,15 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2 0.03 150);
   
-  /* Twój główny, głęboki zielony */
   --primary: oklch(0.45 0.12 150);
   --primary-foreground: oklch(0.98 0 0);
   
-  /* Pastelowy zielony dla aktywnych linków (był niebieski) */
   --secondary: oklch(0.94 0.05 150);
   --secondary-foreground: oklch(0.35 0.1 150);
   
   --muted: oklch(0.95 0.01 150);
   --muted-foreground: oklch(0.5 0.02 150);
   
-  /* Leciutki zielony na hovery list np. w ligach (był żółty) */
   --accent: oklch(0.96 0.03 150);
   --accent-foreground: oklch(0.25 0.05 150);
   
@@ -78,7 +74,6 @@
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
   
-  /* Sidebar zsynchronizowany z zielonym motywem (był fioletowo-niebieski) */
   --sidebar: oklch(0.98 0.005 150);
   --sidebar-foreground: oklch(0.2 0.03 150);
   --sidebar-primary: oklch(0.45 0.12 150);
@@ -90,7 +85,6 @@
 }
 
 .dark {
-  /* Główne ciemne tło */
   --background: oklch(0.18 0.02 150);
   --foreground: oklch(0.96 0.01 150);
   --card: oklch(0.23 0.03 150);
@@ -98,18 +92,15 @@
   --popover: oklch(0.23 0.03 150);
   --popover-foreground: oklch(0.96 0.01 150);
   
-  /* Żarówiasty zielony (neon) */
   --primary: oklch(0.70 0.15 150);
   --primary-foreground: oklch(0.18 0.02 150);
   
-  /* Ciemnozielony do aktywnych linków */
   --secondary: oklch(0.30 0.08 150);
   --secondary-foreground: oklch(0.85 0.15 150);
   
   --muted: oklch(0.28 0.02 150);
   --muted-foreground: oklch(0.72 0.02 150);
   
-  /* Zgaszony ciemny zielony na hovery list */
   --accent: oklch(0.25 0.05 150);
   --accent-foreground: oklch(0.95 0.02 150);
   
@@ -125,7 +116,6 @@
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
   
-  /* Sidebar zsynchronizowany w Dark Mode */
   --sidebar: oklch(0.18 0.02 150);
   --sidebar-foreground: oklch(0.96 0.01 150);
   --sidebar-primary: oklch(0.70 0.15 150);

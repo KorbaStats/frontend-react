@@ -1,17 +1,16 @@
+import GoalsWeatherChart from "@/components/GoalsWeatherChart";
 import RecentMatches from "@/components/MatchesTable";
 import SummaryCards from "@/components/SummaryCards";
-import { getColdestMatchWithWeather } from "@/services/matchesService";
 
-function Dashboard() {
-
-  console.log(getColdestMatchWithWeather());
+const Dashboard = () => {
 
   return (
     <>
       <SummaryCards />
+      <GoalsWeatherChart />
       <RecentMatches />
     </>
-  );
-}
+  )
+};
 
 export default Dashboard;

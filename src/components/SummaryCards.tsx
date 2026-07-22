@@ -3,11 +3,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { CalendarDays } from "lucide-react";
 
 import type { MatchStatsSummary } from "@/data/types";
-import {
-  getColdestMatchWithWeather,
-  type coldestMatchType,
-} from "@/services/matchesService";
 import type { WeatherGoalsInsights } from "@/services/weatherStatsService";
+import { getColdestMatchWithWeather, type coldestMatchType, } from "@/services/matchesService";
 import { getMatchStatsSummary } from "@/services/matchStatsService";
 import { getWeatherGoalsInsights } from "@/services/weatherStatsService";
 
@@ -60,9 +57,9 @@ const SummaryCards = () => {
   }
 
   const bestWeatherConfig =
-    weatherInsights && weatherConfig[weatherInsights.best.condition];
+    weatherInsights && weatherConfig[weatherInsights.bestWeatherForGoals.condition];
   const worstWeatherConfig =
-    weatherInsights && weatherConfig[weatherInsights.worst.condition];
+    weatherInsights && weatherConfig[weatherInsights.worstWeatherForGoals.condition];
 
   const BestIcon = bestWeatherConfig?.icon;
   const WorstIcon = worstWeatherConfig?.icon;
@@ -71,7 +68,7 @@ const SummaryCards = () => {
   const ColdestIcon = coldestConfig?.icon;
 
   return (
-    <div className="grid grid-cols-2 gap-2 xl:grid-cols-4 mb-4 items-stretch">
+    <div className="grid grid-cols-2 gap-2 xl:grid-cols-4 items-stretch">
       {/* Ilość meczy */}
       <Card className="flex flex-col">
         <CardHeader className="flex justify-between items-center">
@@ -98,10 +95,10 @@ const SummaryCards = () => {
         </CardHeader>
         <CardContent className="flex-1 flex flex-col justify-end">
           <span className="text-3xl font-bold">
-            {weatherInsights?.best.avgGoals}
+            {weatherInsights?.bestWeatherForGoals.avgGoals}
           </span>
           <p className="text-xs text-muted-foreground mt-1">
-            {bestWeatherConfig?.label} · {weatherInsights?.best.matchCount}{" "}
+            {bestWeatherConfig?.label} · {weatherInsights?.bestWeatherForGoals.matchCount}{" "}
             meczów
           </p>
         </CardContent>
@@ -119,10 +116,10 @@ const SummaryCards = () => {
         </CardHeader>
         <CardContent className="flex-1 flex flex-col justify-end">
           <span className="text-3xl font-bold">
-            {weatherInsights?.worst.avgGoals}
+            {weatherInsights?.worstWeatherForGoals.avgGoals}
           </span>
           <p className="text-xs text-muted-foreground mt-1">
-            {worstWeatherConfig?.label} · {weatherInsights?.worst.matchCount}{" "}
+            {worstWeatherConfig?.label} · {weatherInsights?.worstWeatherForGoals.matchCount}{" "}
             meczów
           </p>
         </CardContent>
