@@ -17,7 +17,7 @@ const Navbar = () => {
         <span className="text-lg font-semibold">KorbaStats</span>
       </div>
 
-      <nav className="hidden items-center gap-1 md:flex">
+      <nav className="hidden items-center gap-1 lg:flex">
         {navLinks.map((link, index) => (
           <Button
             key={link}
@@ -31,9 +31,9 @@ const Navbar = () => {
       </nav>
 
       <div className="flex shrink-0 items-center gap-3">
-        <div className="relative hidden sm:block">
+        <div className="relative hidden lg:block">
           <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input placeholder="Wyszukaj drużynę..." className="w-48 pl-8 lg:w-64" />
+          <Input placeholder="Wyszukaj drużynę..." className="w-48 pl-8 xl:w-64" />
         </div>
 
         <Button

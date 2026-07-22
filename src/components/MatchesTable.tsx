@@ -89,7 +89,7 @@ const MatchesTable = () => {
   // loading and error states handling
   if (isLoading) {
     return (
-      <Card className="max-w-4xl mx-auto">
+      <Card>
         <CardContent className="py-10 text-center text-muted-foreground">
           Ładowanie...
         </CardContent>
@@ -99,7 +99,7 @@ const MatchesTable = () => {
 
   if (error) {
     return (
-      <Card className="max-w-4xl mx-auto">
+      <Card>
         <CardContent className="py-10 text-center text-muted-foreground">
           {error}
         </CardContent>
@@ -108,7 +108,7 @@ const MatchesTable = () => {
   }
 
   return (
-    <Card className="max-w-4xl mx-auto">
+    <Card>
       <CardHeader className="border-b pb-6">
         <CardTitle className="flex items-center gap-2 text-base">
           <History className="h-4 w-4 text-primary" />

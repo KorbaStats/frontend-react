@@ -1,96 +1,150 @@
 import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
+import { CalendarDays } from "lucide-react";
 
 import type { MatchStatsSummary } from "@/data/types";
+import {
+  getColdestMatchWithWeather,
+  type coldestMatchType,
+} from "@/services/matchesService";
+import type { WeatherGoalsInsights } from "@/services/weatherStatsService";
 import { getMatchStatsSummary } from "@/services/matchStatsService";
-import { CalendarDays, ChartLine, Equal, Users } from "lucide-react";
+import { getWeatherGoalsInsights } from "@/services/weatherStatsService";
+
+import { weatherConfig } from "@/lib/weatherConfig";
 
 const SummaryCards = () => {
   const [statsSummary, setStatsSummary] = useState<MatchStatsSummary>();
+  const [weatherInsights, setWeatherInsights] = useState<WeatherGoalsInsights>();
+  const [coldestMatch, setColdestMatch] = useState<coldestMatchType>();
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getMatchStatsSummary()
-      .then((data) => setStatsSummary(data))
+    Promise.all([
+      getMatchStatsSummary(),
+      getWeatherGoalsInsights(),
+      getColdestMatchWithWeather(),
+    ])
+      .then(([summary, insights, coldestMatch]) => {
+        setStatsSummary(summary);
+        setWeatherInsights(insights);
+        setColdestMatch(coldestMatch);
+      })
       .catch((err) => {
         setError("Pobieranie statystyk nie powiodło się.");
-        console.log(err);
+        console.error(err);
       })
       .finally(() => setIsLoading(false));
   }, []);
 
   if (isLoading) {
     return (
-      <div className="max-w-4xl mx-auto mb-4">
-        <p>Ładowanie...</p>
-      </div>
+      <Card className="mb-4">
+        <CardContent className="py-10 text-center text-muted-foreground">
+          Ładowanie...
+        </CardContent>
+      </Card>
     );
   }
 
   if (error) {
     return (
-      <div className="max-w-4xl mx-auto mb-4">
-        <p>{error}</p>
-      </div>
+      <Card className="mb-4">
+        <CardContent className="py-10 text-center text-destructive">
+          {error}
+        </CardContent>
+      </Card>
     );
   }
 
+  const bestWeatherConfig =
+    weatherInsights && weatherConfig[weatherInsights.best.condition];
+  const worstWeatherConfig =
+    weatherInsights && weatherConfig[weatherInsights.worst.condition];
+
+  const BestIcon = bestWeatherConfig?.icon;
+  const WorstIcon = worstWeatherConfig?.icon;
+
+  const coldestConfig = coldestMatch && weatherConfig[coldestMatch.condition];
+  const ColdestIcon = coldestConfig?.icon;
+
   return (
-    <div className="grid grid-cols-4 gap-2 max-w-4xl mx-auto mb-4">
-      <Card>
+    <div className="grid grid-cols-2 gap-2 xl:grid-cols-4 mb-4 items-stretch">
+      {/* Ilość meczy */}
+      <Card className="flex flex-col">
         <CardHeader className="flex justify-between items-center">
           <CardTitle className="text-muted-foreground text-xs">
             Śledzone mecze
           </CardTitle>
           <CalendarDays size={16} className="text-muted-foreground" />
         </CardHeader>
-        <CardContent>
-          <span className="text-5xl font-bold">
+        <CardContent className="flex-1 flex flex-col justify-end">
+          <span className="text-3xl font-bold">
             {statsSummary?.total_matches}
           </span>
+          <p className="text-xs text-muted-foreground mt-1">łącznie w bazie</p>
         </CardContent>
       </Card>
 
-      <Card>
+      {/* Najlepsza pogoda do bramek */}
+      <Card className="flex flex-col">
         <CardHeader className="flex justify-between items-center">
           <CardTitle className="text-muted-foreground text-xs">
-            Śrd. goli na mecz
+            Najlepsza pogoda na gole
           </CardTitle>
-          <ChartLine size={16} className="text-muted-foreground" />
+          {BestIcon && <BestIcon size={16} className="text-muted-foreground" />}
         </CardHeader>
-        <CardContent>
-          <span className="text-5xl font-bold text-primary">
-            {statsSummary?.avg_goals_per_match}
+        <CardContent className="flex-1 flex flex-col justify-end">
+          <span className="text-3xl font-bold">
+            {weatherInsights?.best.avgGoals}
           </span>
+          <p className="text-xs text-muted-foreground mt-1">
+            {bestWeatherConfig?.label} · {weatherInsights?.best.matchCount}{" "}
+            meczów
+          </p>
         </CardContent>
       </Card>
 
-      <Card>
+      {/* Najgorsza pogoda do bramek */}
+      <Card className="flex flex-col">
         <CardHeader className="flex justify-between items-center">
           <CardTitle className="text-muted-foreground text-xs">
-            Średnia frekwencja
+            Najgorsza pogoda na gole
           </CardTitle>
-          <Users size={16} className="text-muted-foreground" />
+          {WorstIcon && (
+            <WorstIcon size={16} className="text-muted-foreground" />
+          )}
         </CardHeader>
-        <CardContent>
-          <span className="text-4xl font-bold">
-            {Number(statsSummary?.avg_attendance).toLocaleString("pl-PL")}
+        <CardContent className="flex-1 flex flex-col justify-end">
+          <span className="text-3xl font-bold">
+            {weatherInsights?.worst.avgGoals}
           </span>
+          <p className="text-xs text-muted-foreground mt-1">
+            {worstWeatherConfig?.label} · {weatherInsights?.worst.matchCount}{" "}
+            meczów
+          </p>
         </CardContent>
       </Card>
 
-      <Card>
+      {/* Najzimniejszy mecz */}
+      <Card className="flex flex-col">
         <CardHeader className="flex justify-between items-center">
           <CardTitle className="text-muted-foreground text-xs">
-            Remisy
+            Najzimniejszy mecz
           </CardTitle>
-          <Equal size={16} className="text-muted-foreground" />
+          {ColdestIcon && (
+            <ColdestIcon size={16} className="text-muted-foreground" />
+          )}
         </CardHeader>
-        <CardContent>
-          <span className="text-5xl font-bold">
-            {statsSummary?.draws}
+        <CardContent className="flex-1 flex flex-col justify-end">
+          <span className="text-3xl font-bold">
+            {coldestMatch?.temperature_c}
           </span>
+          <p className="text-xs text-muted-foreground mt-1">
+            {coldestMatch?.city} · {coldestConfig?.label}
+          </p>
         </CardContent>
       </Card>
     </div>

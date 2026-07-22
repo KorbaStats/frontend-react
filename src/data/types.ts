@@ -1,6 +1,4 @@
 // Shared data contracts for mocked API responses.
-// Source of truth: /.claude/mocks_plan.md — full backend analysis performed 2026-07-16
-// against /Users/kuba/dev/KorbaStats/backend (Express 5 + Objection/Knex + Postgres).
 // Field types mirror what the real endpoints return today, including backend
 // quirks (e.g. some stats endpoints return raw SQL results as strings, not numbers).
 
@@ -286,13 +284,12 @@ export type Weather = {
   condition: WeatherCondition
 }
 
-// Aggregate powering the product's "weather score" feature (see CLAUDE.md).
-//TODO: verify against real API response
-export type TeamWeatherScore = {
-  team_id: number
-  condition: WeatherCondition
-  sample_size: number
-  avg_points_per_match: number
-  // normalized -1..1 vs. the team's average across all weather conditions
-  weather_score: number
-}
+
+// export type TeamWeatherScore = {
+//   team_id: number
+//   condition: WeatherCondition
+//   sample_size: number
+//   avg_points_per_match: number
+//   // normalized -1..1 vs. the team's average across all weather conditions
+//   weather_score: number
+// }

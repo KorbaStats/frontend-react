@@ -6,7 +6,7 @@
 //TODO: verify against real API response
 
 import { matches } from "./matches"
-import type { TeamWeatherScore, Weather, WeatherCondition } from "./types"
+import type { Weather, WeatherCondition } from "./types"
 
 function mulberry32(seed: number) {
   return function random() {
@@ -28,9 +28,9 @@ function randFloat(min: number, max: number, decimals = 1): number {
   return Number((rng() * (max - min) + min).toFixed(decimals))
 }
 
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value))
-}
+// function clamp(value: number, min: number, max: number): number {
+//   return Math.min(max, Math.max(min, value))
+// }
 
 // Rough monthly temperature bands — all mocked matches fall between
 // November and April (see matches.ts season definitions).
@@ -76,42 +76,42 @@ export const weather: Weather[] = matches.map((match) => {
 
 export const weatherByMatchId = new Map(weather.map((w) => [w.match_id, w]))
 
-export const teamWeatherScores: TeamWeatherScore[] = (() => {
-  type Row = { teamId: number; condition: WeatherCondition; points: number }
-  const rows: Row[] = []
+// export const teamWeatherScores: TeamWeatherScore[] = (() => {
+//   type Row = { teamId: number; condition: WeatherCondition; points: number }
+//   const rows: Row[] = []
 
-  for (const match of matches) {
-    const matchWeather = weatherByMatchId.get(match.id)
-    if (!matchWeather) continue
+//   for (const match of matches) {
+//     const matchWeather = weatherByMatchId.get(match.id)
+//     if (!matchWeather) continue
 
-    const homePoints = match.home_goals > match.away_goals ? 3 : match.home_goals === match.away_goals ? 1 : 0
-    const awayPoints = match.away_goals > match.home_goals ? 3 : match.away_goals === match.home_goals ? 1 : 0
+//     const homePoints = match.home_goals > match.away_goals ? 3 : match.home_goals === match.away_goals ? 1 : 0
+//     const awayPoints = match.away_goals > match.home_goals ? 3 : match.away_goals === match.home_goals ? 1 : 0
 
-    rows.push({ teamId: match.home_team_id, condition: matchWeather.condition, points: homePoints })
-    rows.push({ teamId: match.away_team_id, condition: matchWeather.condition, points: awayPoints })
-  }
+//     rows.push({ teamId: match.home_team_id, condition: matchWeather.condition, points: homePoints })
+//     rows.push({ teamId: match.away_team_id, condition: matchWeather.condition, points: awayPoints })
+//   }
 
-  const teamIds = new Set(rows.map((r) => r.teamId))
-  const scores: TeamWeatherScore[] = []
+//   const teamIds = new Set(rows.map((r) => r.teamId))
+//   const scores: TeamWeatherScore[] = []
 
-  for (const teamId of teamIds) {
-    const teamRows = rows.filter((r) => r.teamId === teamId)
-    const overallAvg = teamRows.reduce((sum, r) => sum + r.points, 0) / teamRows.length
+//   for (const teamId of teamIds) {
+//     const teamRows = rows.filter((r) => r.teamId === teamId)
+//     const overallAvg = teamRows.reduce((sum, r) => sum + r.points, 0) / teamRows.length
 
-    const conditions = new Set(teamRows.map((r) => r.condition))
-    for (const condition of conditions) {
-      const conditionRows = teamRows.filter((r) => r.condition === condition)
-      const avgPointsPerMatch = conditionRows.reduce((sum, r) => sum + r.points, 0) / conditionRows.length
+//     const conditions = new Set(teamRows.map((r) => r.condition))
+//     for (const condition of conditions) {
+//       const conditionRows = teamRows.filter((r) => r.condition === condition)
+//       const avgPointsPerMatch = conditionRows.reduce((sum, r) => sum + r.points, 0) / conditionRows.length
 
-      scores.push({
-        team_id: teamId,
-        condition,
-        sample_size: conditionRows.length,
-        avg_points_per_match: Number(avgPointsPerMatch.toFixed(2)),
-        weather_score: Number(clamp((avgPointsPerMatch - overallAvg) / 1.5, -1, 1).toFixed(2)),
-      })
-    }
-  }
+//       scores.push({
+//         team_id: teamId,
+//         condition,
+//         sample_size: conditionRows.length,
+//         avg_points_per_match: Number(avgPointsPerMatch.toFixed(2)),
+//         weather_score: Number(clamp((avgPointsPerMatch - overallAvg) / 1.5, -1, 1).toFixed(2)),
+//       })
+//     }
+//   }
 
-  return scores
-})()
+//   return scores
+// })()
