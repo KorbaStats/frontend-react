@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { getRecentMatchesWithWeather, type MatchWithWeather } from "@/services/matchesService";
+import {
+  getRecentMatchesWithWeather,
+  type MatchWithWeather,
+} from "@/services/matchStatsService";
 import { getFormatedDate, getLocalTime } from "@/lib/date";
 
 import {
@@ -12,7 +15,14 @@ import {
   TableRow,
 } from "./ui/table";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 
 import {
   History,
@@ -24,49 +34,50 @@ import {
   ThermometerSun,
   ThermometerSnowflake,
 } from "lucide-react";
+import { Link } from "react-router";
 
 const weatherConfig = {
-  clear: { 
-    icon: Sun, 
-    label: "Bezchmurnie", 
-    bg: "bg-amber-100 dark:bg-amber-900/40", 
-    text: "text-amber-500 dark:text-amber-400" 
+  clear: {
+    icon: Sun,
+    label: "Bezchmurnie",
+    bg: "bg-amber-100 dark:bg-amber-900/40",
+    text: "text-amber-500 dark:text-amber-400",
   },
-  clouds: { 
-    icon: Cloudy, 
-    label: "Pochmurno", 
-    bg: "bg-slate-100 dark:bg-slate-800/60", 
-    text: "text-slate-500 dark:text-slate-400" 
+  clouds: {
+    icon: Cloudy,
+    label: "Pochmurno",
+    bg: "bg-slate-100 dark:bg-slate-800/60",
+    text: "text-slate-500 dark:text-slate-400",
   },
-  rain: { 
-    icon: CloudRain, 
-    label: "Deszcz", 
-    bg: "bg-blue-100 dark:bg-blue-900/40", 
-    text: "text-blue-500 dark:text-blue-400" 
+  rain: {
+    icon: CloudRain,
+    label: "Deszcz",
+    bg: "bg-blue-100 dark:bg-blue-900/40",
+    text: "text-blue-500 dark:text-blue-400",
   },
-  snow: { 
-    icon: CloudSnow, 
-    label: "Śnieg", 
-    bg: "bg-sky-100 dark:bg-sky-900/40", 
-    text: "text-sky-500 dark:text-sky-400" 
+  snow: {
+    icon: CloudSnow,
+    label: "Śnieg",
+    bg: "bg-sky-100 dark:bg-sky-900/40",
+    text: "text-sky-500 dark:text-sky-400",
   },
-  wind: { 
-    icon: Wind, 
-    label: "Wietrznie", 
-    bg: "bg-teal-100 dark:bg-teal-900/40", 
-    text: "text-teal-500 dark:text-teal-400" 
+  wind: {
+    icon: Wind,
+    label: "Wietrznie",
+    bg: "bg-teal-100 dark:bg-teal-900/40",
+    text: "text-teal-500 dark:text-teal-400",
   },
-  extreme_heat: { 
-    icon: ThermometerSun, 
-    label: "Upał", 
-    bg: "bg-red-100 dark:bg-red-900/40", 
-    text: "text-red-500 dark:text-red-400" 
+  extreme_heat: {
+    icon: ThermometerSun,
+    label: "Upał",
+    bg: "bg-red-100 dark:bg-red-900/40",
+    text: "text-red-500 dark:text-red-400",
   },
-  extreme_cold: { 
-    icon: ThermometerSnowflake, 
-    label: "Mróz", 
-    bg: "bg-indigo-100 dark:bg-indigo-900/40", 
-    text: "text-indigo-500 dark:text-indigo-400" 
+  extreme_cold: {
+    icon: ThermometerSnowflake,
+    label: "Mróz",
+    bg: "bg-indigo-100 dark:bg-indigo-900/40",
+    text: "text-indigo-500 dark:text-indigo-400",
   },
 };
 
@@ -80,7 +91,7 @@ const MatchesTable = () => {
     getRecentMatchesWithWeather()
       .then((data) => setRecentMatches(data))
       .catch((err) => {
-        setError(`Nie udało sie pobrać meczów.`)
+        setError(`Nie udało sie pobrać meczów.`);
         console.error(err);
       })
       .finally(() => setIsLoading(false));
@@ -94,7 +105,7 @@ const MatchesTable = () => {
           Ładowanie...
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (error) {
@@ -104,7 +115,7 @@ const MatchesTable = () => {
           {error}
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -114,7 +125,9 @@ const MatchesTable = () => {
           <History className="h-4 w-4 text-primary" />
           Ostatnie mecze
         </CardTitle>
-        <CardDescription>Mecze z panującymi warunkami pogodowymi</CardDescription>
+        <CardDescription>
+          Mecze z panującymi warunkami pogodowymi
+        </CardDescription>
       </CardHeader>
       <CardContent className="px-0">
         <Table>
@@ -150,7 +163,9 @@ const MatchesTable = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <span className={`flex h-7 w-7 items-center justify-center rounded-full ${config.bg} ${config.text}`}>
+                      <span
+                        className={`flex h-7 w-7 items-center justify-center rounded-full ${config.bg} ${config.text}`}
+                      >
                         <Icon className="h-4 w-4" />
                       </span>
                       <div className="flex flex-col leading-tight">
@@ -188,6 +203,14 @@ const MatchesTable = () => {
             })}
           </TableBody>
         </Table>
+        <CardFooter className="justify-center">
+          <Link
+            to="/matches"
+            className="mt-2 text-center text-md text-primary hover:pointer hover:text-secondary-foreground"
+          >
+            Wszystkie mecze...
+          </Link>
+        </CardFooter>
       </CardContent>
     </Card>
   );
