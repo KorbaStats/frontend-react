@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { BarChart3 } from "lucide-react";
 
 import { getGoalsByWeatherCondition } from "@/services/matchStatsService";

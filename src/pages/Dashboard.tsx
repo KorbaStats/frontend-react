@@ -1,9 +1,10 @@
-import GoalsWeatherChart from "@/components/GoalsWeatherChart";
-import RecentMatches from "@/components/MatchesTable";
-import SummaryCards from "@/components/SummaryCards";
+// TODO: rebuild the dashboard entirely when statistics for matches/teams, weather score and predictions are ready 
+
+import GoalsWeatherChart from "@/components/dashboard/GoalsWeatherChart";
+import RecentMatches from "@/components/dashboard/MatchesTable";
+import SummaryCards from "@/components/dashboard/SummaryCards";
 
 const Dashboard = () => {
-
   return (
     <>
       <SummaryCards />

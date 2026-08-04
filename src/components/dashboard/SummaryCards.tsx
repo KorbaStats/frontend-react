@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CalendarDays } from "lucide-react";
 
 import type { MatchStatsSummary } from "@/data/types";
@@ -102,6 +102,10 @@ const SummaryCards = () => {
           </p>
         </CardContent>
       </Card>
+{/* 
+                  <span className={`text-2xl font-bold ${stylesConfig.bg}`} key={m.id}>
+              {stylesConfig.text}
+            </span> */}
 
       {/* Najgorsza pogoda do bramek */}
       <Card className="flex flex-col">
