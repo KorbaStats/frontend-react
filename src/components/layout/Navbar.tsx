@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useTheme } from "@/hooks/useTheme"
 
-const navLinks = ["Strona główna", "Mecze", "Statystyki", "Predykcje"]
+const navLinks = ["Strona główna", "Drużyny", "Mecze", "Predykcje"]
 
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme()
