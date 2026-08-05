@@ -10,7 +10,7 @@
 // jsonb ones) to demonstrate the full GET /api/matches/:id shape.
 
 import { teams } from "./teams"
-import type { Match, Team } from "./types"
+import type { Match, ParsedStat, Team } from "./types"
 
 function mulberry32(seed: number) {
   return function random() {
@@ -34,6 +34,14 @@ function randFloat(min: number, max: number, decimals = 2): number {
 
 function pick<T>(items: T[]): T {
   return items[randInt(0, items.length - 1)]
+}
+
+// Mirrors the scraper's parseStat() output for "x% (n/m)" stats. `completed`
+// is derived from the percentage so the three fields always agree with each
+// other (the old {total, accurate} mock could produce accurate > total).
+function parsedStat(total: number, minPct: number, maxPct: number): ParsedStat {
+  const pct = randInt(minPct, maxPct)
+  return { pct, completed: Math.round((total * pct) / 100), total }
 }
 
 function goalsFromXg(xg: number): number {
@@ -187,16 +195,16 @@ function withFullDetail(match: Match): Match {
     away_offsides: randInt(0, 5),
     home_free_kicks: randInt(6, 18),
     away_free_kicks: randInt(6, 18),
-    home_passes: { total: randInt(380, 720), accurate: randInt(320, 650) },
-    away_passes: { total: randInt(320, 650), accurate: randInt(260, 580) },
-    home_long_passes: { total: randInt(30, 70), accurate: randInt(15, 45) },
-    away_long_passes: { total: randInt(30, 70), accurate: randInt(15, 45) },
-    home_passes_in_final_third: { total: randInt(60, 150), accurate: randInt(40, 120) },
-    away_passes_in_final_third: { total: randInt(50, 130), accurate: randInt(30, 100) },
-    home_crosses: { total: randInt(10, 28), accurate: randInt(2, 10) },
-    away_crosses: { total: randInt(8, 24), accurate: randInt(2, 9) },
-    home_tackles: { total: randInt(14, 28), won: randInt(8, 18) },
-    away_tackles: { total: randInt(14, 28), won: randInt(8, 18) },
+    home_passes: parsedStat(randInt(380, 720), 78, 92),
+    away_passes: parsedStat(randInt(320, 650), 74, 90),
+    home_long_passes: parsedStat(randInt(30, 70), 40, 70),
+    away_long_passes: parsedStat(randInt(30, 70), 38, 68),
+    home_passes_in_final_third: parsedStat(randInt(60, 150), 62, 84),
+    away_passes_in_final_third: parsedStat(randInt(50, 130), 58, 80),
+    home_crosses: parsedStat(randInt(10, 28), 18, 40),
+    away_crosses: parsedStat(randInt(8, 24), 16, 38),
+    home_tackles: parsedStat(randInt(14, 28), 55, 78),
+    away_tackles: parsedStat(randInt(14, 28), 55, 78),
     home_throw_ins: randInt(12, 26),
     away_throw_ins: randInt(12, 26),
     home_fouls: randInt(6, 16),

@@ -55,14 +55,14 @@ export type Team = {
   homeStadium: Stadium | null
 }
 
-// jsonb columns on `matches` — shape undocumented on the backend, minimal
-// plausible structure used here.
-//TODO: verify against real API response
-export type PassStat = { total: number; accurate: number }
-//TODO: verify against real API response
-export type CrossStat = { total: number; accurate: number }
-//TODO: verify against real API response
-export type TackleStat = { total: number; won: number }
+// jsonb columns on `matches`. The backend only declares them as
+// `{ type: ["object", "null"] }` (Match.jsonSchema), so the real shape is
+// dictated by the scraper — `parseStat()` in scraper/src/scraper/match.js
+// returns `{ pct, completed, total }` for every "x% (n/m)" stat it reads off
+// the source page. One shape covers passes, crosses and tackles alike.
+// Verified against the scraper on 2026-08-05 — do NOT rename these keys,
+// see "Data contract boundary" in CLAUDE.md.
+export type ParsedStat = { pct: number; completed: number; total: number }
 
 export type Match = {
   id: number
@@ -132,16 +132,16 @@ export type Match = {
   away_offsides?: number
   home_free_kicks?: number
   away_free_kicks?: number
-  home_passes?: PassStat
-  away_passes?: PassStat
-  home_long_passes?: PassStat
-  away_long_passes?: PassStat
-  home_passes_in_final_third?: PassStat
-  away_passes_in_final_third?: PassStat
-  home_crosses?: CrossStat
-  away_crosses?: CrossStat
-  home_tackles?: TackleStat
-  away_tackles?: TackleStat
+  home_passes?: ParsedStat
+  away_passes?: ParsedStat
+  home_long_passes?: ParsedStat
+  away_long_passes?: ParsedStat
+  home_passes_in_final_third?: ParsedStat
+  away_passes_in_final_third?: ParsedStat
+  home_crosses?: ParsedStat
+  away_crosses?: ParsedStat
+  home_tackles?: ParsedStat
+  away_tackles?: ParsedStat
   home_throw_ins?: number
   away_throw_ins?: number
   home_fouls?: number

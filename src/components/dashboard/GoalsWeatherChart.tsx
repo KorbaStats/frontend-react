@@ -12,7 +12,7 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { BarChart3 } from "lucide-react";
 
-import { getGoalsByWeatherCondition } from "@/services/matchStatsService";
+import { getGoalsByWeatherCondition } from "@/services/weatherStatsService";
 import { weatherConfig } from "@/lib/weatherConfig";
 
 type ChartRow = {

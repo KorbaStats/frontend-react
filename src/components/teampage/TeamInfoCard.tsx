@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import type { Team } from "@/data/types";
-import type { MatchWithWeather } from "@/services/matchStatsService";
+import type { MatchWithWeather } from "@/services/matchesService";
 import { MapPin, Users } from "lucide-react";
 
 const resultStylesConfig = {
@@ -54,7 +54,7 @@ const TeamInfoCard = ({ matches, team }: TeamInfoProps) => {
 
       {/* Last 5 matches (win / draw / lose) */}
       <div className="flex flex-col gap-2 lg:items-end">
-        <p className="text-sm font-bold">Ostatnie mecze:</p>
+        <p className="text-sm text-muted-foreground/80 self-start">Ostatnie mecze</p>
         <ol className="flex gap-1.5">
           {matches.slice(0, 5).map((m) => {
             const isHome = m.home_team_id === team?.id;
