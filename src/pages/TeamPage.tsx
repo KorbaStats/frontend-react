@@ -3,6 +3,7 @@ import { useParams } from "react-router";
 import { History } from "lucide-react";
 
 import type { Team } from "@/data/types";
+
 import {
   getTeamMatches,
   type MatchWithWeather,
@@ -19,8 +20,12 @@ import {
 
 import MatchesTable from "@/components/shared/MatchesTable";
 import TeamInfoCard from "@/components/teampage/TeamInfoCard";
-import WeatherFilterPills, {type WeatherFilterValue} from "@/components/teampage/WeatherFilterPills";
+import WeatherFiltersCard, {
+  type WeatherFilterValue,
+} from "@/components/teampage/WeatherFiltersCard";
+import TeamStatsCards from "@/components/teampage/TeamStatsCards";
 
+import { computeTeamStats } from "@/lib/teamStats";
 
 const TeamPage = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -32,7 +37,7 @@ const TeamPage = () => {
   const [team, setTeam] = useState<Team>();
 
   // states for weather filters
-  const [condition, setCondition] = useState<WeatherFilterValue>('all');
+  const [condition, setCondition] = useState<WeatherFilterValue>("all");
 
   // everything below the filters is derived from this narrowed list
   const filteredMatches = useMemo(
@@ -43,6 +48,18 @@ const TeamPage = () => {
     [matches, condition],
   );
 
+  //computed data for TeamStatsCards: filteredStats (via weather), and all matches (non filtered for baseline)
+  const filteredStats = useMemo(
+    () => computeTeamStats(filteredMatches, teamId),
+    [filteredMatches, teamId]
+  )
+
+  const baselineStats = useMemo(
+    () => computeTeamStats(matches, teamId),
+    [matches, teamId]
+  )
+
+  // fetching data by teamId
   useEffect(() => {
     Promise.all([getTeamMatches(teamId), getTeamById(teamId)])
       .then(([matches, team]) => {
@@ -57,6 +74,7 @@ const TeamPage = () => {
   }, [teamId]);
 
 
+  // loading & error states handling
   if (isLoading) {
     return (
       <Card className="mb-4">
@@ -80,11 +98,15 @@ const TeamPage = () => {
   return (
     <>
       <TeamInfoCard matches={matches} team={team} />
-      <WeatherFilterPills value={condition} onChange={setCondition} />
-      {/* Cardy statystyk */}
-      <div className="grid gap-3 grid-cols-5">
-
-      </div>
+      {/* Weather Filters */}
+      <WeatherFiltersCard
+        value={condition}
+        onChange={setCondition}
+        shownCount={filteredMatches.length}
+        totalCount={matches.length}
+      />
+      {/* Statystyki*/}
+      <TeamStatsCards stats={filteredStats} baseline={baselineStats} />
       {/* Matches table card */}
       <Card>
         <CardHeader className="border-b pb-6">

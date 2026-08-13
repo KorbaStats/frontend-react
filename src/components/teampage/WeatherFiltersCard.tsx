@@ -18,9 +18,16 @@ const conditions = Object.keys(weatherConfig) as WeatherCondition[];
 interface WeatherFilterPillsProps {
   value: WeatherFilterValue;
   onChange: (value: WeatherFilterValue) => void;
+  shownCount: number;
+  totalCount: number;
 }
 
-const WeatherFilterPills = ({ value, onChange }: WeatherFilterPillsProps) => {
+const WeatherFiltersCard = ({
+  value,
+  onChange,
+  shownCount,
+  totalCount,
+}: WeatherFilterPillsProps) => {
   return (
     <Card>
       <CardHeader className="flex justify-between">
@@ -28,7 +35,12 @@ const WeatherFilterPills = ({ value, onChange }: WeatherFilterPillsProps) => {
           <SlidersHorizontal className="h-4 w-4 text-primary" />
           <h1>Filtry pogodowe</h1>
         </CardTitle>
-        <Button variant="outline" size="sm" disabled={value === 'all'} onClick={() => onChange('all')}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onChange("all")}
+          className={`${value === "all" ? "hidden" : "visible"}`}
+        >
           Resetuj filtry
         </Button>
       </CardHeader>
@@ -67,8 +79,8 @@ const WeatherFilterPills = ({ value, onChange }: WeatherFilterPillsProps) => {
       <CardFooter>
         <div className="w-full bg-background border rounded-lg p-2 text-sm text-muted-foreground">
           <p className="px-2">
-            Pokazano <span className="font-bold">12</span> z
-            <span className="font-bold"> 20 </span>meczów
+            Pokazano <span className="font-bold">{shownCount}</span> z
+            <span className="font-bold"> {totalCount} </span>meczów
           </p>
         </div>
       </CardFooter>
@@ -76,4 +88,4 @@ const WeatherFilterPills = ({ value, onChange }: WeatherFilterPillsProps) => {
   );
 };
 
-export default WeatherFilterPills;
+export default WeatherFiltersCard;

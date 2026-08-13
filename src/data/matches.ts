@@ -145,6 +145,8 @@ function buildMatch(id: number, home: Team, away: Team, season: string, datetime
     away_yellow_cards: randInt(0, 4),
     home_red_cards: rng() < 0.08 ? 1 : 0,
     away_red_cards: rng() < 0.08 ? 1 : 0,
+    home_fouls: randInt(6, 16), // moved from "withFullDetail" object builder
+    away_fouls: randInt(6, 16), //
     home_xg_on_target_xgot: Number(Math.min(homeXg * randFloat(0.6, 1.1), homeXg + 0.4).toFixed(2)),
     away_xg_on_target_xgot: Number(Math.min(awayXg * randFloat(0.6, 1.1), awayXg + 0.4).toFixed(2)),
     home_expected_assists_xa: randFloat(0.3, 1.8),
@@ -207,8 +209,6 @@ function withFullDetail(match: Match): Match {
     away_tackles: parsedStat(randInt(14, 28), 55, 78),
     home_throw_ins: randInt(12, 26),
     away_throw_ins: randInt(12, 26),
-    home_fouls: randInt(6, 16),
-    away_fouls: randInt(6, 16),
     home_duels_won: randInt(35, 65),
     away_duels_won: randInt(35, 65),
     home_clearances: randInt(8, 26),

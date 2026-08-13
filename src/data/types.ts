@@ -89,6 +89,8 @@ export type Match = {
   away_yellow_cards: number
   home_red_cards: number
   away_red_cards: number
+  home_fouls: number
+  away_fouls: number
   home_xg_on_target_xgot: number
   away_xg_on_target_xgot: number
   home_expected_assists_xa: number
@@ -144,8 +146,6 @@ export type Match = {
   away_tackles?: ParsedStat
   home_throw_ins?: number
   away_throw_ins?: number
-  home_fouls?: number
-  away_fouls?: number
   home_duels_won?: number
   away_duels_won?: number
   home_clearances?: number
