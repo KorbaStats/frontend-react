@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CalendarDays } from "lucide-react";
 
 import type { MatchStatsSummary } from "@/data/types";
-import type { WeatherGoalsInsights } from "@/services/weatherStatsService";
-import { getColdestMatchWithWeather, type coldestMatchType, } from "@/services/matchesService";
 import { getMatchStatsSummary } from "@/services/matchStatsService";
-import { getWeatherGoalsInsights } from "@/services/weatherStatsService";
+import type { ColdestMatch, WeatherGoalsInsights } from "@/services/weatherStatsService";
+import { getColdestMatch, getWeatherGoalsInsights } from "@/services/weatherStatsService";
+
 
 import { weatherConfig } from "@/lib/weatherConfig";
 
 const SummaryCards = () => {
   const [statsSummary, setStatsSummary] = useState<MatchStatsSummary>();
   const [weatherInsights, setWeatherInsights] = useState<WeatherGoalsInsights>();
-  const [coldestMatch, setColdestMatch] = useState<coldestMatchType>();
+  const [coldestMatch, setColdestMatch] = useState<ColdestMatch>();
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +22,7 @@ const SummaryCards = () => {
     Promise.all([
       getMatchStatsSummary(),
       getWeatherGoalsInsights(),
-      getColdestMatchWithWeather(),
+      getColdestMatch(),
     ])
       .then(([summary, insights, coldestMatch]) => {
         setStatsSummary(summary);
@@ -103,6 +103,10 @@ const SummaryCards = () => {
           </p>
         </CardContent>
       </Card>
+{/* 
+                  <span className={`text-2xl font-bold ${stylesConfig.bg}`} key={m.id}>
+              {stylesConfig.text}
+            </span> */}
 
       {/* Najgorsza pogoda do bramek */}
       <Card className="flex flex-col">
