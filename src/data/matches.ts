@@ -36,6 +36,18 @@ function pick<T>(items: T[]): T {
   return items[randInt(0, items.length - 1)]
 }
 
+// Seeded Fisher-Yates. Used on the fixture list so that a team's home matches
+// land all over the season instead of in one block of consecutive months —
+// otherwise half the league would never host a match in winter.
+function shuffle<T>(items: T[]): T[] {
+  const result = [...items]
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = randInt(0, i)
+    ;[result[i], result[j]] = [result[j], result[i]]
+  }
+  return result
+}
+
 // Mirrors the scraper's parseStat() output for "x% (n/m)" stats. `completed`
 // is derived from the percentage so the three fields always agree with each
 // other (the old {total, accurate} mock could produce accurate > total).
@@ -84,27 +96,53 @@ function doubleRoundRobin(leagueTeams: Team[]): Fixture[] {
 
 type SeasonDef = { season: string; months: { year: number; month: number }[] }
 
+// A real season runs August-May. The full 10-month span matters here: weather.ts
+// derives conditions from the month, so a shorter winter-only window could never
+// produce `extreme_heat` (and made the weather filters lopsided).
 const seasonDefs: SeasonDef[] = [
+  {
+    season: "2023/2024",
+    months: [
+      { year: 2023, month: 8 },
+      { year: 2023, month: 9 },
+      { year: 2023, month: 10 },
+      { year: 2023, month: 11 },
+      { year: 2023, month: 12 },
+      { year: 2024, month: 1 },
+      { year: 2024, month: 2 },
+      { year: 2024, month: 3 },
+      { year: 2024, month: 4 },
+      { year: 2024, month: 5 },
+    ],
+  },
   {
     season: "2024/2025",
     months: [
+      { year: 2024, month: 8 },
+      { year: 2024, month: 9 },
+      { year: 2024, month: 10 },
       { year: 2024, month: 11 },
       { year: 2024, month: 12 },
       { year: 2025, month: 1 },
       { year: 2025, month: 2 },
       { year: 2025, month: 3 },
       { year: 2025, month: 4 },
+      { year: 2025, month: 5 },
     ],
   },
   {
     season: "2025/2026",
     months: [
+      { year: 2025, month: 8 },
+      { year: 2025, month: 9 },
+      { year: 2025, month: 10 },
       { year: 2025, month: 11 },
       { year: 2025, month: 12 },
       { year: 2026, month: 1 },
       { year: 2026, month: 2 },
       { year: 2026, month: 3 },
       { year: 2026, month: 4 },
+      { year: 2026, month: 5 },
     ],
   },
 ]
@@ -235,7 +273,7 @@ function generateMatches(): Match[] {
 
   for (const season of seasonDefs) {
     for (const leagueTeams of leagueGroups.values()) {
-      const fixtures = doubleRoundRobin(leagueTeams)
+      const fixtures = shuffle(doubleRoundRobin(leagueTeams))
       fixtures.forEach((fixture, index) => {
         const { year, month } = season.months[index % season.months.length]
         const day = randInt(1, 27)

@@ -23,14 +23,18 @@ function byNewestFirst(a: Match, b: Match): number {
 }
 
 /**
- * GET /api/matches
+ * GET /api/matches?sort=datetime&order=desc
  *
  * The real endpoint is paginated (helpers/pagination.js: 20 per page,
  * max 100) and supports `league_id`, `season`, `home_team_id`,
  * `away_team_id`, `page`, `limit`, `sort`, `order`.
+ *
+ * Newest first is the order every view wants, so it is applied here once
+ * rather than re-sorted by each caller. `data/matches.ts` stores them the
+ * other way round (oldest first), hence the explicit sort.
  */
 export async function getMatches(): Promise<PaginatedResponse<MatchWithWeather>> {
-  const data = matches.map(withWeather);
+  const data = matches.map(withWeather).sort(byNewestFirst);
 
   return {
     data,
@@ -45,7 +49,7 @@ export async function getRecentMatches(
   limit = DEFAULT_MATCHES_LIMIT,
 ): Promise<MatchWithWeather[]> {
   const { data } = await getMatches();
-  return [...data].sort(byNewestFirst).slice(0, limit);
+  return data.slice(0, limit);
 }
 
 /**
@@ -61,9 +65,9 @@ export async function getTeamMatches(
   teamId: number,
 ): Promise<MatchWithWeather[]> {
   const { data } = await getMatches();
-  return data
-    .filter((m) => m.home_team_id === teamId || m.away_team_id === teamId)
-    .sort(byNewestFirst);
+  return data.filter(
+    (m) => m.home_team_id === teamId || m.away_team_id === teamId,
+  );
 }
 
 /** GET /api/matches/:id */

@@ -7,6 +7,7 @@ import { ThemeProvider } from './hooks/useTheme.tsx'
 import MainLayout from './components/layout/MainLayout.tsx'
 import Dashboard from './pages/Dashboard.tsx'
 import TeamPage from './pages/TeamPage.tsx'
+import Matches from './pages/Matches.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -16,6 +17,9 @@ createRoot(document.getElementById('root')!).render(
           <Route path='/' element={<MainLayout />}>
             <Route index element={<Dashboard />} />
             <Route path='/team/:id' element={<TeamPage />} />
+
+            {/* Mecze */}
+            <Route path='/matches' element={<Matches />} />
           </Route>
           
         </Routes>

@@ -51,7 +51,7 @@ function formatMetricCard(
     delta === null
       ? "Brak danych do porównania"
       : delta === 0
-        ? ""
+        ? "W linii ze średnią."
         : `${delta > 0 ? "+" : ""}${delta.toFixed(decimals)}${unit} vs. średnia`;
 
   const deltaClass =

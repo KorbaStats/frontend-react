@@ -32,15 +32,46 @@ function randFloat(min: number, max: number, decimals = 1): number {
 //   return Math.min(max, Math.max(min, value))
 // }
 
-// Rough monthly temperature bands — all mocked matches fall between
-// November and April (see matches.ts season definitions).
+// Rough monthly temperature bands, calibrated for central Europe. Mocked
+// matches run August-May (see matches.ts season definitions); June/July are
+// defined anyway so a wider calendar wouldn't silently fall back to a default.
 const monthTempRange: Record<number, [number, number]> = {
-  11: [4, 14],
-  12: [-2, 8],
-  1: [-4, 6],
-  2: [-3, 7],
-  3: [2, 12],
-  4: [6, 16],
+  1: [-6, 3],
+  2: [-5, 5],
+  3: [0, 12],
+  4: [5, 17],
+  5: [10, 23],
+  6: [14, 27],
+  7: [16, 31],
+  8: [16, 31],
+  9: [11, 24],
+  10: [5, 16],
+  11: [0, 10],
+  12: [-4, 5],
+}
+
+// Rain and wind are seasonal too. They are not cosmetic: conditionFor() checks
+// snow/rain/wind *before* extreme_heat, so year-round odds of a downpour meant
+// hot Spanish fixtures kept being classified as `rain` instead.
+const monthRainChance: Record<number, number> = {
+  1: 0.45, 2: 0.45, 3: 0.45, 4: 0.4, 5: 0.3, 6: 0.2,
+  7: 0.15, 8: 0.15, 9: 0.3, 10: 0.45, 11: 0.5, 12: 0.5,
+}
+
+const monthWindMax: Record<number, number> = {
+  1: 50, 2: 50, 3: 48, 4: 36, 5: 34, 6: 30,
+  7: 30, 8: 30, 9: 34, 10: 46, 11: 50, 12: 50,
+}
+
+// Shifts the band by the host country's climate, so the same August fixture is
+// a heatwave in Sevilla and a mild evening in Newcastle. Without this the two
+// extreme conditions barely showed up: `extreme_heat` needs >=28C and
+// `extreme_cold` <=-3C (see conditionFor below).
+const countryTempOffset: Record<string, number> = {
+  Spain: 8,
+  Germany: 0,
+  England: -1,
+  Poland: -3,
 }
 
 function conditionFor(temperature: number, precipitation: number, wind: number, cloudCover: number): WeatherCondition {
@@ -56,9 +87,11 @@ function conditionFor(temperature: number, precipitation: number, wind: number, 
 export const weather: Weather[] = matches.map((match) => {
   const month = Number(match.datetime.slice(5, 7))
   const [minTemp, maxTemp] = monthTempRange[month] ?? [5, 20]
-  const temperature_c = randFloat(minTemp, maxTemp)
-  const precipitation_mm = rng() < 0.35 ? randFloat(0.5, 12) : 0
-  const wind_speed_kmh = randFloat(5, 45)
+  // matches are played at the home team's stadium, so its country sets the climate
+  const offset = countryTempOffset[match.homeTeam.country] ?? 0
+  const temperature_c = randFloat(minTemp + offset, maxTemp + offset)
+  const precipitation_mm = rng() < (monthRainChance[month] ?? 0.35) ? randFloat(0.5, 12) : 0
+  const wind_speed_kmh = randFloat(5, monthWindMax[month] ?? 45)
   const humidity_pct = randInt(40, 95)
   const cloud_cover_pct = randInt(0, 100)
 

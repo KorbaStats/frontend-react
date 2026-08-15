@@ -14,7 +14,11 @@ type NavLink = {
 const navLinks: NavLink[] = [
   { label: "Strona główna", to: "/", isActive: (pathname) => pathname === "/" },
   { label: "Drużyny", isActive: (pathname) => pathname.startsWith("/team") },
-  { label: "Mecze", isActive: () => false },
+  {
+    label: "Mecze",
+    to: "/matches",
+    isActive: (pathname) => pathname === "/matches",
+  },
   { label: "Predykcje", isActive: () => false },
 ];
 
