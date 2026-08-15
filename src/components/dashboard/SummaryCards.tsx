@@ -68,7 +68,7 @@ const SummaryCards = () => {
   const ColdestIcon = coldestConfig?.icon;
 
   return (
-    <div className="grid grid-cols-2 gap-2 xl:grid-cols-4 items-stretch">
+    <div className="grid grid-cols-2 gap-4 xl:grid-cols-4 items-stretch">
       {/* Ilość meczy */}
       <Card className="flex flex-col">
         <CardHeader className="flex justify-between items-center">
