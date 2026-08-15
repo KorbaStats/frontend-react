@@ -58,7 +58,7 @@ function formatMetricCard(
     delta === null || delta === 0
       ? "text-muted-foreground"
       : delta > 0
-        ? "text-green-500 dark:text-green-500/90"
+        ? "text-green-600 dark:text-green-500/90"
         : "text-destructive";
 
   return { displayValue, deltaText, deltaClass };

@@ -12,8 +12,6 @@ import { matches } from "@/data/matches";
 import { weatherByMatchId } from "@/data/weather";
 import type { Match, PaginatedResponse, Weather } from "@/data/types";
 
-const DEFAULT_MATCHES_LIMIT = 10;
-
 export type MatchWithWeather = Match & { weather: Weather | null };
 
 function withWeather(match: Match): MatchWithWeather {
@@ -41,6 +39,8 @@ export async function getMatches(): Promise<PaginatedResponse<MatchWithWeather>>
 }
 
 /** GET /api/matches?sort=datetime&order=desc&limit=N */
+const DEFAULT_MATCHES_LIMIT = 8;
+
 export async function getRecentMatches(
   limit = DEFAULT_MATCHES_LIMIT,
 ): Promise<MatchWithWeather[]> {
