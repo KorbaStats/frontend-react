@@ -43,7 +43,7 @@ export async function getMatches(): Promise<PaginatedResponse<MatchWithWeather>>
 }
 
 /** GET /api/matches?sort=datetime&order=desc&limit=N */
-const DEFAULT_MATCHES_LIMIT = 8;
+const DEFAULT_MATCHES_LIMIT = 10;
 
 export async function getRecentMatches(
   limit = DEFAULT_MATCHES_LIMIT,

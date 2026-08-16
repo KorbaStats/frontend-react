@@ -26,6 +26,8 @@ import WeatherFiltersCard, {
 import TeamStatsCards from "@/components/teampage/TeamStatsCards";
 
 import { computeTeamStats } from "@/lib/teamStats";
+import { useVisibleItems } from "@/hooks/useVisibleItems";
+import ShowMoreFooter from "@/components/shared/ShowMoreFooter"
 
 const TeamPage = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -51,19 +53,29 @@ const TeamPage = () => {
   //computed data for TeamStatsCards: filteredStats (via weather), and all matches (non filtered for baseline)
   const filteredStats = useMemo(
     () => computeTeamStats(filteredMatches, teamId),
-    [filteredMatches, teamId]
-  )
+    [filteredMatches, teamId],
+  );
 
   const baselineStats = useMemo(
     () => computeTeamStats(matches, teamId),
-    [matches, teamId]
-  )
+    [matches, teamId],
+  );
+
+  // custom hook for pagination
+  const { visibleItems, hiddenCount, showMore, reset } =
+    useVisibleItems(filteredMatches);
+
+  const handleConditionChange = (next: WeatherFilterValue) => {
+    setCondition(next);
+    reset();
+  }
 
   // fetching data by teamId
   useEffect(() => {
     Promise.all([getTeamMatches(teamId), getTeamById(teamId)])
       .then(([matches, team]) => {
         setMatches(matches);
+        reset(); //reset pagination each re-render (switching teams)
         setTeam(team);
       })
       .catch((err) => {
@@ -71,8 +83,7 @@ const TeamPage = () => {
         console.log(err);
       })
       .finally(() => setIsLoading(false));
-  }, [teamId]);
-
+  }, [teamId, reset]);
 
   // loading & error states handling
   if (isLoading) {
@@ -101,7 +112,7 @@ const TeamPage = () => {
       {/* Weather Filters */}
       <WeatherFiltersCard
         value={condition}
-        onChange={setCondition}
+        onChange={handleConditionChange}
         shownCount={filteredMatches.length}
         totalCount={matches.length}
       />
@@ -119,8 +130,9 @@ const TeamPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="px-0">
-          <MatchesTable matches={filteredMatches} />
+          <MatchesTable matches={visibleItems} />
         </CardContent>
+        <ShowMoreFooter hiddenCount={hiddenCount} onClick={showMore} />
       </Card>
     </>
   );

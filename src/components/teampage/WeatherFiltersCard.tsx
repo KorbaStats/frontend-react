@@ -15,7 +15,7 @@ export type WeatherFilterValue = WeatherCondition | "all";
 
 const conditions = Object.keys(weatherConfig) as WeatherCondition[];
 
-interface WeatherFilterPillsProps {
+interface WeatherFiltersCardProps {
   value: WeatherFilterValue;
   onChange: (value: WeatherFilterValue) => void;
   shownCount: number;
@@ -27,7 +27,7 @@ const WeatherFiltersCard = ({
   onChange,
   shownCount,
   totalCount,
-}: WeatherFilterPillsProps) => {
+}: WeatherFiltersCardProps) => {
   return (
     <Card>
       <CardHeader className="flex justify-between">

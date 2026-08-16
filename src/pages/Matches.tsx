@@ -3,11 +3,9 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { CalendarDays } from "lucide-react";
 
 import { getMatches, type MatchWithWeather } from "@/services/matchesService";
@@ -23,16 +21,15 @@ import {
 
 import MatchesTable from "@/components/shared/MatchesTable";
 import MatchesFiltersCard from "@/components/matches/MatchesFiltersCard";
+import { useVisibleItems } from "@/hooks/useVisibleItems";
+import ShowMoreFooter from "@/components/shared/ShowMoreFooter";
 
-// how many rows the table shows before "pokaż więcej"
-const PAGE_SIZE = 20;
 
 const Matches = () => {
   const [matches, setMatches] = useState<MatchWithWeather[]>([]);
   const [leagues, setLeagues] = useState<LeagueWithFlag[]>([]);
   const [filters, setFilters] = useState<MatchFilters>(emptyFilters);
   
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,14 +53,15 @@ const Matches = () => {
     [matches, filters],
   );
 
-  const visibleMatches = filteredMatches.slice(0, visibleCount);
-  const hiddenCount = filteredMatches.length - visibleMatches.length;
+  // calling custom hook to serve pagination
+  const {visibleItems, hiddenCount, showMore, reset} = useVisibleItems(filteredMatches);
+
 
   // narrowing the list should always drop you back to the first page — done
   // here rather than in an effect, since it reacts to the event, not to state
   const handleFiltersChange = (next: MatchFilters) => {
     setFilters(next);
-    setVisibleCount(PAGE_SIZE);
+    reset();
   };
 
   return (
@@ -102,21 +100,12 @@ const Matches = () => {
 
           {!isLoading && !error && (
             <div className="overflow-x-auto">
-              <MatchesTable matches={visibleMatches} />
+              <MatchesTable matches={visibleItems} />
             </div>
           )}
         </CardContent>
 
-        {hiddenCount > 0 && (
-          <CardFooter className="justify-center border-t pt-6">
-            <Button
-              variant="outline"
-              onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
-            >
-              Pokaż więcej ({hiddenCount})
-            </Button>
-          </CardFooter>
-        )}
+        <ShowMoreFooter hiddenCount={hiddenCount} onClick={showMore} />
       </Card>
     </>
   );

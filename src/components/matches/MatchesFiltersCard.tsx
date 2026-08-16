@@ -165,7 +165,7 @@ const MatchesFiltersCard = ({
               max={value.dateTo || undefined}
               onChange={(e) => set("dateFrom", e.target.value)}
               // otherwise the native picker icon stays black on a dark card
-              className={cn("dark:[color-scheme:dark]")}
+              className={cn("dark:scheme-dark")}
             />
           </Field>
 
@@ -175,7 +175,7 @@ const MatchesFiltersCard = ({
               value={value.dateTo}
               min={value.dateFrom || undefined}
               onChange={(e) => set("dateTo", e.target.value)}
-              className={cn("dark:[color-scheme:dark]")}
+              className={cn("dark:scheme-dark")}
             />
           </Field>
         </div>
