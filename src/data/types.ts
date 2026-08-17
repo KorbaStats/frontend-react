@@ -109,9 +109,10 @@ export type Match = {
   stadium: Stadium | null
   league: League | null
 
-  // Remaining `matches` columns. Populated only on the 1-2 example matches in
-  // matches.ts that demonstrate the full GET /api/matches/:id shape — every
-  // other mocked match only carries the "core" fields above.
+  // Remaining `matches` columns — the full GET /api/matches/:id shape. Every
+  // mocked match now carries them (the match detail page and the league weather
+  // analysis both need them), but they stay optional: the real columns are
+  // nullable and the scraper writes null whenever a stat was unavailable.
   home_big_chances?: number
   away_big_chances?: number
   home_shots_off_target?: number
@@ -284,12 +285,7 @@ export type Weather = {
   condition: WeatherCondition
 }
 
-
-// export type TeamWeatherScore = {
-//   team_id: number
-//   condition: WeatherCondition
-//   sample_size: number
-//   avg_points_per_match: number
-//   // normalized -1..1 vs. the team's average across all weather conditions
-//   weather_score: number
-// }
+// NOTE: there is deliberately no TeamWeatherScore type here. The weather score
+// is a DERIVED value, not stored data — it is computed from matches a component
+// already holds (lib/weatherScore.ts) or aggregated across all teams
+// (services/weatherStatsService.ts). Mocking it would mean mocking a result.

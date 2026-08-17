@@ -30,9 +30,11 @@ type TeamSeed = {
   home_stadium_id: number
 }
 
-// 6 teams per league — matches.ts builds a double round-robin per league per
+// 8 teams per league — matches.ts builds a double round-robin per league per
 // season, so this is what decides the size of the mocked match list
-// (6 teams => 30 fixtures per league per season).
+// (8 teams => 56 fixtures per league per season, i.e. 14 games per team).
+// The count is deliberate: weather-conditioned stats need enough matches per
+// team that even the rarest condition (snow, extreme heat) has a usable sample.
 const teamSeeds: TeamSeed[] = [
   { id: 1, name: "Legia Warszawa", short_name: "LEG", city: "Warsaw", country: "Poland", league_id: 1, home_stadium_id: 1 },
   { id: 2, name: "Lech Poznań", short_name: "LECH", city: "Poznań", country: "Poland", league_id: 1, home_stadium_id: 2 },
@@ -58,6 +60,14 @@ const teamSeeds: TeamSeed[] = [
   { id: 22, name: "Bayer Leverkusen", short_name: "B04", city: "Leverkusen", country: "Germany", league_id: 4, home_stadium_id: 22 },
   { id: 23, name: "Eintracht Frankfurt", short_name: "SGE", city: "Frankfurt", country: "Germany", league_id: 4, home_stadium_id: 23 },
   { id: 24, name: "VfB Stuttgart", short_name: "VFB", city: "Stuttgart", country: "Germany", league_id: 4, home_stadium_id: 24 },
+  { id: 25, name: "Cracovia", short_name: "CRA", city: "Kraków", country: "Poland", league_id: 1, home_stadium_id: 25 },
+  { id: 26, name: "Widzew Łódź", short_name: "WID", city: "Łódź", country: "Poland", league_id: 1, home_stadium_id: 26 },
+  { id: 27, name: "Athletic Bilbao", short_name: "ATH", city: "Bilbao", country: "Spain", league_id: 2, home_stadium_id: 27 },
+  { id: 28, name: "Villarreal CF", short_name: "VIL", city: "Villarreal", country: "Spain", league_id: 2, home_stadium_id: 28 },
+  { id: 29, name: "Tottenham Hotspur", short_name: "TOT", city: "London", country: "England", league_id: 3, home_stadium_id: 29 },
+  { id: 30, name: "Aston Villa", short_name: "AVL", city: "Birmingham", country: "England", league_id: 3, home_stadium_id: 30 },
+  { id: 31, name: "Werder Bremen", short_name: "SVW", city: "Bremen", country: "Germany", league_id: 4, home_stadium_id: 31 },
+  { id: 32, name: "VfL Wolfsburg", short_name: "WOB", city: "Wolfsburg", country: "Germany", league_id: 4, home_stadium_id: 32 },
 ]
 
 export const teams: Team[] = teamSeeds.map((seed) => ({

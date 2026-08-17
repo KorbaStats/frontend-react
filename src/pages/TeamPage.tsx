@@ -26,6 +26,7 @@ import WeatherFiltersCard, {
 import TeamStatsCards from "@/components/teampage/TeamStatsCards";
 
 import { computeTeamStats } from "@/lib/teamStats";
+import { getConditions } from "@/lib/matchFilters";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
 import ShowMoreFooter from "@/components/shared/ShowMoreFooter"
 
@@ -40,6 +41,10 @@ const TeamPage = () => {
 
   // states for weather filters
   const [condition, setCondition] = useState<WeatherFilterValue>("all");
+
+  // only the conditions this team has actually played in — a pill that can
+  // only ever return an empty table is a dead button
+  const availableConditions = useMemo(() => getConditions(matches), [matches]);
 
   // everything below the filters is derived from this narrowed list
   const filteredMatches = useMemo(
@@ -76,6 +81,7 @@ const TeamPage = () => {
       .then(([matches, team]) => {
         setMatches(matches);
         reset(); //reset pagination each re-render (switching teams)
+        setCondition("all");  // the new team may not play in the currently selected condition at all
         setTeam(team);
       })
       .catch((err) => {
@@ -113,6 +119,7 @@ const TeamPage = () => {
       <WeatherFiltersCard
         value={condition}
         onChange={handleConditionChange}
+        available={availableConditions}
         shownCount={filteredMatches.length}
         totalCount={matches.length}
       />

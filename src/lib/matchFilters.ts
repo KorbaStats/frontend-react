@@ -61,6 +61,22 @@ function teamHaystack(match: MatchWithWeather): string {
   )
 }
 
+/**
+ * Weather conditions that actually occur in this set of matches.
+ *
+ * A team only ever plays in its own country, so a filter listing all seven
+ * conditions would offer Legia an "upał" pill that can only ever return zero
+ * matches. Callers decide the display order (weatherConfig owns it) — this
+ * just answers "which ones exist here".
+ */
+export function getConditions(matches: MatchWithWeather[]): WeatherCondition[] {
+  const conditions = new Set<WeatherCondition>()
+  for (const match of matches) {
+    if (match.weather !== null) conditions.add(match.weather.condition)
+  }
+  return [...conditions]
+}
+
 // Season options for the dropdown, newest first. Derived from the matches at
 // hand — the value sits on every row already, so there is nothing to fetch.
 export function getSeasons(matches: MatchWithWeather[]): string[] {

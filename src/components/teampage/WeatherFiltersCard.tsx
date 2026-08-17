@@ -13,11 +13,14 @@ import {
 
 export type WeatherFilterValue = WeatherCondition | "all";
 
-const conditions = Object.keys(weatherConfig) as WeatherCondition[];
+// weatherConfig owns the display order; `available` narrows it to the
+// conditions the team has actually played in.
+const allConditions = Object.keys(weatherConfig) as WeatherCondition[];
 
 interface WeatherFiltersCardProps {
   value: WeatherFilterValue;
   onChange: (value: WeatherFilterValue) => void;
+  available: WeatherCondition[];
   shownCount: number;
   totalCount: number;
 }
@@ -25,9 +28,12 @@ interface WeatherFiltersCardProps {
 const WeatherFiltersCard = ({
   value,
   onChange,
+  available,
   shownCount,
   totalCount,
 }: WeatherFiltersCardProps) => {
+  const conditions = allConditions.filter((c) => available.includes(c));
+
   return (
     <Card>
       <CardHeader className="flex justify-between">

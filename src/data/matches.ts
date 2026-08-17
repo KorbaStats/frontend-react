@@ -5,9 +5,8 @@
 // use withGraphFetched, so every row carries nested homeTeam/awayTeam/stadium/league.
 //
 // Generated deterministically from a seeded RNG so the dataset stays stable
-// across reloads. Only the "core" stat fields used by match-stats/team-stats
-// are populated for most matches; two matches get every column (incl. the
-// jsonb ones) to demonstrate the full GET /api/matches/:id shape.
+// across reloads. Every match carries every column, including the jsonb ones —
+// see withFullDetail() below for why.
 
 import { teams } from "./teams"
 import type { Match, ParsedStat, Team } from "./types"
@@ -100,6 +99,36 @@ type SeasonDef = { season: string; months: { year: number; month: number }[] }
 // derives conditions from the month, so a shorter winter-only window could never
 // produce `extreme_heat` (and made the weather filters lopsided).
 const seasonDefs: SeasonDef[] = [
+  {
+    season: "2021/2022",
+    months: [
+      { year: 2021, month: 8 },
+      { year: 2021, month: 9 },
+      { year: 2021, month: 10 },
+      { year: 2021, month: 11 },
+      { year: 2021, month: 12 },
+      { year: 2022, month: 1 },
+      { year: 2022, month: 2 },
+      { year: 2022, month: 3 },
+      { year: 2022, month: 4 },
+      { year: 2022, month: 5 },
+    ],
+  },
+  {
+    season: "2022/2023",
+    months: [
+      { year: 2022, month: 8 },
+      { year: 2022, month: 9 },
+      { year: 2022, month: 10 },
+      { year: 2022, month: 11 },
+      { year: 2022, month: 12 },
+      { year: 2023, month: 1 },
+      { year: 2023, month: 2 },
+      { year: 2023, month: 3 },
+      { year: 2023, month: 4 },
+      { year: 2023, month: 5 },
+    ],
+  },
   {
     season: "2023/2024",
     months: [
@@ -205,8 +234,12 @@ function buildMatch(id: number, home: Team, away: Team, season: string, datetime
   }
 }
 
-// Fills in every remaining `matches` column (incl. jsonb ones) to show the
-// full GET /api/matches/:id shape. Only applied to a couple of example rows.
+// Fills in every remaining `matches` column (incl. jsonb ones), i.e. the full
+// GET /api/matches/:id shape. Applied to every generated match: the match detail
+// page and the league-wide weather analysis both read these columns, and a
+// dataset where only two rows carry them would leave both views empty.
+// They stay OPTIONAL in types.ts — the real columns are nullable, and the
+// scraper does write null when a stat was unavailable.
 function withFullDetail(match: Match): Match {
   const homeShots = match.home_total_shots
   const awayShots = match.away_total_shots
@@ -279,18 +312,10 @@ function generateMatches(): Match[] {
         const day = randInt(1, 27)
         const hour = pick([15, 17, 18, 20])
         const datetime = new Date(Date.UTC(year, month - 1, day, hour, 0, 0)).toISOString()
-        generated.push(buildMatch(nextId++, fixture.home, fixture.away, season.season, datetime))
+        const match = buildMatch(nextId++, fixture.home, fixture.away, season.season, datetime)
+        generated.push(withFullDetail(match))
       })
     }
-  }
-
-  // First generated match + the first Arsenal-Liverpool fixture get the full detail shape.
-  generated[0] = withFullDetail(generated[0])
-  const arsenalVsLiverpoolIndex = generated.findIndex(
-    (m) => m.homeTeam.short_name === "ARS" && m.awayTeam.short_name === "LIV",
-  )
-  if (arsenalVsLiverpoolIndex > 0) {
-    generated[arsenalVsLiverpoolIndex] = withFullDetail(generated[arsenalVsLiverpoolIndex])
   }
 
   return generated.sort((a, b) => a.datetime.localeCompare(b.datetime))

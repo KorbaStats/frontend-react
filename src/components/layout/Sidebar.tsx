@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { getLeagues } from "@/services/leaguesService";
 import type { League } from "@/data/types";
+import { getLeagueCountryCode } from "@/lib/leagueLabel";
 
 import { Trophy } from "lucide-react"
 
@@ -24,8 +25,8 @@ const Sidebar = () => {
           {leagues.map((league) => (
             <li key={league.id}>
               <button className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/50 text-xs">
-                {/*  */}
+                <span className="flex h-6 w-9 shrink-0 items-center justify-center rounded-md bg-accent/50 text-[10px] font-semibold tracking-wide text-muted-foreground">
+                  {getLeagueCountryCode(league)}
                 </span>
                 <span>{league.name}</span>
               </button>

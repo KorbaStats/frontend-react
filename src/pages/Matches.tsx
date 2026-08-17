@@ -10,7 +10,7 @@ import { CalendarDays } from "lucide-react";
 
 import { getMatches, type MatchWithWeather } from "@/services/matchesService";
 import { getLeagues } from "@/services/leaguesService";
-import type { LeagueWithFlag } from "@/data/leagues";
+import type { League } from "@/data/types";
 
 import {
   emptyFilters,
@@ -27,7 +27,7 @@ import ShowMoreFooter from "@/components/shared/ShowMoreFooter";
 
 const Matches = () => {
   const [matches, setMatches] = useState<MatchWithWeather[]>([]);
-  const [leagues, setLeagues] = useState<LeagueWithFlag[]>([]);
+  const [leagues, setLeagues] = useState<League[]>([]);
   const [filters, setFilters] = useState<MatchFilters>(emptyFilters);
   
   const [isLoading, setIsLoading] = useState(true);
