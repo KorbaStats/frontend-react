@@ -5,9 +5,9 @@
 import type { League } from "./types"
 
 // UI-only field (flag emoji), not returned by the backend — kept for Sidebar.tsx.
-export type LeagueWithFlag = League & { flag: string }
+// export type LeagueWithFlag = League & { flag: string }
 
-export const leagues: LeagueWithFlag[] = [
+export const leagues: League[] = [
   {
     id: 1,
     name: "Ekstraklasa",
@@ -16,7 +16,6 @@ export const leagues: LeagueWithFlag[] = [
     active: true,
     created_at: "2026-01-05T10:00:00.000Z",
     updated_at: "2026-01-05T10:00:00.000Z",
-    flag: "🇵🇱",
   },
   {
     id: 2,
@@ -26,7 +25,6 @@ export const leagues: LeagueWithFlag[] = [
     active: true,
     created_at: "2026-01-05T10:00:00.000Z",
     updated_at: "2026-01-05T10:00:00.000Z",
-    flag: "🇪🇸",
   },
   {
     id: 3,
@@ -36,7 +34,6 @@ export const leagues: LeagueWithFlag[] = [
     active: true,
     created_at: "2026-01-05T10:00:00.000Z",
     updated_at: "2026-01-05T10:00:00.000Z",
-    flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
   },
   {
     id: 4,
@@ -46,6 +43,5 @@ export const leagues: LeagueWithFlag[] = [
     active: true,
     created_at: "2026-01-05T10:00:00.000Z",
     updated_at: "2026-01-05T10:00:00.000Z",
-    flag: "🇩🇪",
   },
 ]

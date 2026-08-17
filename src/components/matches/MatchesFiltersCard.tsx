@@ -1,11 +1,9 @@
 import { Search, SlidersHorizontal } from "lucide-react";
 
-import type { WeatherCondition } from "@/data/types";
-import type { LeagueWithFlag } from "@/data/leagues";
+import type { League, WeatherCondition } from "@/data/types";
 import type { MatchFilters } from "@/lib/matchFilters";
 import { emptyFilters, hasActiveFilters } from "@/lib/matchFilters";
 import { weatherConfig } from "@/lib/weatherConfig";
-import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,9 +17,6 @@ import {
 
 const conditions = Object.keys(weatherConfig) as WeatherCondition[];
 
-// Native <select> instead of the shadcn one: that component isn't installed and
-// pulling it in for three dropdowns isn't worth it yet. Styled to sit flush with
-// <Input>, so the filter row reads as one control group.
 const selectClass =
   "h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm text-foreground shadow-xs outline-none transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50";
 
@@ -32,17 +27,17 @@ const Field = ({
   label: string;
   children: React.ReactNode;
 }) => (
-  <div className="flex flex-col gap-1.5">
-    <label className="text-xs font-medium text-muted-foreground">{label}</label>
+  <label className="flex flex-col gap-1.5">
+    <span className="text-xs font-medium text-muted-foreground">{label}</span>
     {children}
-  </div>
+  </label>
 );
 
 interface MatchesFiltersCardProps {
   value: MatchFilters;
   onChange: (filters: MatchFilters) => void;
   seasons: string[];
-  leagues: LeagueWithFlag[];
+  leagues: League[];
   shownCount: number;
   totalCount: number;
 }
@@ -116,6 +111,9 @@ const MatchesFiltersCard = ({
             value={value.query}
             onChange={(e) => set("query", e.target.value)}
             placeholder="Szukaj drużyny (nazwa, skrót lub miasto)..."
+            // no visible caption here, so the placeholder alone would be the
+            // only hint — and it disappears the moment you start typing
+            aria-label="Szukaj drużyny"
             className="pl-8"
           />
         </div>
@@ -152,7 +150,7 @@ const MatchesFiltersCard = ({
               <option value="all">Wszystkie ligi</option>
               {leagues.map((league) => (
                 <option key={league.id} value={league.id}>
-                  {league.flag} {league.name}
+                  {league.name}
                 </option>
               ))}
             </select>
@@ -165,7 +163,7 @@ const MatchesFiltersCard = ({
               max={value.dateTo || undefined}
               onChange={(e) => set("dateFrom", e.target.value)}
               // otherwise the native picker icon stays black on a dark card
-              className={cn("dark:scheme-dark")}
+              className="dark:scheme-dark"
             />
           </Field>
 
@@ -175,7 +173,7 @@ const MatchesFiltersCard = ({
               value={value.dateTo}
               min={value.dateFrom || undefined}
               onChange={(e) => set("dateTo", e.target.value)}
-              className={cn("dark:scheme-dark")}
+              className="dark:scheme-dark"
             />
           </Field>
         </div>

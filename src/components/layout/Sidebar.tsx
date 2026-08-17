@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
 import { getLeagues } from "@/services/leaguesService";
-import type { LeagueWithFlag } from "@/data/leagues";
+import type { League } from "@/data/types";
 
 import { Trophy } from "lucide-react"
 
 const Sidebar = () => {
-  const [leagues, setLeagues] = useState<LeagueWithFlag[]>([]);
+  const [leagues, setLeagues] = useState<League[]>([]);
 
   useEffect(() => {
     getLeagues()
@@ -25,7 +25,7 @@ const Sidebar = () => {
             <li key={league.id}>
               <button className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-accent/50 text-xs">
-                  {league.flag}
+                {/*  */}
                 </span>
                 <span>{league.name}</span>
               </button>
