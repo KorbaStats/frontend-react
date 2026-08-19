@@ -30,7 +30,7 @@ import { getConditions } from "@/lib/matchFilters";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
 import ShowMoreFooter from "@/components/shared/ShowMoreFooter"
 
-const TeamPage = () => {
+const TeamDetails = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>();
 
@@ -42,11 +42,10 @@ const TeamPage = () => {
   // states for weather filters
   const [condition, setCondition] = useState<WeatherFilterValue>("all");
 
-  // only the conditions this team has actually played in — a pill that can
-  // only ever return an empty table is a dead button
+  // available conditions for the team (all conditions the team has played in)
   const availableConditions = useMemo(() => getConditions(matches), [matches]);
 
-  // everything below the filters is derived from this narrowed list
+  // filtered matches for the selected condition
   const filteredMatches = useMemo(
     () =>
       condition === "all"
@@ -55,7 +54,7 @@ const TeamPage = () => {
     [matches, condition],
   );
 
-  //computed data for TeamStatsCards: filteredStats (via weather), and all matches (non filtered for baseline)
+  //computed data for TeamStatsCards: filteredStats (via weather), and all matches (non filtered for baseline stats)
   const filteredStats = useMemo(
     () => computeTeamStats(filteredMatches, teamId),
     [filteredMatches, teamId],
@@ -145,4 +144,4 @@ const TeamPage = () => {
   );
 };
 
-export default TeamPage;
+export default TeamDetails;

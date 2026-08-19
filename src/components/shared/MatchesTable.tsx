@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 import type { MatchWithWeather } from "@/services/matchesService";
 import { getFormatedDate, getLocalTime } from "@/lib/date";
@@ -18,6 +18,8 @@ interface MatchesTableProps {
 }
 
 const MatchesTable = ({ matches }: MatchesTableProps) => {
+  const navigate = useNavigate();
+
   return (
     <Table>
       <TableHeader>
@@ -49,10 +51,20 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
           const Icon = config.icon;
 
           return (
-            <TableRow key={m.id}>
+            <TableRow
+              key={m.id}
+              onClick={() => navigate(`/match/${m.id}`)}
+              className="cursor-pointer"
+            >
               {/* teams and result */}
               <TableCell className="pl-6 font-medium text-foreground hover:text-primary">
-                <Link to={`/team/${m.home_team_id}`}>{m.homeTeam.name}</Link>
+                {/* stopPropagation: klik w drużynę idzie do drużyny, nie do meczu */}
+                <Link
+                  to={`/team/${m.home_team_id}`}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {m.homeTeam.name}
+                </Link>
               </TableCell>
               <TableCell className="text-center">
                 <span className="inline-flex min-w-12 justify-center rounded-md bg-muted px-2 py-0.5 font-semibold tabular-nums text-foreground">
@@ -60,7 +72,12 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
                 </span>
               </TableCell>
               <TableCell className="font-medium text-foreground hover:text-primary">
-                <Link to={`/team/${m.away_team_id}`}>{m.awayTeam.name}</Link>
+                <Link
+                  to={`/team/${m.away_team_id}`}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {m.awayTeam.name}
+                </Link>
               </TableCell>
 
               {/* weather condition */}

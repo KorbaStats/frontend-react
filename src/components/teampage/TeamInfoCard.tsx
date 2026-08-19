@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import type { Team } from "@/data/types";
 import type { MatchWithWeather } from "@/services/matchesService";
 import { MapPin, Users } from "lucide-react";
+import TeamLogo from "../shared/TeamLogo";
 
 const resultStylesConfig = {
   W: { text: "W", bg: "bg-green-500 dark:bg-green-500/80" },
@@ -19,16 +20,7 @@ const TeamInfoCard = ({ matches, team }: TeamInfoProps) => {
     <Card className="flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between">
       {/* Image / short name */}
       <div className="flex items-center gap-4">
-        <div
-          role="img"
-          aria-label={team?.name}
-          className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary/20 to-secondary/20"
-        >
-          <span className="text-xl font-extrabold tracking-wide text-foreground">
-            {team?.short_name}
-          </span>
-        </div>
-
+        <TeamLogo name={team?.name} short_name={team?.short_name} />
         {/* team info */}
         <div>
           <p className=" text-md text-primary font-bold tracking-widest ">
