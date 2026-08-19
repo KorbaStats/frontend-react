@@ -4,8 +4,8 @@ import { useParams } from "react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { getMatchById, type MatchWithWeather } from "@/services/matchesService";
 
-import MatchHeaderCard from "@/components/matchpage/MatchHeaderCard";
-import MatchStats from "@/components/matchpage/MatchStats";
+import MatchHeaderCard from "@/components/matchdetail/MatchHeaderCard";
+import MatchStats from "@/components/matchdetail/MatchStats";
 
 
 const MatchDetails = () => {
