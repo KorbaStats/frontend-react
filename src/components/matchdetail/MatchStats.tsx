@@ -31,6 +31,12 @@ const MatchStats = ({ match }: MatchStatsProps) => {
       suffix: "%",
     },
     {
+      kind: "parsed",
+      label: "Podania",
+      home: match.home_passes,
+      away: match.away_passes,
+    },
+    {
       kind: "number",
       label: "Strzały łącznie",
       home: match.home_total_shots,
@@ -52,19 +58,13 @@ const MatchStats = ({ match }: MatchStatsProps) => {
       kind: "number",
       label: "Faule",
       home: match.home_fouls,
-      away: match.away_fouls
+      away: match.away_fouls,
     },
     {
       kind: "number",
       label: "Żółte kartki",
       home: match.home_yellow_cards,
       away: match.away_yellow_cards,
-    },
-        {
-      kind: "parsed",
-      label: "Podania",
-      home: match.home_passes,
-      away: match.away_passes,
     },
   ];
 
