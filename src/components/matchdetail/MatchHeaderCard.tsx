@@ -51,10 +51,11 @@ const WeatherTile = ({
   label: string;
   value: string;
 }) => (
-  <div className="rounded-lg border bg-card px-3 py-2">
+  <div className="min-w-0 rounded-lg border bg-card px-3 py-2">
     <dt className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      {/* min-w-0 + break-words: "Zachmurzenie" to jedno długie słowo */}
       <Icon size={14} className="shrink-0" />
-      {label}
+      <span className="min-w-0 break-words">{label}</span>
     </dt>
     <dd className="mt-0.5 text-lg font-semibold tabular-nums text-foreground">
       {value}
@@ -187,7 +188,7 @@ const MatchHeaderCard = ({ match }: MatchHeaderCardProps) => {
             </div>
           </div>
 
-          <dl className="grid flex-1 grid-cols-2 gap-2 lg:grid-cols-4">
+          <dl className="grid flex-1 grid-cols-2 gap-2 min-[1120px]:grid-cols-4">
             <WeatherTile
               icon={Wind}
               label="Wiatr"

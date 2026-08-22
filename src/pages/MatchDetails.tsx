@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { getMatchById, type MatchWithWeather } from "@/services/matchesService";
 
 import MatchHeaderCard from "@/components/matchdetail/MatchHeaderCard";
 import MatchStats from "@/components/matchdetail/MatchStats";
-
+import MatchWeatherInsights from "@/components/matchdetail/MatchWeatherInsights";
 
 const MatchDetails = () => {
   const { id } = useParams();
@@ -15,6 +16,8 @@ const MatchDetails = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [match, setMatch] = useState<MatchWithWeather>();
+
+  const [activeTab, setActiveTab] = useState<"stats" | "weather">("stats");
 
   useEffect(() => {
     getMatchById(matchId)
@@ -52,10 +55,28 @@ const MatchDetails = () => {
   return (
     <>
       <MatchHeaderCard match={match} />
-      <div className="grid grid-cols-2">
-        <MatchStats match={match} />
-        {/* Chart jakis smieszny */}
+      <div className="flex gap-2">
+        <Button
+          aria-pressed={activeTab === "stats"}
+          variant={activeTab === "stats" ? "secondary" : "outline"}
+          onClick={() => setActiveTab("stats")}
+        >
+          Statystyki
+        </Button>
+        <Button
+          aria-pressed={activeTab === "weather"}
+          variant={activeTab === "weather" ? "secondary" : "outline"}
+          onClick={() => setActiveTab("weather")}
+        >
+          Wpływ pogody
+        </Button>
       </div>
+
+      {activeTab === "stats" ? (
+        <MatchStats match={match} />
+      ) : (
+        <MatchWeatherInsights match={match} />
+      )}
     </>
   );
 };

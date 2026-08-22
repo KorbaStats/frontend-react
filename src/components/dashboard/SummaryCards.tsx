@@ -141,7 +141,7 @@ const SummaryCards = () => {
         </CardHeader>
         <CardContent className="flex-1 flex flex-col justify-end">
           <span className="text-3xl font-bold">
-            {coldestMatch?.temperature_c}
+            {coldestMatch?.temperature_c}°C
           </span>
           <p className="text-xs text-muted-foreground mt-1">
             {coldestMatch?.city} · {coldestConfig?.label}

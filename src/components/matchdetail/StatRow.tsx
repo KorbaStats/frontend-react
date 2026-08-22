@@ -1,12 +1,17 @@
 export type NumberRowProps = {
   label: string;
-  home: number;
-  away: number;
+  // undefined, bo część kolumn w types.ts jest opcjonalna (scraper zapisuje
+  // null, gdy statystyka była niedostępna)
+  home: number | undefined;
+  away: number | undefined;
   suffix?: string;
   decimals?: number;
 };
 
 const StatRow = ({label, home, away, suffix = "", decimals = 0}: NumberRowProps) => {
+  // jawne porównanie z undefined — przy !home znikałyby wiersze z zerem
+  if (home === undefined || away === undefined) return null;
+
   const total = home+away;
   const homeShare = total === 0 ? 0 : (home / total) * 100;
   const awayShare = total === 0 ? 0 : 100 - homeShare;

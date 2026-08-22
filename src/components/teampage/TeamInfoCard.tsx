@@ -3,12 +3,7 @@ import type { Team } from "@/data/types";
 import type { MatchWithWeather } from "@/services/matchesService";
 import { MapPin, Users } from "lucide-react";
 import TeamLogo from "../shared/TeamLogo";
-
-const resultStylesConfig = {
-  W: { text: "W", bg: "bg-green-500 dark:bg-green-500/80" },
-  D: { text: "D", bg: "bg-amber-300 dark:bg-amber-400/80" },
-  L: { text: "L", bg: "bg-red-500 dark:bg-red-500/80" },
-};
+import ResultBadge from "../shared/ResultBadge";
 
 interface TeamInfoProps {
   matches: MatchWithWeather[];
@@ -46,38 +41,19 @@ const TeamInfoCard = ({ matches, team }: TeamInfoProps) => {
 
       {/* Last 5 matches (win / draw / lose) */}
       <div className="flex flex-col gap-2 lg:items-end">
-        <p className="text-sm text-muted-foreground/80 self-start">Ostatnie mecze</p>
+        <p className="text-sm text-muted-foreground/80 self-start">
+          Ostatnie mecze
+        </p>
         <ol className="flex gap-1.5">
           {matches.slice(0, 5).map((m) => {
             const isHome = m.home_team_id === team?.id;
 
-            const ourGoals = isHome ? m.home_goals : m.away_goals;
-            const enemyGoals = isHome ? m.away_goals : m.home_goals;
-
-            let result: "W" | "D" | "L";
-            if (ourGoals === enemyGoals) {
-              result = "D";
-            } else if (ourGoals > enemyGoals) {
-              result = "W";
-            } else {
-              result = "L";
-            }
-
-            const stylingConfig = resultStylesConfig[result];
-
             return (
-              <li
-                key={m.id}
-                title={
-                  result === "W"
-                    ? "Wygrana"
-                    : result === "D"
-                      ? "Remis"
-                      : "Porażka"
-                }
-                className={`flex h-8 w-8 items-center justify-center rounded-md text-xl font-bold text-white ${stylingConfig.bg}`}
-              >
-                {stylingConfig.text}
+              <li key={m.id}>
+                <ResultBadge
+                  goalsFor={isHome ? m.home_goals : m.away_goals}
+                  goalsAgainst={isHome ? m.away_goals : m.home_goals}
+                />
               </li>
             );
           })}
