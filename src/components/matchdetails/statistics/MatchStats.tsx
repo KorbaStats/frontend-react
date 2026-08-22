@@ -5,14 +5,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../ui/card";
+} from "@/components/ui/card";
 import { ChartColumnIncreasing } from "lucide-react";
 
 import type { MatchWithWeather } from "@/services/matchesService";
 
 import StatRow from "./StatRow";
 import ParsedStatRow from "./ParsedStatRow";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { getAllGroups, getTopGroup, type StatGroup } from "./matchStatRows";
 
 interface MatchStatsProps {

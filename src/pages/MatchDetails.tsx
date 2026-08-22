@@ -5,9 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getMatchById, type MatchWithWeather } from "@/services/matchesService";
 
-import MatchHeaderCard from "@/components/matchdetail/MatchHeaderCard";
-import MatchStats from "@/components/matchdetail/MatchStats";
-import MatchWeatherInsights from "@/components/matchdetail/MatchWeatherInsights";
+import MatchHeaderCard from "@/components/matchdetails/MatchHeaderCard";
+import MatchStats from "@/components/matchdetails/statistics/MatchStats";
+import MatchWeatherInsights from "@/components/matchdetails/weatherInsights/MatchWeatherInsights";
 
 const MatchDetails = () => {
   const { id } = useParams();
@@ -17,7 +17,7 @@ const MatchDetails = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [match, setMatch] = useState<MatchWithWeather>();
 
-  const [activeTab, setActiveTab] = useState<"stats" | "weather">("stats");
+  const [activeTab, setActiveTab] = useState<"stats" | "weather">("weather");
 
   useEffect(() => {
     getMatchById(matchId)

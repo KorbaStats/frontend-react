@@ -19,11 +19,11 @@ import {
 } from "@/components/ui/card";
 
 import MatchesTable from "@/components/shared/MatchesTable";
-import TeamInfoCard from "@/components/teampage/TeamInfoCard";
+import TeamInfoCard from "@/components/teamdetails/TeamInfoCard";
 import WeatherFiltersCard, {
   type WeatherFilterValue,
-} from "@/components/teampage/WeatherFiltersCard";
-import TeamStatsCards from "@/components/teampage/TeamStatsCards";
+} from "@/components/teamdetails/WeatherFiltersCard";
+import TeamStatsCards from "@/components/teamdetails/TeamStatsCards";
 
 import { computeTeamStats } from "@/lib/teamStats";
 import { getConditions } from "@/lib/matchFilters";
