@@ -46,19 +46,19 @@ const Matches = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
-  // both derive from data already in state — no reason to refetch on filtering
+  // oba wyliczają się z danych już w stanie — nie ma powodu pobierać ponownie przy filtrowaniu
   const seasons = useMemo(() => getSeasons(matches), [matches]);
   const filteredMatches = useMemo(
     () => filterMatches(matches, filters),
     [matches, filters],
   );
 
-  // calling custom hook to serve pagination
+  // własny hook obsługujący paginację
   const {visibleItems, hiddenCount, showMore, reset} = useVisibleItems(filteredMatches);
 
 
-  // narrowing the list should always drop you back to the first page — done
-  // here rather than in an effect, since it reacts to the event, not to state
+  // zawężenie listy zawsze powinno cofać na pierwszą stronę — robione tutaj,
+  // a nie w efekcie, bo reaguje na zdarzenie, a nie na stan
   const handleFiltersChange = (next: MatchFilters) => {
     setFilters(next);
     reset();
@@ -80,7 +80,7 @@ const Matches = () => {
       <Card>
         <CardHeader className="border-b pb-6">
           <CardTitle className="flex items-center gap-2 text-base">
-            <CalendarDays className="h4- w-4 text-primary" />
+            <CalendarDays className="h-4 w-4 text-primary" />
             Wszystkie mecze
           </CardTitle>
           <CardDescription>

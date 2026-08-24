@@ -27,7 +27,7 @@ export function filterMatches(
   matches: MatchWithWeather[],
   filters: MatchFilters
 ): MatchWithWeather[] {
-  // normalized once for the whole pass, not per match
+  // normalizowane raz na cały przebieg, nie osobno dla każdego meczu
   const needle = normalize(filters.query.trim())
 
   return matches.filter((match) => {
@@ -35,7 +35,7 @@ export function filterMatches(
     if (filters.season !== "all" && match.season !== filters.season) return false;
     if (filters.leagueId !== "all" && match.league_id !== filters.leagueId) return false;
 
-    // ISO dates compare lexicographically, so no Date parsing is needed
+    // daty ISO porównują się leksykograficznie, więc parsowanie Date jest zbędne
     const day = match.datetime.slice(0, 10)
     if (filters.dateFrom !== "" && day < filters.dateFrom) return false;
     if (filters.dateTo !== "" && day > filters.dateTo) return false;
@@ -46,7 +46,7 @@ export function filterMatches(
   })
 }
 
-// Team name, abbreviation and city, for both sides of the fixture.
+// Nazwa drużyny, skrót i miasto — dla obu stron spotkania.
 function teamHaystack(match: MatchWithWeather): string {
   const { homeTeam, awayTeam } = match
   return normalize(
@@ -62,12 +62,12 @@ function teamHaystack(match: MatchWithWeather): string {
 }
 
 /**
- * Weather conditions that actually occur in this set of matches.
+ * Warunki pogodowe, które faktycznie występują w tym zbiorze meczów.
  *
- * A team only ever plays in its own country, so a filter listing all seven
- * conditions would offer Legia an "upał" pill that can only ever return zero
- * matches. Callers decide the display order (weatherConfig owns it) — this
- * just answers "which ones exist here".
+ * Drużyna gra tylko we własnym kraju, więc filtr wypisujący wszystkie siedem
+ * warunków dawałby Legii pigułkę "upał", która zawsze zwróci zero meczów.
+ * O kolejności wyświetlania decydują wywołujący (należy do weatherConfig) — to
+ * odpowiada wyłącznie na pytanie "które tu w ogóle istnieją".
  */
 export function getConditions(matches: MatchWithWeather[]): WeatherCondition[] {
   const conditions = new Set<WeatherCondition>()
@@ -77,8 +77,8 @@ export function getConditions(matches: MatchWithWeather[]): WeatherCondition[] {
   return [...conditions]
 }
 
-// Season options for the dropdown, newest first. Derived from the matches at
-// hand — the value sits on every row already, so there is nothing to fetch.
+// Opcje sezonów do dropdowna, od najnowszych. Wyprowadzone z meczów, które
+// mamy pod ręką — wartość siedzi już w każdym wierszu, więc nie ma czego pobierać.
 export function getSeasons(matches: MatchWithWeather[]): string[] {
   const seasons = new Set<string>()
   for (const match of matches) {
@@ -87,7 +87,7 @@ export function getSeasons(matches: MatchWithWeather[]): string[] {
   return [...seasons].sort().reverse()
 }
 
-/** Drives the "reset" button — hidden while nothing is narrowed down. */
+/** Steruje przyciskiem "reset" — ukrytym, dopóki nic nie jest zawężone. */
 export function hasActiveFilters(filters: MatchFilters): boolean {
   return (
     filters.query.trim() !== "" ||

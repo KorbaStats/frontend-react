@@ -1,4 +1,4 @@
-// TODO: rebuild the dashboard entirely when statistics for matches/teams, weather score and predictions are ready 
+// TODO: przebudować dashboard od zera, gdy będą gotowe statystyki meczów/drużyn, weather score i predykcje
 
 import GoalsWeatherChart from "@/components/dashboard/GoalsWeatherChart";
 import RecentMatches from "@/components/dashboard/RecentMatchesCard";

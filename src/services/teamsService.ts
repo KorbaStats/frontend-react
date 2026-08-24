@@ -1,12 +1,12 @@
-// Mirrors TeamsController (GET /api/teams, GET /api/teams/:id).
-// Both return teams with `[league, homeStadium]` graph-fetched.
+// Odwzorowuje TeamsController (GET /api/teams, GET /api/teams/:id).
+// Oba zwracają drużyny z dociągniętym grafem `[league, homeStadium]`.
 
 import { teams } from "@/data/teams";
 import type { PaginatedResponse, Team } from "@/data/types";
 
 /**
- * GET /api/teams — public. Supports `league_id`, `country`, plus the shared
- * pagination params (default 20 per page, sorted by `name`).
+ * GET /api/teams — publiczny. Obsługuje `league_id`, `country` plus wspólne
+ * parametry paginacji (domyślnie 20 na stronę, sortowane po `name`).
  */
 export async function getTeams(): Promise<PaginatedResponse<Team>> {
   return {
@@ -16,11 +16,11 @@ export async function getTeams(): Promise<PaginatedResponse<Team>> {
 }
 
 /**
- * GET /api/teams/:id — returns 404 `{ error: "Team not found" }` when missing.
+ * GET /api/teams/:id — przy braku zwraca 404 `{ error: "Team not found" }`.
  *
- * NOTE: currently behind requireAuth + requirePermission("teams") on the
- * backend, while TeamPage is a public route. Flagged in CLAUDE.md as a gap for
- * the backend owner; the list endpoint above is already public.
+ * UWAGA: na backendzie siedzi obecnie za requireAuth + requirePermission("teams"),
+ * a strona drużyny jest trasą publiczną. Zgłoszone w CLAUDE.md jako luka dla
+ * właściciela backendu; endpoint listy wyżej jest już publiczny.
  */
 export async function getTeamById(id: number): Promise<Team> {
   const team = teams.find((t) => t.id === id);

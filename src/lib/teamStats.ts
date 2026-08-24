@@ -1,9 +1,9 @@
 import type { MatchWithWeather } from "@/services/matchesService";
 
-// Field names mirror TeamRanking (types.ts) on purpose — TeamStatsController.rankings
-// already computes the same averages server-side via the same home/away UNION ALL
-// pattern. Same names now means swapping this for a real endpoint later touches
-// only the fetch, not every component reading these fields.
+// Nazwy pól celowo odwzorowują TeamRanking (types.ts) — TeamStatsController.rankings
+// liczy już te same średnie po stronie serwera, tym samym wzorcem UNION ALL dla
+// gospodarzy/gości. Te same nazwy teraz oznaczają, że podmiana na prawdziwy
+// endpoint później dotknie tylko fetcha, a nie każdego komponentu czytającego te pola.
 export type TeamStats = {
   matches: number;
   wins: number;

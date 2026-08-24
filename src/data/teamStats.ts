@@ -1,7 +1,7 @@
-// Mocked data - change later for backend endpoints
-// Shape verified against TeamStatsController (GET /api/team-stats/*).
-// Computed from matches.ts so numbers stay consistent with the match list —
-// see matchStats.ts for the same approach.
+// Dane zamockowane — do podmiany na endpointy backendu.
+// Kształt zweryfikowany z TeamStatsController (GET /api/team-stats/*).
+// Wyliczane z matches.ts, żeby liczby trzymały się listy meczów — to samo
+// podejście co w matchStats.ts.
 
 import { matches } from "./matches"
 import type { TeamRanking, TeamStatsOverTimePoint } from "./types"
@@ -105,7 +105,7 @@ export const rankings: TeamRanking[] = (() => {
         xg_ratio: sumXg > 0 ? Number((goalsScored / sumXg).toFixed(3)) : null,
       }
     })
-    // matches TeamStatsController.rankings SQL: ORDER BY points DESC, goals_scored DESC
+    // zgodne z SQL-em TeamStatsController.rankings: ORDER BY points DESC, goals_scored DESC
     .sort((a, b) => b.points - a.points || b.goals_scored - a.goals_scored)
 })()
 

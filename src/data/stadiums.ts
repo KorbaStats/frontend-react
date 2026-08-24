@@ -1,6 +1,6 @@
-// Mocked data - change later for backend endpoints
-// Shape verified against backend migration 20260522120000_create_stadiums_table.js
-// and StadiumsController (GET /api/stadiums, GET /api/stadiums/:id).
+// Dane zamockowane — do podmiany na endpointy backendu.
+// Kształt zweryfikowany z migracją 20260522120000_create_stadiums_table.js
+// i ze StadiumsController (GET /api/stadiums, GET /api/stadiums/:id).
 
 import type { Stadium } from "./types"
 

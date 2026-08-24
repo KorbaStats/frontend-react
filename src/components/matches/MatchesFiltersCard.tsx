@@ -50,7 +50,7 @@ const MatchesFiltersCard = ({
   shownCount,
   totalCount,
 }: MatchesFiltersCardProps) => {
-  // one setter for every field, so each control stays a one-liner
+  // jeden setter na wszystkie pola, dzięki czemu każda kontrolka zostaje jednolinijkowa
   const set = <K extends keyof MatchFilters>(key: K, fieldValue: MatchFilters[K]) =>
     onChange({ ...value, [key]: fieldValue });
 
@@ -72,7 +72,7 @@ const MatchesFiltersCard = ({
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
-        {/* weather condition */}
+        {/* warunek pogodowy */}
         <div className="flex flex-wrap gap-2">
           <Button
             variant={value.condition === "all" ? "secondary" : "outline"}
@@ -104,21 +104,21 @@ const MatchesFiltersCard = ({
           })}
         </div>
 
-        {/* team search */}
+        {/* wyszukiwarka drużyn */}
         <div className="relative">
           <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={value.query}
             onChange={(e) => set("query", e.target.value)}
             placeholder="Szukaj drużyny (nazwa, skrót lub miasto)..."
-            // no visible caption here, so the placeholder alone would be the
-            // only hint — and it disappears the moment you start typing
+            // nie ma tu widocznej etykiety, więc placeholder byłby jedyną
+            // podpowiedzią — a znika, gdy tylko zaczniesz pisać
             aria-label="Szukaj drużyny"
             className="pl-8"
           />
         </div>
 
-        {/* season / league / date range */}
+        {/* sezon / liga / zakres dat */}
         <div className="grid gap-3 lg:grid-cols-4">
           <Field label="Sezon">
             <select
@@ -139,7 +139,7 @@ const MatchesFiltersCard = ({
             <select
               className={selectClass}
               value={value.leagueId}
-              // <select> only ever yields strings — league_id is a number
+              // <select> zawsze zwraca stringi — a league_id jest liczbą
               onChange={(e) =>
                 set(
                   "leagueId",
@@ -162,7 +162,7 @@ const MatchesFiltersCard = ({
               value={value.dateFrom}
               max={value.dateTo || undefined}
               onChange={(e) => set("dateFrom", e.target.value)}
-              // otherwise the native picker icon stays black on a dark card
+              // inaczej natywna ikona kalendarza zostaje czarna na ciemnej karcie
               className="dark:scheme-dark"
             />
           </Field>

@@ -1,9 +1,10 @@
-// Mocked data - change later for backend endpoints
-// Shape verified against backend migration 20260525140000_create_teams_table.js
-// and TeamsController (GET /api/teams, GET /api/teams/:id) — both endpoints
-// use withGraphFetched("[league, homeStadium]"), which returns full rows
-// (jsonSchema only validates writes, no controller restricts SELECT columns),
-// so nested `league`/`homeStadium` carry every League/Stadium column.
+// Dane zamockowane — do podmiany na endpointy backendu.
+// Kształt zweryfikowany z migracją 20260525140000_create_teams_table.js
+// i z TeamsController (GET /api/teams, GET /api/teams/:id) — oba endpointy
+// używają withGraphFetched("[league, homeStadium]"), co zwraca pełne wiersze
+// (jsonSchema waliduje tylko zapisy, żaden kontroler nie ogranicza kolumn w
+// SELECT), więc zagnieżdżone `league`/`homeStadium` niosą każdą kolumnę
+// League/Stadium.
 
 import { leagues } from "./leagues"
 import { stadiums } from "./stadiums"
@@ -30,11 +31,11 @@ type TeamSeed = {
   home_stadium_id: number
 }
 
-// 8 teams per league — matches.ts builds a double round-robin per league per
-// season, so this is what decides the size of the mocked match list
-// (8 teams => 56 fixtures per league per season, i.e. 14 games per team).
-// The count is deliberate: weather-conditioned stats need enough matches per
-// team that even the rarest condition (snow, extreme heat) has a usable sample.
+// 8 drużyn na ligę — matches.ts buduje rundę i rewanż dla każdej ligi w każdym
+// sezonie, więc to ta liczba decyduje o rozmiarze zamockowanej listy meczów
+// (8 drużyn => 56 par na ligę na sezon, czyli 14 meczów na drużynę).
+// Liczba jest celowa: statystyki w podziale na pogodę potrzebują tylu meczów na
+// drużynę, żeby nawet najrzadszy warunek (śnieg, upał) miał używalną próbę.
 const teamSeeds: TeamSeed[] = [
   { id: 1, name: "Legia Warszawa", short_name: "LEG", city: "Warsaw", country: "Poland", league_id: 1, home_stadium_id: 1 },
   { id: 2, name: "Lech Poznań", short_name: "LECH", city: "Poznań", country: "Poland", league_id: 1, home_stadium_id: 2 },

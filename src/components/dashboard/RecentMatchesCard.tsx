@@ -23,7 +23,7 @@ const RecentMatchesCard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // simulates async data fetching (mock serivce)
+  // symuluje asynchroniczne pobieranie danych (serwis na mockach)
   useEffect(() => {
     getRecentMatches()
       .then((data) => setRecentMatches(data))
@@ -34,7 +34,7 @@ const RecentMatchesCard = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
-  // loading and error states handling
+  // obsługa stanów ładowania i błędu
   if (isLoading) {
     return (
       <Card>

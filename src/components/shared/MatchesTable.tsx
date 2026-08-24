@@ -45,7 +45,7 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
         )}
 
         {matches.map((m) => {
-          // For icons and descriptions of weather
+          // Ikony i opisy pogody
           const condition = m.weather?.condition || "clear";
           const config = weatherConfig[condition];
           const Icon = config.icon;
@@ -56,7 +56,7 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
               onClick={() => navigate(`/match/${m.id}`)}
               className="cursor-pointer"
             >
-              {/* teams and result */}
+              {/* drużyny i wynik */}
               <TableCell className="pl-6 font-medium text-foreground hover:text-primary">
                 {/* stopPropagation: klik w drużynę idzie do drużyny, nie do meczu */}
                 <Link
@@ -80,7 +80,7 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
                 </Link>
               </TableCell>
 
-              {/* weather condition */}
+              {/* warunek pogodowy */}
               <TableCell>
                 <div className="flex items-center gap-2">
                   <span
@@ -99,7 +99,7 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
                 </div>
               </TableCell>
 
-              {/* date and time */}
+              {/* data i godzina */}
               <TableCell>
                 <div className="flex flex-col leading-tight">
                   <span className="font-medium text-foreground">
@@ -111,7 +111,7 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
                 </div>
               </TableCell>
 
-              {/* stadium */}
+              {/* stadion */}
               <TableCell className="pr-6">
                 <div className="flex flex-col leading-tight">
                   <span className="font-medium text-foreground">

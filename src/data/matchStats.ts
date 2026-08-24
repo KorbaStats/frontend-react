@@ -1,12 +1,11 @@
-// Mocked data - change later for backend endpoints
-// Shape verified against MatchStatsController (GET /api/match-stats/*).
-// Values are computed from matches.ts instead of being hand-typed, so
-// aggregates (wins/draws/losses, points, etc.) always stay consistent with
-// the underlying match list.
+// Dane zamockowane — do podmiany na endpointy backendu.
+// Kształt zweryfikowany z MatchStatsController (GET /api/match-stats/*).
+// Wartości są wyliczane z matches.ts, a nie wpisywane ręcznie, żeby agregaty
+// (zwycięstwa/remisy/porażki, punkty itd.) zawsze trzymały się listy meczów.
 //
-// summary / goals-over-time / attendance-over-time hit knex.raw() on the
-// backend with no JS-side parsing, so every numeric value comes back as a
-// string — reproduced here on purpose (see types.ts).
+// summary / goals-over-time / attendance-over-time uderzają na backendzie w
+// knex.raw() bez parsowania po stronie JS, więc każda wartość liczbowa wraca
+// jako string — odtworzone tu celowo (patrz types.ts).
 
 import { matches } from "./matches"
 import { leagues } from "./leagues"
@@ -151,7 +150,7 @@ export const byTeam: TeamStatsByTeam[] = (() => {
       avg_goals_conceded: Number((t.goals_conceded / t.matches).toFixed(2)),
       points: t.wins * 3 + t.draws,
     }))
-    // matches MatchStatsController.byTeam: ORDER BY points DESC, goals_scored DESC
+    // zgodne z MatchStatsController.byTeam: ORDER BY points DESC, goals_scored DESC
     .sort((a, b) => b.points - a.points || b.goals_scored - a.goals_scored)
 })()
 

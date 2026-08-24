@@ -1,12 +1,13 @@
-// Mocked data - change later for backend endpoints
-// Shape verified against the final `matches` table (after migrations
-// 20260321175947, 20260522120000, 20260525123625, 20260525140000) and
-// MatchesController (GET /api/matches, GET /api/matches/:id) — both endpoints
-// use withGraphFetched, so every row carries nested homeTeam/awayTeam/stadium/league.
+// Dane zamockowane — do podmiany na endpointy backendu.
+// Kształt zweryfikowany z docelową tabelą `matches` (po migracjach
+// 20260321175947, 20260522120000, 20260525123625, 20260525140000) i z
+// MatchesController (GET /api/matches, GET /api/matches/:id) — oba endpointy
+// używają withGraphFetched, więc każdy wiersz niesie zagnieżdżone
+// homeTeam/awayTeam/stadium/league.
 //
-// Generated deterministically from a seeded RNG so the dataset stays stable
-// across reloads. Every match carries every column, including the jsonb ones —
-// see withFullDetail() below for why.
+// Generowane deterministycznie z RNG z ziarnem, żeby zbiór danych był stabilny
+// między przeładowaniami. Każdy mecz niesie każdą kolumnę, łącznie z jsonb —
+// dlaczego, patrz withFullDetail() niżej.
 
 import { teams } from "./teams"
 import type { Match, ParsedStat, Team } from "./types"
@@ -35,9 +36,9 @@ function pick<T>(items: T[]): T {
   return items[randInt(0, items.length - 1)]
 }
 
-// Seeded Fisher-Yates. Used on the fixture list so that a team's home matches
-// land all over the season instead of in one block of consecutive months —
-// otherwise half the league would never host a match in winter.
+// Fisher-Yates z ziarnem. Używane na liście par, żeby mecze domowe drużyny
+// rozłożyły się po całym sezonie, a nie w jednym bloku kolejnych miesięcy —
+// inaczej połowa ligi nigdy nie grałaby u siebie zimą.
 function shuffle<T>(items: T[]): T[] {
   const result = [...items]
   for (let i = result.length - 1; i > 0; i--) {
@@ -47,9 +48,9 @@ function shuffle<T>(items: T[]): T[] {
   return result
 }
 
-// Mirrors the scraper's parseStat() output for "x% (n/m)" stats. `completed`
-// is derived from the percentage so the three fields always agree with each
-// other (the old {total, accurate} mock could produce accurate > total).
+// Odwzorowuje wyjście parseStat() ze scrapera dla statystyk "x% (n/m)".
+// `completed` wyliczamy z procentu, żeby trzy pola zawsze się ze sobą zgadzały
+// (stary mock {total, accurate} potrafił dać accurate > total).
 function parsedStat(total: number, minPct: number, maxPct: number): ParsedStat {
   const pct = randInt(minPct, maxPct)
   return { pct, completed: Math.round((total * pct) / 100), total }
@@ -82,7 +83,7 @@ function groupByLeague(allTeams: Team[]): Map<number, Team[]> {
 
 type Fixture = { home: Team; away: Team }
 
-// Every ordered pair once = a full home-and-away double round-robin.
+// Każda uporządkowana para raz = pełna runda i rewanż (mecz i mecz u siebie).
 function doubleRoundRobin(leagueTeams: Team[]): Fixture[] {
   const fixtures: Fixture[] = []
   for (const home of leagueTeams) {
@@ -95,9 +96,9 @@ function doubleRoundRobin(leagueTeams: Team[]): Fixture[] {
 
 type SeasonDef = { season: string; months: { year: number; month: number }[] }
 
-// A real season runs August-May. The full 10-month span matters here: weather.ts
-// derives conditions from the month, so a shorter winter-only window could never
-// produce `extreme_heat` (and made the weather filters lopsided).
+// Prawdziwy sezon trwa od sierpnia do maja. Pełne 10 miesięcy ma tu znaczenie:
+// weather.ts wyprowadza warunki z miesiąca, więc krótsze, czysto zimowe okno
+// nigdy nie wygenerowałoby `extreme_heat` (i wykrzywiało filtry pogodowe).
 const seasonDefs: SeasonDef[] = [
   {
     season: "2021/2022",
@@ -234,12 +235,12 @@ function buildMatch(id: number, home: Team, away: Team, season: string, datetime
   }
 }
 
-// Fills in every remaining `matches` column (incl. jsonb ones), i.e. the full
-// GET /api/matches/:id shape. Applied to every generated match: the match detail
-// page and the league-wide weather analysis both read these columns, and a
-// dataset where only two rows carry them would leave both views empty.
-// They stay OPTIONAL in types.ts — the real columns are nullable, and the
-// scraper does write null when a stat was unavailable.
+// Uzupełnia wszystkie pozostałe kolumny `matches` (łącznie z jsonb), czyli
+// pełny kształt GET /api/matches/:id. Stosowane do każdego generowanego meczu:
+// czytają te kolumny i strona szczegółów meczu, i analiza pogodowa całej ligi,
+// a zbiór, w którym niosłyby je tylko dwa wiersze, zostawiłby oba widoki puste.
+// W types.ts zostają OPCJONALNE — prawdziwe kolumny są nullowalne, a scraper
+// faktycznie zapisuje null, gdy statystyka była niedostępna.
 function withFullDetail(match: Match): Match {
   const homeShots = match.home_total_shots
   const awayShots = match.away_total_shots

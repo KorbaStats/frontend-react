@@ -1,10 +1,10 @@
-// Mocked data - change later for backend endpoints
-// Shape verified against backend migration 20260417113614_create_leagues.js
-// and LeaguesController (GET /api/leagues, GET /api/leagues/:id).
+// Dane zamockowane — do podmiany na endpointy backendu.
+// Kształt zweryfikowany z migracją 20260417113614_create_leagues.js
+// i z LeaguesController (GET /api/leagues, GET /api/leagues/:id).
 
 import type { League } from "./types"
 
-// UI-only field (flag emoji), not returned by the backend — kept for Sidebar.tsx.
+// Pole tylko dla UI (emoji flagi), backend go nie zwraca — trzymane dla Sidebar.tsx.
 // export type LeagueWithFlag = League & { flag: string }
 
 export const leagues: League[] = [

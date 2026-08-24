@@ -1,6 +1,7 @@
-// Shared data contracts for mocked API responses.
-// Field types mirror what the real endpoints return today, including backend
-// quirks (e.g. some stats endpoints return raw SQL results as strings, not numbers).
+// Wspólne kontrakty danych dla zamockowanych odpowiedzi API.
+// Typy pól odwzorowują to, co dziś zwracają prawdziwe endpointy, razem z
+// dziwactwami backendu (np. część endpointów statystyk zwraca surowy wynik SQL
+// jako stringi, a nie liczby).
 
 export type PaginatedResponse<T> = {
   data: T[]
@@ -13,7 +14,7 @@ export type PaginatedResponse<T> = {
 }
 
 // ---------------------------------------------------------------------------
-// Core domain entities (migrations + CRUD controllers)
+// Główne encje domenowe (migracje + kontrolery CRUD)
 // ---------------------------------------------------------------------------
 
 export type League = {
@@ -48,20 +49,20 @@ export type Team = {
   home_stadium_id: number | null
   created_at: string
   updated_at: string
-  // Objection's withGraphFetched("[league, homeStadium]") returns full rows
-  // (jsonSchema only validates writes, no controller restricts SELECT
-  // columns) — nested objects carry created_at/updated_at too.
+  // withGraphFetched("[league, homeStadium]") z Objection zwraca pełne wiersze
+  // (jsonSchema waliduje tylko zapisy, żaden kontroler nie ogranicza kolumn
+  // w SELECT) — zagnieżdżone obiekty niosą też created_at/updated_at.
   league: League | null
   homeStadium: Stadium | null
 }
 
-// jsonb columns on `matches`. The backend only declares them as
-// `{ type: ["object", "null"] }` (Match.jsonSchema), so the real shape is
-// dictated by the scraper — `parseStat()` in scraper/src/scraper/match.js
-// returns `{ pct, completed, total }` for every "x% (n/m)" stat it reads off
-// the source page. One shape covers passes, crosses and tackles alike.
-// Verified against the scraper on 2026-08-05 — do NOT rename these keys,
-// see "Data contract boundary" in CLAUDE.md.
+// Kolumny jsonb w tabeli `matches`. Backend deklaruje je tylko jako
+// `{ type: ["object", "null"] }` (Match.jsonSchema), więc o realnym kształcie
+// decyduje scraper — `parseStat()` w scraper/src/scraper/match.js zwraca
+// `{ pct, completed, total }` dla każdej statystyki typu "x% (n/m)" odczytanej
+// ze strony źródłowej. Jeden kształt obsługuje podania, dośrodkowania i odbiory.
+// Zweryfikowane ze scraperem 2026-08-05 — NIE zmieniaj nazw tych kluczy,
+// patrz "Data contract boundary" w CLAUDE.md.
 export type ParsedStat = { pct: number; completed: number; total: number }
 
 export type Match = {
@@ -109,10 +110,10 @@ export type Match = {
   stadium: Stadium | null
   league: League | null
 
-  // Remaining `matches` columns — the full GET /api/matches/:id shape. Every
-  // mocked match now carries them (the match detail page and the league weather
-  // analysis both need them), but they stay optional: the real columns are
-  // nullable and the scraper writes null whenever a stat was unavailable.
+  // Pozostałe kolumny `matches` — pełny kształt GET /api/matches/:id. Każdy
+  // zamockowany mecz już je niesie (potrzebuje ich i strona szczegółów meczu,
+  // i analiza pogodowa ligi), ale zostają opcjonalne: prawdziwe kolumny są
+  // nullowalne, a scraper zapisuje null, gdy statystyka była niedostępna.
   home_big_chances?: number
   away_big_chances?: number
   home_shots_off_target?: number
@@ -166,10 +167,10 @@ export type Match = {
 }
 
 // ---------------------------------------------------------------------------
-// match-stats (MatchStatsController) — some endpoints return raw knex.raw
-// results, i.e. every numeric value comes back as a string. Kept as `string`
-// here on purpose so consumers must parseFloat/parseInt, same as against the
-// real API.
+// match-stats (MatchStatsController) — część endpointów zwraca surowy wynik
+// knex.raw, czyli każda wartość liczbowa wraca jako string. Celowo trzymamy tu
+// `string`, żeby konsumenci musieli robić parseFloat/parseInt dokładnie tak
+// samo jak przy prawdziwym API.
 // ---------------------------------------------------------------------------
 
 export type MatchStatsSummary = {
@@ -197,7 +198,7 @@ export type AttendanceOverTimePoint = {
   match_count: string
 }
 
-// by-team is parsed to numbers in the controller (parseInt/parseFloat).
+// by-team jest parsowane do liczb już w kontrolerze (parseInt/parseFloat).
 export type TeamStatsByTeam = {
   team_id: number
   team_name: string
@@ -213,7 +214,7 @@ export type TeamStatsByTeam = {
   points: number
 }
 
-// by-league stays as raw strings except league_id/league_name.
+// by-league zostaje surowymi stringami poza league_id/league_name.
 export type TeamStatsByLeague = {
   league_id: number
   league_name: string
@@ -226,7 +227,7 @@ export type TeamStatsByLeague = {
 // team-stats (TeamStatsController)
 // ---------------------------------------------------------------------------
 
-// rankings is fully parsed to numbers (or null when there's no data).
+// rankings jest w pełni sparsowane do liczb (albo null, gdy brak danych).
 export type TeamRanking = {
   team_id: number
   team_name: string
@@ -247,8 +248,8 @@ export type TeamRanking = {
   xg_ratio: number | null
 }
 
-// over-time (per team) is raw knex.raw output — strings, unlike `rankings`.
-// This mirrors a real backend inconsistency between the two endpoints.
+// over-time (dla drużyny) to surowe wyjście knex.raw — stringi, inaczej niż
+// `rankings`. Odwzorowuje to realną niespójność backendu między tymi endpointami.
 export type TeamStatsOverTimePoint = {
   period: string
   match_count: string
@@ -260,7 +261,7 @@ export type TeamStatsOverTimePoint = {
 }
 
 // ---------------------------------------------------------------------------
-// Weather — invented contract, the backend has nothing like this yet.
+// Pogoda — kontrakt wymyślony, backend nie ma jeszcze nic podobnego.
 // ---------------------------------------------------------------------------
 
 //TODO: verify against real API response
@@ -285,7 +286,7 @@ export type Weather = {
   condition: WeatherCondition
 }
 
-// NOTE: there is deliberately no TeamWeatherScore type here. The weather score
-// is a DERIVED value, not stored data — it is computed from matches a component
-// already holds (lib/weatherScore.ts) or aggregated across all teams
-// (services/weatherStatsService.ts). Mocking it would mean mocking a result.
+// UWAGA: celowo nie ma tu typu TeamWeatherScore. Weather score to wartość
+// WYLICZANA, a nie przechowywana — powstaje z meczów, które komponent i tak już
+// ma (wtedy miejsce na to jest w lib/), albo z agregatu po wszystkich drużynach
+// (services/weatherStatsService.ts). Mockowanie go byłoby mockowaniem wyniku.
