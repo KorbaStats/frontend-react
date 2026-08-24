@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router";
 import { History } from "lucide-react";
 
-import type { Team } from "@/data/types";
+import type { Team, WeatherCondition } from "@/data/types";
 
 import {
   getTeamMatches,
@@ -19,16 +19,18 @@ import {
 } from "@/components/ui/card";
 
 import MatchesTable from "@/components/shared/MatchesTable";
-import TeamInfoCard from "@/components/teamdetails/TeamInfoCard";
+import TeamInfoCard from "@/components/team-details/TeamInfoCard";
 import WeatherFiltersCard, {
   type WeatherFilterValue,
-} from "@/components/teamdetails/WeatherFiltersCard";
-import TeamStatsCards from "@/components/teamdetails/TeamStatsCards";
+} from "@/components/team-details/WeatherFiltersCard";
+import TeamStatsCards from "@/components/team-details/TeamStatsCards";
 
 import { computeTeamStats } from "@/lib/teamStats";
 import { getConditions } from "@/lib/matchFilters";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
 import ShowMoreFooter from "@/components/shared/ShowMoreFooter"
+
+const DEFAULT_CONDITION: WeatherCondition = "clear";
 
 const TeamDetails = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -39,13 +41,13 @@ const TeamDetails = () => {
   const [matches, setMatches] = useState<MatchWithWeather[]>([]);
   const [team, setTeam] = useState<Team>();
 
-  // states for weather filters
-  const [condition, setCondition] = useState<WeatherFilterValue>("all");
+  // stany filtrów pogodowych
+  const [condition, setCondition] = useState<WeatherFilterValue>(DEFAULT_CONDITION);
 
-  // available conditions for the team (all conditions the team has played in)
+  // warunki dostępne dla drużyny (wszystkie, przy których grała)
   const availableConditions = useMemo(() => getConditions(matches), [matches]);
 
-  // filtered matches for the selected condition
+  // mecze odfiltrowane po wybranym warunku
   const filteredMatches = useMemo(
     () =>
       condition === "all"
@@ -54,7 +56,7 @@ const TeamDetails = () => {
     [matches, condition],
   );
 
-  //computed data for TeamStatsCards: filteredStats (via weather), and all matches (non filtered for baseline stats)
+  // dane wyliczone dla TeamStatsCards: filteredStats (po pogodzie) i wszystkie mecze (nieodfiltrowane, jako punkt odniesienia)
   const filteredStats = useMemo(
     () => computeTeamStats(filteredMatches, teamId),
     [filteredMatches, teamId],
@@ -65,7 +67,7 @@ const TeamDetails = () => {
     [matches, teamId],
   );
 
-  // custom hook for pagination
+  // własny hook do paginacji
   const { visibleItems, hiddenCount, showMore, reset } =
     useVisibleItems(filteredMatches);
 
@@ -74,13 +76,16 @@ const TeamDetails = () => {
     reset();
   }
 
-  // fetching data by teamId
+  // pobieranie danych po teamId
   useEffect(() => {
     Promise.all([getTeamMatches(teamId), getTeamById(teamId)])
       .then(([matches, team]) => {
         setMatches(matches);
         reset(); //reset pagination each re-render (switching teams)
-        setCondition("all");  // the new team may not play in the currently selected condition at all
+        const available = getConditions(matches); //reset for active condition filter
+        setCondition(
+          available.includes(DEFAULT_CONDITION) ? DEFAULT_CONDITION : "all", //reset to default condition; all for backup if team doesnt played in default condition
+        );
         setTeam(team);
       })
       .catch((err) => {
@@ -90,7 +95,7 @@ const TeamDetails = () => {
       .finally(() => setIsLoading(false));
   }, [teamId, reset]);
 
-  // loading & error states handling
+  // obsługa stanów ładowania i błędu
   if (isLoading) {
     return (
       <Card className="mb-4">
@@ -114,7 +119,7 @@ const TeamDetails = () => {
   return (
     <>
       <TeamInfoCard matches={matches} team={team} />
-      {/* Weather Filters */}
+      {/* Filtry pogodowe */}
       <WeatherFiltersCard
         value={condition}
         onChange={handleConditionChange}
@@ -122,9 +127,9 @@ const TeamDetails = () => {
         shownCount={filteredMatches.length}
         totalCount={matches.length}
       />
-      {/* Statystyki*/}
+      {/* Statystyki */}
       <TeamStatsCards stats={filteredStats} baseline={baselineStats} />
-      {/* Matches table card */}
+      {/* Karta z tabelą meczów */}
       <Card>
         <CardHeader className="border-b pb-6">
           <CardTitle className="flex items-center gap-2 text-base">

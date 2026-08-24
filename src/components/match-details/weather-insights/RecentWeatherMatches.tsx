@@ -65,7 +65,6 @@ const RecentWeatherMatches = ({ match }: RecentWeatherMatchesProps) => {
         )}
       </div>
 
-      {/* Poniżej 1120px tabele nie mieszczą się obok siebie bez scrolla */}
       <div className="grid grid-cols-1 gap-2 min-[1120px]:grid-cols-2">
         <TeamMatchesCard
           teamId={home_id}

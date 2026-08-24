@@ -13,10 +13,10 @@ interface TeamInfoProps {
 const TeamInfoCard = ({ matches, team }: TeamInfoProps) => {
   return (
     <Card className="flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between">
-      {/* Image / short name */}
+      {/* Zdjęcie / skrót nazwy */}
       <div className="flex items-center gap-4">
         <TeamLogo name={team?.name} short_name={team?.short_name} />
-        {/* team info */}
+        {/* Dane drużyny */}
         <div>
           <p className=" text-md text-primary font-bold tracking-widest ">
             {team?.league?.name.toUpperCase()}
@@ -39,7 +39,7 @@ const TeamInfoCard = ({ matches, team }: TeamInfoProps) => {
         </div>
       </div>
 
-      {/* Last 5 matches (win / draw / lose) */}
+      {/* Ostatnie 5 meczów (zwycięstwo / remis / porażka) */}
       <div className="flex flex-col gap-2 lg:items-end">
         <p className="text-sm text-muted-foreground/80 self-start">
           Ostatnie mecze

@@ -10,10 +10,11 @@ import { ChartColumnIncreasing } from "lucide-react";
 
 import type { MatchWithWeather } from "@/services/matchesService";
 
-import StatRow from "./StatRow";
-import ParsedStatRow from "./ParsedStatRow";
 import { Button } from "@/components/ui/button";
-import { getAllGroups, getTopGroup, type StatGroup } from "./matchStatRows";
+
+import StatRow from "./statistics/StatRow";
+import ParsedStatRow from "./statistics/ParsedStatRow";
+import { getAllGroups, getTopGroup, type StatGroup } from "./statistics/matchStatRows";
 
 interface MatchStatsProps {
   match: MatchWithWeather;

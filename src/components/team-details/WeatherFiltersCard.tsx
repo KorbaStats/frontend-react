@@ -13,8 +13,8 @@ import {
 
 export type WeatherFilterValue = WeatherCondition | "all";
 
-// weatherConfig owns the display order; `available` narrows it to the
-// conditions the team has actually played in.
+// O kolejności wyświetlania decyduje weatherConfig; `available` zawęża ją do
+// warunków, przy których drużyna faktycznie grała.
 const allConditions = Object.keys(weatherConfig) as WeatherCondition[];
 
 interface WeatherFiltersCardProps {
@@ -52,6 +52,7 @@ const WeatherFiltersCard = ({
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap gap-2">
+          {/* wszystkie warunki */}
           <Button
             variant={value === "all" ? "secondary" : "outline"}
             size="sm"
@@ -62,6 +63,7 @@ const WeatherFiltersCard = ({
             Wszystkie
           </Button>
 
+          {/* reszta warunków pogodowych */}
           {conditions.map((condition) => {
             const { icon: Icon, label } = weatherConfig[condition];
             const active = value === condition;

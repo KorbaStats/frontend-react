@@ -1,10 +1,3 @@
-// Konfiguracja wierszy statystyk dla MatchStats — co pokazujemy, w jakiej
-// kolejności i w jakich sekcjach. Same dane, zero JSX.
-//
-// Leży obok komponentu, a nie w lib/, bo opiera się na typach propsów wierszy
-// (NumberRowProps / ParsedRowProps). lib/ jest warstwą, od której zależą
-// komponenty — nie odwrotnie.
-
 import type { Match } from "@/data/types";
 
 import type { NumberRowProps } from "./StatRow";
@@ -19,7 +12,7 @@ export type StatGroup = {
   rows: Row[];
 };
 
-/** Sekcja widoczna zawsze — najważniejsze statystyki meczu. */
+// Top statystyki - zawsze na gorze
 export function getTopGroup(match: Match): StatGroup {
   return {
     title: "Top statystyki",
@@ -36,9 +29,7 @@ export function getTopGroup(match: Match): StatGroup {
   };
 }
 
-/**
- * Pełny rozkład statystyk na sekcje, pokazywany po rozwinięciu.
- */
+// wszystkie statystyki
 export function getAllGroups(match: Match): StatGroup[] {
   return [
     {

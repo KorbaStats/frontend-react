@@ -5,9 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getMatchById, type MatchWithWeather } from "@/services/matchesService";
 
-import MatchHeaderCard from "@/components/matchdetails/MatchHeaderCard";
-import MatchStats from "@/components/matchdetails/statistics/MatchStats";
-import MatchWeatherInsights from "@/components/matchdetails/weatherInsights/MatchWeatherInsights";
+import MatchHeaderCard from "@/components/match-details/MatchHeaderCard";
+import MatchStats from "@/components/match-details/MatchStats";
+import MatchWeatherInsights from "@/components/match-details/MatchWeatherInsights";
 
 const MatchDetails = () => {
   const { id } = useParams();
