@@ -15,6 +15,7 @@ const Sidebar = () => {
   }, [])
 
   return (
+    // Ligi
     <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] w-64 shrink-0 flex-col gap-4 overflow-y-auto p-4 lg:flex xl:w-80">
       <div className="rounded-2xl bg-card p-4 shadow-sm border border-border">
         <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">

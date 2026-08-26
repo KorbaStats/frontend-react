@@ -50,7 +50,7 @@ const MatchesFiltersCard = ({
   shownCount,
   totalCount,
 }: MatchesFiltersCardProps) => {
-  // jeden setter na wszystkie pola, dzięki czemu każda kontrolka zostaje jednolinijkowa
+  // jeden setter na wszystkie pola
   const set = <K extends keyof MatchFilters>(key: K, fieldValue: MatchFilters[K]) =>
     onChange({ ...value, [key]: fieldValue });
 
@@ -111,8 +111,8 @@ const MatchesFiltersCard = ({
             value={value.query}
             onChange={(e) => set("query", e.target.value)}
             placeholder="Szukaj drużyny (nazwa, skrót lub miasto)..."
-            // nie ma tu widocznej etykiety, więc placeholder byłby jedyną
-            // podpowiedzią — a znika, gdy tylko zaczniesz pisać
+            // bez widocznej etykiety placeholder jest jedyną podpowiedzią,
+            // a znika przy pisaniu
             aria-label="Szukaj drużyny"
             className="pl-8"
           />

@@ -2,15 +2,9 @@ import type { ParsedStat } from "@/data/types";
 import type { MatchWithWeather } from "@/services/matchesService";
 
 /**
- * Mecz sprowadzony do pojedynczych liczb obejmujących OBIE drużyny.
+ * Statystyki meczu jako sumy obu drużyn.
  *
- * Pogoda działa na mecz, a nie na jedną jego stronę, więc jednostką porównania
- * jest całe spotkanie: gospodarze + goście zsumowani. Ta sama funkcja produkuje
- * i oglądany mecz, i każdy mecz wchodzący do średniej — i to jest jedyny powód,
- * dla którego te dwie liczby w ogóle da się porównywać.
- *
- * Świadomie NIE ma tu posiadania piłki. Gospodarze + goście to zawsze 100, więc
- * wartość łączna nie niesie żadnej informacji.
+ * Nie ma tu posiadania piłki — suma gospodarzy i gości zawsze wynosi 100.
  */
 export type CombinedMatchStats = {
   goals: number;
@@ -35,9 +29,8 @@ function sumOptional(
 }
 
 /**
- * Łączna celność. Uśrednienie dwóch pól `pct` traktowałoby drużynę, która
- * zagrała 200 podań, tak samo jak tę z 600, więc najpierw sumujemy liczniki,
- * a procent wyliczamy dopiero z nich.
+ * Celność liczona ze zsumowanych liczników obu drużyn. Średnia dwóch procentów
+ * ważyłaby drużynę z 200 podaniami tak samo jak tę z 600.
  */
 function combinedAccuracy(
   home: ParsedStat | undefined,
@@ -69,9 +62,7 @@ export function getCombinedMatchStats(
 }
 
 /**
- * Średnia pole po polu z już zsumowanych meczów. Każde pole uśredniamy tylko po
- * tych meczach, które faktycznie je mają — dzięki temu jeden mecz bez obron
- * bramkarza nie ciągnie tej średniej do zera.
+ * Średnia pole po polu. Każde pole uśredniane tylko po meczach, które je mają.
  */
 export function averageCombinedStats(
   statsList: CombinedMatchStats[],

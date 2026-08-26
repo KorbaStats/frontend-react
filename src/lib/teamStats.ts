@@ -1,9 +1,7 @@
 import type { MatchWithWeather } from "@/services/matchesService";
 
-// Nazwy pól celowo odwzorowują TeamRanking (types.ts) — TeamStatsController.rankings
-// liczy już te same średnie po stronie serwera, tym samym wzorcem UNION ALL dla
-// gospodarzy/gości. Te same nazwy teraz oznaczają, że podmiana na prawdziwy
-// endpoint później dotknie tylko fetcha, a nie każdego komponentu czytającego te pola.
+// Nazwy pól jak w TeamRanking (types.ts). Te same średnie liczy już
+// TeamStatsController.rankings, więc podmiana na endpoint nie ruszy komponentów.
 export type TeamStats = {
   matches: number;
   wins: number;

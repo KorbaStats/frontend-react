@@ -1,12 +1,9 @@
 // Odwzorowuje MatchesController (GET /api/matches, GET /api/matches/:id).
 //
-// Jedno zastrzeżenie co do pogody: backend nie ma jeszcze żadnych danych
-// pogodowych (brak tabeli `weather`, kolumny i endpointu — zweryfikowane
-// 2026-08-05). Ustalony kontrakt zakłada, że pogoda docelowo przyjdzie
-// zagnieżdżona w payloadzie meczu, tak jak już przychodzą
-// homeTeam/awayTeam/stadium/league przez withGraphFetched z Objection. Do tego
-// czasu doklejamy ją z lokalnego mocka tutaj, w JEDNYM miejscu, żeby przejście
-// na prawdziwy fetch dotknęło jednej funkcji.
+// Backend nie ma danych pogodowych (brak tabeli `weather`, kolumny i endpointu
+// — zweryfikowane 2026-08-05). Docelowo pogoda ma przychodzić zagnieżdżona
+// w payloadzie meczu, jak homeTeam/awayTeam/stadium/league. Na razie doklejana
+// z mocka w withWeather().
 //TODO: verify against real API response once the backend has weather
 
 import { matches } from "@/data/matches";
@@ -26,13 +23,12 @@ function byNewestFirst(a: Match, b: Match): number {
 /**
  * GET /api/matches?sort=datetime&order=desc
  *
- * Prawdziwy endpoint jest paginowany (helpers/pagination.js: 20 na stronę,
- * maks. 100) i obsługuje `league_id`, `season`, `home_team_id`,
- * `away_team_id`, `page`, `limit`, `sort`, `order`.
+ * Endpoint jest paginowany (helpers/pagination.js: 20 na stronę, maks. 100)
+ * i obsługuje `league_id`, `season`, `home_team_id`, `away_team_id`, `page`,
+ * `limit`, `sort`, `order`.
  *
- * Od najnowszych to kolejność, której chce każdy widok, więc ustawiamy ją tu
- * raz, zamiast sortować w każdym miejscu wywołania. `data/matches.ts` trzyma je
- * odwrotnie (od najstarszych) — stąd jawne sortowanie.
+ * Sortowanie od najnowszych ustawiane tu raz, bo `data/matches.ts` trzyma mecze
+ * od najstarszych.
  */
 export async function getMatches(): Promise<PaginatedResponse<MatchWithWeather>> {
   const data = matches.map(withWeather).sort(byNewestFirst);
@@ -56,11 +52,9 @@ export async function getRecentMatches(
 /**
  * Wszystkie mecze jednej drużyny, u siebie i na wyjeździe, od najnowszych.
  *
- * UWAGA: dziś nie pokrywa tego żaden pojedynczy endpoint — GET /api/matches
- * filtruje `home_team_id` ALBO `away_team_id` osobno.
- * MatchStatsController._applyFilters ma już semantykę OR pod parametrem
- * `team_id`, więc proponowana zmiana w backendzie to przyjęcie tego samego
- * `team_id` w GET /api/matches.
+ * Nie pokrywa tego żaden endpoint — GET /api/matches filtruje `home_team_id`
+ * albo `away_team_id` osobno. MatchStatsController._applyFilters ma już
+ * semantykę OR pod parametrem `team_id`.
  *TODO: przejść na GET /api/matches?team_id=X, gdy backend zacznie to przyjmować
  */
 export async function getTeamMatches(

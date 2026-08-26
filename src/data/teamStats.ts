@@ -1,7 +1,6 @@
 // Dane zamockowane — do podmiany na endpointy backendu.
 // Kształt zweryfikowany z TeamStatsController (GET /api/team-stats/*).
-// Wyliczane z matches.ts, żeby liczby trzymały się listy meczów — to samo
-// podejście co w matchStats.ts.
+// Wyliczane z matches.ts, żeby liczby trzymały się listy meczów.
 
 import { matches } from "./matches"
 import type { TeamRanking, TeamStatsOverTimePoint } from "./types"

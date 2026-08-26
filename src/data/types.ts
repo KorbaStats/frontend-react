@@ -110,10 +110,9 @@ export type Match = {
   stadium: Stadium | null
   league: League | null
 
-  // Pozostałe kolumny `matches` — pełny kształt GET /api/matches/:id. Każdy
-  // zamockowany mecz już je niesie (potrzebuje ich i strona szczegółów meczu,
-  // i analiza pogodowa ligi), ale zostają opcjonalne: prawdziwe kolumny są
-  // nullowalne, a scraper zapisuje null, gdy statystyka była niedostępna.
+  // Pozostałe kolumny `matches` — pełny kształt GET /api/matches/:id.
+  // Opcjonalne, bo prawdziwe kolumny są nullowalne: scraper zapisuje null,
+  // gdy statystyka była niedostępna.
   home_big_chances?: number
   away_big_chances?: number
   home_shots_off_target?: number
@@ -168,9 +167,8 @@ export type Match = {
 
 // ---------------------------------------------------------------------------
 // match-stats (MatchStatsController) — część endpointów zwraca surowy wynik
-// knex.raw, czyli każda wartość liczbowa wraca jako string. Celowo trzymamy tu
-// `string`, żeby konsumenci musieli robić parseFloat/parseInt dokładnie tak
-// samo jak przy prawdziwym API.
+// knex.raw, czyli każda wartość liczbowa wraca jako string. Stąd `string` tutaj,
+// żeby konsumenci robili parseFloat/parseInt tak jak przy prawdziwym API.
 // ---------------------------------------------------------------------------
 
 export type MatchStatsSummary = {
@@ -249,7 +247,7 @@ export type TeamRanking = {
 }
 
 // over-time (dla drużyny) to surowe wyjście knex.raw — stringi, inaczej niż
-// `rankings`. Odwzorowuje to realną niespójność backendu między tymi endpointami.
+// `rankings`. Tak samo niespójnie zachowuje się backend.
 export type TeamStatsOverTimePoint = {
   period: string
   match_count: string
@@ -286,7 +284,5 @@ export type Weather = {
   condition: WeatherCondition
 }
 
-// UWAGA: celowo nie ma tu typu TeamWeatherScore. Weather score to wartość
-// WYLICZANA, a nie przechowywana — powstaje z meczów, które komponent i tak już
-// ma (wtedy miejsce na to jest w lib/), albo z agregatu po wszystkich drużynach
-// (services/weatherStatsService.ts). Mockowanie go byłoby mockowaniem wyniku.
+// Nie ma tu typu TeamWeatherScore — weather score jest wyliczany z meczów,
+// a nie przechowywany, więc nie ma czego mockować.

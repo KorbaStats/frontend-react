@@ -30,6 +30,8 @@ import { getConditions } from "@/lib/matchFilters";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
 import ShowMoreFooter from "@/components/shared/ShowMoreFooter"
 
+// Przy "all" statystyki filtrowane i bazowe liczą się z tego samego zbioru,
+// więc wszystkie delty wychodzą zero.
 const DEFAULT_CONDITION: WeatherCondition = "clear";
 
 const TeamDetails = () => {
@@ -56,7 +58,7 @@ const TeamDetails = () => {
     [matches, condition],
   );
 
-  // dane wyliczone dla TeamStatsCards: filteredStats (po pogodzie) i wszystkie mecze (nieodfiltrowane, jako punkt odniesienia)
+  // dane dla TeamStatsCards: po filtrze pogodowym i wszystkie mecze jako baza
   const filteredStats = useMemo(
     () => computeTeamStats(filteredMatches, teamId),
     [filteredMatches, teamId],

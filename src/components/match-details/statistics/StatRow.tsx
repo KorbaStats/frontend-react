@@ -1,7 +1,6 @@
 export type NumberRowProps = {
   label: string;
-  // undefined, bo część kolumn w types.ts jest opcjonalna (scraper zapisuje
-  // null, gdy statystyka była niedostępna)
+  // opcjonalne, bo część kolumn w types.ts jest nullowalna
   home: number | undefined;
   away: number | undefined;
   suffix?: string;

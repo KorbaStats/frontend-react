@@ -31,11 +31,9 @@ type TeamSeed = {
   home_stadium_id: number
 }
 
-// 8 drużyn na ligę — matches.ts buduje rundę i rewanż dla każdej ligi w każdym
-// sezonie, więc to ta liczba decyduje o rozmiarze zamockowanej listy meczów
-// (8 drużyn => 56 par na ligę na sezon, czyli 14 meczów na drużynę).
-// Liczba jest celowa: statystyki w podziale na pogodę potrzebują tylu meczów na
-// drużynę, żeby nawet najrzadszy warunek (śnieg, upał) miał używalną próbę.
+// 8 drużyn na ligę. matches.ts buduje z tego rundę i rewanż, czyli 56 par na
+// ligę na sezon (14 meczów na drużynę) — tyle, żeby najrzadsze warunki pogodowe
+// miały używalną próbę.
 const teamSeeds: TeamSeed[] = [
   { id: 1, name: "Legia Warszawa", short_name: "LEG", city: "Warsaw", country: "Poland", league_id: 1, home_stadium_id: 1 },
   { id: 2, name: "Lech Poznań", short_name: "LECH", city: "Poznań", country: "Poland", league_id: 1, home_stadium_id: 2 },

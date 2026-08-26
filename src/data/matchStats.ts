@@ -1,11 +1,10 @@
 // Dane zamockowane — do podmiany na endpointy backendu.
 // Kształt zweryfikowany z MatchStatsController (GET /api/match-stats/*).
-// Wartości są wyliczane z matches.ts, a nie wpisywane ręcznie, żeby agregaty
-// (zwycięstwa/remisy/porażki, punkty itd.) zawsze trzymały się listy meczów.
+// Wartości wyliczane z matches.ts, żeby agregaty trzymały się listy meczów.
 //
-// summary / goals-over-time / attendance-over-time uderzają na backendzie w
-// knex.raw() bez parsowania po stronie JS, więc każda wartość liczbowa wraca
-// jako string — odtworzone tu celowo (patrz types.ts).
+// summary / goals-over-time / attendance-over-time uderzają na backendzie
+// w knex.raw() bez parsowania, więc każda wartość liczbowa wraca jako string
+// (patrz types.ts).
 
 import { matches } from "./matches"
 import { leagues } from "./leagues"

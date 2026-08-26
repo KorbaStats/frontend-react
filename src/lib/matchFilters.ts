@@ -62,12 +62,10 @@ function teamHaystack(match: MatchWithWeather): string {
 }
 
 /**
- * Warunki pogodowe, które faktycznie występują w tym zbiorze meczów.
+ * Warunki pogodowe występujące w tym zbiorze meczów.
  *
- * Drużyna gra tylko we własnym kraju, więc filtr wypisujący wszystkie siedem
- * warunków dawałby Legii pigułkę "upał", która zawsze zwróci zero meczów.
- * O kolejności wyświetlania decydują wywołujący (należy do weatherConfig) — to
- * odpowiada wyłącznie na pytanie "które tu w ogóle istnieją".
+ * Drużyna gra tylko we własnym kraju, więc pełna lista siedmiu warunków dawałaby
+ * filtry zwracające zero meczów. Kolejność wyświetlania ustala weatherConfig.
  */
 export function getConditions(matches: MatchWithWeather[]): WeatherCondition[] {
   const conditions = new Set<WeatherCondition>()
@@ -77,8 +75,7 @@ export function getConditions(matches: MatchWithWeather[]): WeatherCondition[] {
   return [...conditions]
 }
 
-// Opcje sezonów do dropdowna, od najnowszych. Wyprowadzone z meczów, które
-// mamy pod ręką — wartość siedzi już w każdym wierszu, więc nie ma czego pobierać.
+// Sezony do dropdowna, od najnowszych. Wartość jest już w każdym meczu.
 export function getSeasons(matches: MatchWithWeather[]): string[] {
   const seasons = new Set<string>()
   for (const match of matches) {
@@ -87,7 +84,7 @@ export function getSeasons(matches: MatchWithWeather[]): string[] {
   return [...seasons].sort().reverse()
 }
 
-/** Steruje przyciskiem "reset" — ukrytym, dopóki nic nie jest zawężone. */
+/** Widoczność przycisku "reset". */
 export function hasActiveFilters(filters: MatchFilters): boolean {
   return (
     filters.query.trim() !== "" ||

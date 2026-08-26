@@ -23,7 +23,7 @@ const RecentMatchesCard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // symuluje asynchroniczne pobieranie danych (serwis na mockach)
+  // serwis na mockach, ale interfejs asynchroniczny jak przy prawdziwym API
   useEffect(() => {
     getRecentMatches()
       .then((data) => setRecentMatches(data))

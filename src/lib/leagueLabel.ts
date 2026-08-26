@@ -1,12 +1,10 @@
-// Helpery czysto prezentacyjne dla lig. Tabela `leagues` w backendzie ma
-// name/country/slug i nic poza tym — żadnej flagi ani skrótu — więc każdą krótką
-// etykietę trzeba wyprowadzić tutaj, zamiast wymyślać ją jako kolumnę.
+// Helpery prezentacyjne dla lig. Tabela `leagues` ma tylko name/country/slug,
+// bez flagi i skrótu, więc krótkie etykiety powstają tutaj.
 
 import type { League } from "@/data/types";
 
-// `slug` nie nadaje się na plakietkę ("premier-league", "laliga"), a skrócenie
-// nazwy tylko powtarzałoby etykietę obok. Kraj to jedyna informacja, którą krótka
-// plakietka jest w stanie dołożyć.
+// `slug` nie nadaje się na plakietkę ("premier-league"), a skrót nazwy
+// powtarzałby etykietę obok — zostaje kraj.
 const countryCodes: Record<string, string> = {
   Poland: "POL",
   Spain: "ESP",

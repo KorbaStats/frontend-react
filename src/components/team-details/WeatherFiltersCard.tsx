@@ -13,8 +13,8 @@ import {
 
 export type WeatherFilterValue = WeatherCondition | "all";
 
-// O kolejności wyświetlania decyduje weatherConfig; `available` zawęża ją do
-// warunków, przy których drużyna faktycznie grała.
+// Kolejność z weatherConfig; `available` zawęża do warunków, przy których
+// drużyna grała.
 const allConditions = Object.keys(weatherConfig) as WeatherCondition[];
 
 interface WeatherFiltersCardProps {

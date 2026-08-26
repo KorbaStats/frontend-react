@@ -46,7 +46,7 @@ const Matches = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
-  // oba wyliczają się z danych już w stanie — nie ma powodu pobierać ponownie przy filtrowaniu
+  // oba wyliczane z danych już w stanie, bez ponownego pobierania
   const seasons = useMemo(() => getSeasons(matches), [matches]);
   const filteredMatches = useMemo(
     () => filterMatches(matches, filters),
@@ -57,8 +57,7 @@ const Matches = () => {
   const {visibleItems, hiddenCount, showMore, reset} = useVisibleItems(filteredMatches);
 
 
-  // zawężenie listy zawsze powinno cofać na pierwszą stronę — robione tutaj,
-  // a nie w efekcie, bo reaguje na zdarzenie, a nie na stan
+  // zawężenie listy cofa paginację na początek
   const handleFiltersChange = (next: MatchFilters) => {
     setFilters(next);
     reset();

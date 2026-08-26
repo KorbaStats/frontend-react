@@ -1,8 +1,6 @@
 // Dane zamockowane — do podmiany na endpointy backendu.
-// Kontrakt wymyślony: backend nie ma jeszcze żadnych danych pogodowych. Każde
-// pole tutaj to zgadywanka, co taki endpoint mógłby zwracać, skorelowana z
-// datami meczów z matches.ts, żeby funkcja "weather score" (patrz CLAUDE.md)
-// miała co nanosić na wykresy.
+// Kontrakt wymyślony: backend nie ma danych pogodowych. Wartości generowane
+// z dat meczów z matches.ts.
 //TODO: verify against real API response
 
 import { matches } from "./matches"
@@ -28,10 +26,9 @@ function randFloat(min: number, max: number, decimals = 1): number {
   return Number((rng() * (max - min) + min).toFixed(decimals))
 }
 
-// Zgrubne miesięczne przedziały temperatur, skalibrowane dla Europy Środkowej.
-// Zamockowane mecze idą od sierpnia do maja (patrz definicje sezonów w
-// matches.ts); czerwiec i lipiec są zdefiniowane mimo to, żeby szerszy kalendarz
-// nie wpadał po cichu w wartość domyślną.
+// Miesięczne przedziały temperatur dla Europy Środkowej. Mecze idą od sierpnia
+// do maja, ale czerwiec i lipiec są zdefiniowane, żeby szerszy kalendarz nie
+// wpadał w wartość domyślną.
 const monthTempRange: Record<number, [number, number]> = {
   1: [-6, 3],
   2: [-5, 5],
@@ -47,10 +44,8 @@ const monthTempRange: Record<number, [number, number]> = {
   12: [-4, 5],
 }
 
-// Deszcz i wiatr też są sezonowe. To nie jest kosmetyka: conditionFor()
-// sprawdza snow/rain/wind *przed* extreme_heat, więc jednakowa szansa na ulewę
-// przez cały rok powodowała, że gorące mecze w Hiszpanii wciąż lądowały jako
-// `rain`.
+// Deszcz i wiatr sezonowo. conditionFor() sprawdza snow/rain/wind przed
+// extreme_heat, więc stała szansa opadów przez cały rok przykrywała upały.
 const monthRainChance: Record<number, number> = {
   1: 0.45, 2: 0.45, 3: 0.45, 4: 0.4, 5: 0.3, 6: 0.2,
   7: 0.15, 8: 0.15, 9: 0.3, 10: 0.45, 11: 0.5, 12: 0.5,
@@ -61,10 +56,8 @@ const monthWindMax: Record<number, number> = {
   7: 30, 8: 30, 9: 34, 10: 46, 11: 50, 12: 50,
 }
 
-// Przesuwa przedział o klimat kraju gospodarza, żeby ten sam sierpniowy mecz
-// był upałem w Sewilli i łagodnym wieczorem w Newcastle. Bez tego oba skrajne
-// warunki prawie się nie pojawiały: `extreme_heat` wymaga >=28C, a
-// `extreme_cold` <=-3C (patrz conditionFor niżej).
+// Przesunięcie przedziału o klimat kraju gospodarza. Bez tego `extreme_heat`
+// (>=28C) i `extreme_cold` (<=-3C) prawie nie występowały.
 const countryTempOffset: Record<string, number> = {
   Spain: 8,
   Germany: 0,

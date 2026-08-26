@@ -10,8 +10,7 @@ import {
 } from "lucide-react";
 
 // `chartColor` to token CSS, nie klasa Tailwinda — recharts ustawia fill/stroke
-// bezpośrednio na SVG, więc klasa by nie zadziałała. Wartości siedzą
-// w globals.css i mają wariant dla dark mode.
+// bezpośrednio na SVG. Wartości w globals.css, z wariantem dla dark mode.
 export const weatherConfig: Record<WeatherCondition, {
   icon: typeof Sun;
   label: string;

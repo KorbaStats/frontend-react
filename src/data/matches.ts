@@ -7,7 +7,7 @@
 //
 // Generowane deterministycznie z RNG z ziarnem, żeby zbiór danych był stabilny
 // między przeładowaniami. Każdy mecz niesie każdą kolumnę, łącznie z jsonb —
-// dlaczego, patrz withFullDetail() niżej.
+// patrz withFullDetail() niżej.
 
 import { teams } from "./teams"
 import type { Match, ParsedStat, Team } from "./types"
@@ -36,9 +36,8 @@ function pick<T>(items: T[]): T {
   return items[randInt(0, items.length - 1)]
 }
 
-// Fisher-Yates z ziarnem. Używane na liście par, żeby mecze domowe drużyny
-// rozłożyły się po całym sezonie, a nie w jednym bloku kolejnych miesięcy —
-// inaczej połowa ligi nigdy nie grałaby u siebie zimą.
+// Fisher-Yates z ziarnem. Rozrzuca mecze domowe drużyny po całym sezonie —
+// bez tego połowa ligi nigdy nie grałaby u siebie zimą.
 function shuffle<T>(items: T[]): T[] {
   const result = [...items]
   for (let i = result.length - 1; i > 0; i--) {
@@ -49,8 +48,7 @@ function shuffle<T>(items: T[]): T[] {
 }
 
 // Odwzorowuje wyjście parseStat() ze scrapera dla statystyk "x% (n/m)".
-// `completed` wyliczamy z procentu, żeby trzy pola zawsze się ze sobą zgadzały
-// (stary mock {total, accurate} potrafił dać accurate > total).
+// `completed` liczone z procentu, żeby trzy pola zawsze się zgadzały.
 function parsedStat(total: number, minPct: number, maxPct: number): ParsedStat {
   const pct = randInt(minPct, maxPct)
   return { pct, completed: Math.round((total * pct) / 100), total }
@@ -96,9 +94,9 @@ function doubleRoundRobin(leagueTeams: Team[]): Fixture[] {
 
 type SeasonDef = { season: string; months: { year: number; month: number }[] }
 
-// Prawdziwy sezon trwa od sierpnia do maja. Pełne 10 miesięcy ma tu znaczenie:
-// weather.ts wyprowadza warunki z miesiąca, więc krótsze, czysto zimowe okno
-// nigdy nie wygenerowałoby `extreme_heat` (i wykrzywiało filtry pogodowe).
+// Sezon trwa od sierpnia do maja. Pełne 10 miesięcy jest potrzebne, bo
+// weather.ts wyprowadza warunki z miesiąca — krótsze okno nie wygenerowałoby
+// `extreme_heat`.
 const seasonDefs: SeasonDef[] = [
   {
     season: "2021/2022",
@@ -235,12 +233,10 @@ function buildMatch(id: number, home: Team, away: Team, season: string, datetime
   }
 }
 
-// Uzupełnia wszystkie pozostałe kolumny `matches` (łącznie z jsonb), czyli
-// pełny kształt GET /api/matches/:id. Stosowane do każdego generowanego meczu:
-// czytają te kolumny i strona szczegółów meczu, i analiza pogodowa całej ligi,
-// a zbiór, w którym niosłyby je tylko dwa wiersze, zostawiłby oba widoki puste.
-// W types.ts zostają OPCJONALNE — prawdziwe kolumny są nullowalne, a scraper
-// faktycznie zapisuje null, gdy statystyka była niedostępna.
+// Uzupełnia pozostałe kolumny `matches` (łącznie z jsonb), czyli pełny kształt
+// GET /api/matches/:id. Stosowane do każdego meczu, bo czytają je i szczegóły
+// meczu, i analiza pogodowa ligi. W types.ts zostają opcjonalne — prawdziwe
+// kolumny są nullowalne.
 function withFullDetail(match: Match): Match {
   const homeShots = match.home_total_shots
   const awayShots = match.away_total_shots
