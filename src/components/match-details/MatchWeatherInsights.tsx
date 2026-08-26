@@ -1,5 +1,6 @@
 import type { MatchWithWeather } from "@/services/matchesService";
 
+import WeatherPercentiles from "./weather-insights/WeatherPercentiles";
 import MatchVsWeatherAverage from "./weather-insights/MatchVsWeatherAverage";
 import GoalsByWeatherRadial from "./weather-insights/GoalsByWeatherRadial";
 import RecentWeatherMatches from "./weather-insights/RecentWeatherMatches";
@@ -11,6 +12,8 @@ interface MatchWeatherInsightsProps {
 const MatchWeatherInsights = ({ match }: MatchWeatherInsightsProps) => {
   return (
     <div className="flex flex-col gap-6">
+      <WeatherPercentiles match={match} />
+
       <div className="grid grid-cols-1 gap-4 min-[1120px]:grid-cols-[3fr_2fr]">
         <MatchVsWeatherAverage match={match} />
         <GoalsByWeatherRadial match={match} />

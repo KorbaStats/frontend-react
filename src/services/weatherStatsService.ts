@@ -1,22 +1,14 @@
-// KONTRAKT WYMYŚLONY — nic w tym pliku nie odwzorowuje istniejącego endpointu.
-//
-// Backend nie ma żadnych danych pogodowych (ani tabeli, ani kolumny, ani route'a
-// — sprawdzone grepem 2026-08-05), więc te agregaty to własna propozycja
-// frontendu, co powinno zwracać przyszłe API pogodowe. Celowo mają postać
-// asynchronicznych wywołań serwisu, a nie czystych funkcji: każde potrzebuje
-// PEŁNEGO zbioru meczów, którego prawdziwy klient nigdy by nie pobierał tylko po
-// to, żeby uśrednić kilka liczb — to są właśnie te rzeczy, których miejsce jest
-// na serwerze.
+// Agregaty pogodowe. Backend nie ma danych pogodowych (brak tabeli, kolumny
+// i route'a — sprawdzone 2026-08-05), więc poniższe endpointy to propozycja
+// kształtu przyszłego API. Każda funkcja potrzebuje pełnego zbioru meczów,
+// dlatego są w services/, a nie w lib/.
 //
 // Proponowane endpointy:
 //   GET /api/weather-stats/goals-by-condition  → WeatherGoalsStat[]
 //   GET /api/weather-stats/insights            → WeatherGoalsInsights
 //   GET /api/weather-stats/coldest-match       → ColdestMatch
 //   GET /api/weather-stats/match-averages      → ConditionAverages
-//
-// Dla kontrastu lib/: wszystko, co wyliczasz z meczów JUŻ pobranych przez
-// komponent (np. filtrowanie meczów jednej drużyny po warunku pogodowym),
-// zostaje czystą funkcją w lib/ — tam żadna podróż do serwera by się nie broniła.
+//   GET /api/weather-stats/percentiles         → WeatherPercentile[]
 //TODO: verify against real API response once the backend has weather
 
 import { getMatches } from "@/services/matchesService";
@@ -47,11 +39,8 @@ export type ColdestMatch = {
 /**
  * GET /api/weather-stats/goals-by-condition?league_id=1
  *
- * `leagueId` jest opcjonalny, ale rzadko bezcelowy: ligi systematycznie różnią
- * się liczbą goli na mecz, a w prawdziwych danych pogoda koreluje z ligą (śnieg
- * pada w Polsce, nie w Hiszpanii), więc nieodfiltrowana średnia po części mierzy
- * skład ligowy, a nie pogodę. Pomijaj go tylko dla świadomie przekrojowego
- * widoku, jak Dashboard.
+ * Bez `leagueId` średnia miesza ligi, które różnią się liczbą goli na mecz.
+ * Pogoda koreluje z ligą (śnieg pada w Polsce, nie w Hiszpanii).
  */
 export async function getGoalsByWeatherCondition(
   leagueId?: number,
@@ -93,7 +82,7 @@ export async function getWeatherGoalsInsights(): Promise<WeatherGoalsInsights> {
 
 export type ConditionAverages = {
   condition: WeatherCondition;
-  /** Na ilu meczach opierają się średnie — UI to pokazuje, małe próby kłamią. */
+  /** Liczba meczów, z których liczone są średnie. */
   matchCount: number;
   averages: CombinedMatchStats;
 };
@@ -101,12 +90,7 @@ export type ConditionAverages = {
 /**
  * GET /api/weather-stats/match-averages?condition=rain&league_id=1
  *
- * Przeciętny mecz rozegrany przy danym warunku pogodowym, obie drużyny razem.
- * Siedzi tutaj, a nie w lib/, bo potrzebuje wszystkich meczów w bazie — żaden
- * klient nie powinien ich pobierać tylko po to, żeby uśrednić osiem liczb.
- *
- * To samo zastrzeżenie co przy getGoalsByWeatherCondition: pomijaj `leagueId`
- * tylko wtedy, gdy naprawdę chcesz średnią z wielu lig.
+ * Średnie statystyki meczu przy danym warunku pogodowym, obie drużyny razem.
  */
 export async function getMatchAveragesByCondition(
   condition: WeatherCondition,
@@ -127,6 +111,91 @@ export async function getMatchAveragesByCondition(
     matchCount: statsList.length,
     averages: averageCombinedStats(statsList),
   };
+}
+
+export type WeatherMetricKey =
+  | "temperature_c"
+  | "wind_speed_kmh"
+  | "precipitation_mm"
+  | "humidity_pct";
+
+export type WeatherPercentile = {
+  metric: WeatherMetricKey;
+  /** Wartość z tego meczu. */
+  value: number;
+  /** 0-100, gdzie 50 to mediana rozkładu. */
+  percentile: number;
+  /** Mediana metryki w lidze. */
+  median: number;
+  min: number;
+  max: number;
+  matchCount: number;
+};
+
+const percentileMetrics: WeatherMetricKey[] = [
+  "temperature_c",
+  "wind_speed_kmh",
+  "precipitation_mm",
+  "humidity_pct",
+];
+
+// Remisy liczone w połowie, żeby powtarzalne wartości (np. 0 mm opadów) nie
+// zawyżały percentyla.
+function percentileRank(values: number[], value: number): number {
+  if (values.length === 0) return 0;
+
+  const below = values.filter((v) => v < value).length;
+  const equal = values.filter((v) => v === value).length;
+
+  return ((below + equal / 2) / values.length) * 100;
+}
+
+// Mediana - odpowiada normie w danej lidze
+function median(values: number[]): number {
+  if (values.length === 0) return 0;
+
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+
+  return sorted.length % 2 === 0
+    ? (sorted[middle - 1] + sorted[middle]) / 2
+    : sorted[middle];
+}
+
+/**
+ * GET /api/weather-stats/percentiles?match_id=X&league_id=Y
+ *
+ * Pozycja warunków tego meczu w rozkładzie wszystkich meczów ligi.
+ */
+export async function getWeatherPercentiles(
+  matchId: number,
+  leagueId?: number,
+): Promise<WeatherPercentile[]> {
+  const { data } = await getMatches();
+
+  const match = data.find((m) => m.id === matchId);
+  if (!match?.weather) return [];
+
+  const population = data.filter(
+    (m) =>
+      m.weather !== null &&
+      (leagueId === undefined || m.league_id === leagueId),
+  );
+
+  return percentileMetrics.map((metric) => {
+    const values = population.map((m) => m.weather![metric]);
+    const value = match.weather![metric];
+
+    return {
+      metric,
+      value,
+      percentile: percentileRank(values, value),
+      median: median(values),
+      min: Math.min(...values),
+      max: Math.max(...values),
+      matchCount: values.length,
+    };
+  });
 }
 
 /** GET /api/weather-stats/coldest-match */
