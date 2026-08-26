@@ -118,14 +118,13 @@ const MatchVsWeatherAverage = ({ match }: MatchVsWeatherAverageProps) => {
 
   const matchStats = getCombinedMatchStats(match);
 
-  // null (mecz bez ligi) znaczy dla serwisu "nie filtruj", stąd konwersja.
+  // serwis oczekuje undefined, nie null
   const leagueId = match.league_id ?? undefined;
 
   useEffect(() => {
     if (condition === null) return;
 
-    // Zawężone do ligi tego meczu — ligi różnią się liczbą goli i kartek, więc
-    // średnia z czterech lig naraz mierzyłaby po części skład ligowy, a nie pogodę.
+    // tylko liga tego meczu — ligi różnią się liczbą goli i kartek
     getMatchAveragesByCondition(condition, leagueId)
       .then((data) => {
         setConditionAverages(data);
@@ -217,6 +216,9 @@ const MatchVsWeatherAverage = ({ match }: MatchVsWeatherAverageProps) => {
                     borderRadius: "var(--radius)",
                     fontSize: 13,
                   }}
+                  // bez tego nazwa statystyki zostaje w domyślnym, czarnym
+                  // kolorze recharts
+                  labelStyle={{ color: "var(--foreground)" }}
                 />
                 <Legend wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
                 <Bar

@@ -93,6 +93,10 @@ const GoalsWeatherChart = () => {
                 borderRadius: "var(--radius)",
                 fontSize: 13,
               }}
+              // bez tego tekst tooltipa zostaje w domyślnym, czarnym kolorze
+              // recharts (contentStyle stylizuje samą ramkę)
+              labelStyle={{ color: "var(--foreground)" }}
+              itemStyle={{ color: "var(--foreground)" }}
             />
             <Bar dataKey="avgGoals" fill="var(--primary)" radius={[6, 6, 0, 0]} />
           </BarChart>

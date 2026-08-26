@@ -41,12 +41,10 @@ const GoalsByWeatherRadial = ({ match }: GoalsByWeatherRadialProps) => {
   const [error, setError] = useState<string | null>(null);
 
   const condition = match.weather?.condition ?? null;
-  // null (mecz bez ligi) znaczy dla serwisu "nie filtruj", stąd konwersja.
   const leagueId = match.league_id ?? undefined;
 
   useEffect(() => {
-    // Tylko liga tego meczu — inaczej "średnia goli przy śniegu" mierzyłaby
-    // po części to, że śnieg pada w Ekstraklasie, a nie w LaLiga.
+    // tylko liga tego meczu
     getGoalsByWeatherCondition(leagueId)
       .then((stats) => {
         setChartData(
@@ -70,11 +68,7 @@ const GoalsByWeatherRadial = ({ match }: GoalsByWeatherRadialProps) => {
       .finally(() => setIsLoading(false));
   }, [leagueId]);
 
-  /*
-  *  Skala łuków. Bez wspólnej górnej granicy recharts rysowałby każdy łuk na
-  *  pełny okrąg i wszystkie wyglądałyby identycznie. Zapas 20% nad maksimum,
-  * żeby najdłuższy łuk nie domykał się w pełne koło.
-  */
+  // skala łóków - zeby zaden nie domykal sie na 100% przestrzeni
   const maxGoals = Math.max(...chartData.map((row) => row.avgGoals), 0) * 1.2;
 
   const placeholder = isLoading
@@ -147,6 +141,8 @@ const GoalsByWeatherRadial = ({ match }: GoalsByWeatherRadialProps) => {
                     borderRadius: "var(--radius)",
                     fontSize: 13,
                   }}
+                  labelStyle={{ display: "none" }}
+                  itemStyle={{ color: "var(--foreground)" }}
                 />
               </RadialBarChart>
             </ResponsiveContainer>
