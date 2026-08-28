@@ -14,8 +14,8 @@ type NavLink = {
 const navLinks: NavLink[] = [
   { label: "Strona główna", to: "/", isActive: (pathname) => pathname === "/" },
   { label: "Mecze", to: "/matches", isActive: (pathname) => pathname.startsWith("/match")},
-  { label: "Drużyny", isActive: (pathname) => pathname.startsWith("/team") },
-  { label: "Predykcje", isActive: () => false },
+  { label: "Drużyny", to: "/teams", isActive: (pathname) => pathname.startsWith("/team") },
+  { label: "Predykcje", to: "/predictions", isActive: (pathname) => pathname === "/predictions" },
 ];
 
 const Navbar = () => {
@@ -24,7 +24,7 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-background/70 backdrop-blur-md border-b">
-      <div className="mx-auto flex h-16 w-full max-w-400 items-center justify-between gap-4 px-6">
+      <div className="mx-auto flex h-16 w-full max-w-360 items-center justify-between gap-4 px-6">
         <Link to="/">
           <div className="flex items-center gap-2">
             <div className="border bg-white dark:bg-primary p-1.5 rounded-sm">
