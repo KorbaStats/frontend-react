@@ -69,8 +69,8 @@ function conditionFor(temperature: number, precipitation: number, wind: number, 
   if (temperature <= 0 && precipitation > 0.5) return "snow"
   if (temperature <= -3) return "extreme_cold"
   if (precipitation > 2) return "rain"
-  if (wind > 35) return "wind"
   if (temperature >= 28) return "extreme_heat"
+  if (wind > 35) return "wind"
   if (cloudCover > 60) return "clouds"
   return "clear"
 }
