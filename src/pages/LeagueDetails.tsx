@@ -12,13 +12,14 @@ const LeagueDetails = () => {
 
   const [league, setLeague] = useState<League>();
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getLeagueById(leagueId)
       .then(setLeague)
       .catch(err => {
-        setError(err);
+        setError("Failed to load data");
+        console.log(err);
       })
       .finally(() => setIsLoading(false));
   }, [leagueId]);
