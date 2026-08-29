@@ -7,6 +7,12 @@ import {
   Wind,
   ThermometerSun,
   ThermometerSnowflake,
+  Thermometer,
+  Snowflake,
+  Flame,
+  CloudDrizzle,
+  Leaf,
+  Tornado,
 } from "lucide-react";
 
 // `chartColor` to token CSS, nie klasa Tailwinda — recharts ustawia fill/stroke
@@ -26,3 +32,22 @@ export const weatherConfig: Record<WeatherCondition, {
   extreme_heat: { icon: ThermometerSun, label: "Upał", bg: "bg-red-100 dark:bg-red-900/40", text: "text-red-500 dark:text-red-400", chartColor: "var(--weather-extreme-heat)" },
   extreme_cold: { icon: ThermometerSnowflake, label: "Mróz", bg: "bg-indigo-100 dark:bg-indigo-900/40", text: "text-indigo-500 dark:text-indigo-400", chartColor: "var(--weather-extreme-cold)" },
 };
+
+// klucze pasm są unikalne między osiami, więc wystarczy płaska mapa
+export const bandIcons: Record<string, typeof Sun> = {
+  // temperatura
+  freezing: ThermometerSnowflake,
+  cold: Snowflake,
+  mild: Thermometer,
+  warm: ThermometerSun,
+  hot: Flame,
+  // opady
+  dry: Sun,
+  light: CloudDrizzle,
+  heavy: CloudRain,
+  snow: CloudSnow,
+  // wiatr
+  calm: Leaf,
+  breezy: Wind,
+  strong: Tornado,
+}

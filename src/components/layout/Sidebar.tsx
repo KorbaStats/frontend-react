@@ -1,64 +1,40 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation } from "react-router";
 
-import { getLeagues } from "@/services/leaguesService";
-import type { League } from "@/data/types";
-import { getLeagueCountryCode } from "@/lib/leagueLabel";
+import type { MatchFilters } from "@/lib/matchFilters";
+import { cn } from "@/lib/utils";
 
-import { Star, Trophy } from "lucide-react";
+import FiltersSidebar from "@/components/layout/sidebar-type/FiltersSidebar";
+import NavSidebar from "@/components/layout/sidebar-type/NavSidebar";
 
-const LeaguesAside = () => {
-  const navigate = useNavigate();
-  const [leagues, setLeagues] = useState<League[]>([]);
+interface SidebarProps {
+  filters: MatchFilters;
+  onFiltersChange: (next: MatchFilters) => void;
+}
 
-  useEffect(() => {
-    getLeagues().then((res) => setLeagues(res.data));
-  }, []);
+const Sidebar = ({ filters, onFiltersChange }: SidebarProps) => {
+  const { pathname } = useLocation();
+
+  const isMatchesList = pathname === "/matches";
+  // "/teams" (lista) nie łapie się na filtry
+  const isTeamPage = pathname.startsWith("/team/");
+  const showFilters = isMatchesList || isTeamPage;
 
   return (
-    <div className="rounded-2xl bg-card p-4 shadow-sm border border-border">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
-        <Trophy className="h-4 w-4 text-primary" />
-        Ligi
-      </h3>
-      <ul className="flex flex-col gap-1">
-        {leagues.map((league) => (
-          <li key={league.id}>
-            <button
-              className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-sm font-medium hover:cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors"
-              onClick={() => navigate(`/league/${league.id}`)}
-            >
-              <span className="flex h-6 w-9 shrink-0 items-center justify-center rounded-md bg-accent/50 text-[10px] font-semibold tracking-wide text-muted-foreground">
-                {getLeagueCountryCode(league)}
-              </span>
-              <span>{league.name}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-const FavouriteTeams = () => {
-  return (
-    <div className="rounded-2xl bg-card p-4 shadow-sm border border-border">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
-        <Star className="h-4 w-4 text-primary" />
-        Ulubione drużyny
-      </h3>
-      <p className="text-sm text-muted-foreground text-center">Brak ulubionych drużyn</p>
-      {/* TODO: */}
-    </div>
-  );
-};
-
-const Sidebar = () => {
-  return (
-    // Ligi
-    <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] w-64 shrink-0 flex-col gap-4 overflow-y-auto p-4 lg:flex xl:w-80">
-      <FavouriteTeams />
-      <LeaguesAside />
+    <aside
+      className={cn(
+        "shrink-0 px-6 py-4 lg:sticky lg:top-16 lg:min-h-[calc(100vh-4rem)] lg:w-80 lg:self-start lg:border-r xl:w-88 ",
+        showFilters ? "border-b lg:border-b-0" : "hidden lg:block",
+      )}
+    >
+      {showFilters ? (
+        <FiltersSidebar
+          value={filters}
+          onChange={onFiltersChange}
+          showMatchFields={isMatchesList}
+        />
+      ) : (
+        <NavSidebar />
+      )}
     </aside>
   );
 };

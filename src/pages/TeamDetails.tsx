@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router";
 import { History } from "lucide-react";
 
-import type { Team, WeatherCondition } from "@/data/types";
+import type { Team } from "@/data/types";
 
 import {
   getTeamMatches,
@@ -20,19 +20,13 @@ import {
 
 import MatchesTable from "@/components/shared/MatchesTable";
 import TeamInfoCard from "@/components/team-details/TeamInfoCard";
-import WeatherFiltersCard, {
-  type WeatherFilterValue,
-} from "@/components/team-details/WeatherFiltersCard";
 import TeamStatsCards from "@/components/team-details/TeamStatsCards";
 
 import { computeTeamStats } from "@/lib/teamStats";
-import { getConditions } from "@/lib/matchFilters";
+import { hasBandFilters, matchesBands } from "@/lib/matchFilters";
+import { useLayoutFilters } from "@/hooks/useLayoutFilters";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
 import ShowMoreFooter from "@/components/shared/ShowMoreFooter"
-
-// Przy "all" statystyki filtrowane i bazowe liczą się z tego samego zbioru,
-// więc wszystkie delty wychodzą zero.
-const DEFAULT_CONDITION: WeatherCondition = "clear";
 
 const TeamDetails = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -43,19 +37,11 @@ const TeamDetails = () => {
   const [matches, setMatches] = useState<MatchWithWeather[]>([]);
   const [team, setTeam] = useState<Team>();
 
-  // stany filtrów pogodowych
-  const [condition, setCondition] = useState<WeatherFilterValue>(DEFAULT_CONDITION);
+  const { filters } = useLayoutFilters();
 
-  // warunki dostępne dla drużyny (wszystkie, przy których grała)
-  const availableConditions = useMemo(() => getConditions(matches), [matches]);
-
-  // mecze odfiltrowane po wybranym warunku
   const filteredMatches = useMemo(
-    () =>
-      condition === "all"
-        ? matches
-        : matches.filter((m) => m.weather?.condition === condition),
-    [matches, condition],
+    () => matches.filter((match) => matchesBands(match, filters)),
+    [matches, filters],
   );
 
   // dane dla TeamStatsCards: po filtrze pogodowym i wszystkie mecze jako baza
@@ -73,21 +59,14 @@ const TeamDetails = () => {
   const { visibleItems, hiddenCount, showMore, reset } =
     useVisibleItems(filteredMatches);
 
-  const handleConditionChange = (next: WeatherFilterValue) => {
-    setCondition(next);
-    reset();
-  }
+  useEffect(() => reset(), [filters, reset]);
 
   // pobieranie danych po teamId
   useEffect(() => {
     Promise.all([getTeamMatches(teamId), getTeamById(teamId)])
       .then(([matches, team]) => {
         setMatches(matches);
-        reset(); //reset pagination each re-render (switching teams)
-        const available = getConditions(matches); //reset for active condition filter
-        setCondition(
-          available.includes(DEFAULT_CONDITION) ? DEFAULT_CONDITION : "all", //reset to default condition; all for backup if team doesnt played in default condition
-        );
+        reset(); // reset paginacji przy przełączeniu drużyny
         setTeam(team);
       })
       .catch((err) => {
@@ -121,16 +100,11 @@ const TeamDetails = () => {
   return (
     <>
       <TeamInfoCard matches={matches} team={team} />
-      {/* Filtry pogodowe */}
-      <WeatherFiltersCard
-        value={condition}
-        onChange={handleConditionChange}
-        available={availableConditions}
-        shownCount={filteredMatches.length}
-        totalCount={matches.length}
-      />
       {/* Statystyki */}
-      <TeamStatsCards stats={filteredStats} baseline={baselineStats} />
+      <TeamStatsCards
+        stats={filteredStats}
+        baseline={hasBandFilters(filters) ? baselineStats : null}
+      />
       {/* Karta z tabelą meczów */}
       <Card>
         <CardHeader className="border-b pb-6">
@@ -139,7 +113,7 @@ const TeamDetails = () => {
             Mecze drużyny
           </CardTitle>
           <CardDescription>
-            Mecze z panującymi warunkami pogodowymi
+            Pokazano {filteredMatches.length} z {matches.length} meczów
           </CardDescription>
         </CardHeader>
         <CardContent className="px-0">

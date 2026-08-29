@@ -72,3 +72,15 @@ export async function getMatchById(id: number): Promise<MatchWithWeather> {
   if (!match) throw new Error(`Match id=${id} not found`);
   return withWeather(match);
 }
+
+/**
+ * Lista sezonów do filtrów, od najnowszego. Backend nie ma takiego endpointu.
+ *TODO: verify against real API response
+ */
+export async function getAvailableSeasons(): Promise<string[]> {
+  const seasons = new Set<string>();
+  for (const match of matches) {
+    if (match.season !== null) seasons.add(match.season);
+  }
+  return [...seasons].sort().reverse();
+}
