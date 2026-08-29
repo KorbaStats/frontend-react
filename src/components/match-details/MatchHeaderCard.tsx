@@ -25,6 +25,7 @@ interface MatchHeaderCardProps {
   match: MatchWithWeather;
 }
 
+// Meta Item: Ikonka + tekst (np Calendar + data)
 const MetaItem = ({
   icon: Icon,
   label,
@@ -53,9 +54,8 @@ const WeatherTile = ({
 }) => (
   <div className="min-w-0 rounded-lg border bg-card px-3 py-2">
     <dt className="flex items-center gap-1.5 text-xs text-muted-foreground">
-      {/* min-w-0 + break-words: "Zachmurzenie" to jedno długie słowo */}
       <Icon size={14} className="shrink-0" />
-      <span className="min-w-0 break-words">{label}</span>
+      <span className="min-w-0 wrap-break-word">{label}</span>
     </dt>
     <dd className="mt-0.5 text-lg font-semibold tabular-nums text-foreground">
       {value}

@@ -65,7 +65,7 @@ const countryTempOffset: Record<string, number> = {
   Poland: -3,
 }
 
-function conditionFor(temperature: number, precipitation: number, wind: number, cloudCover: number): WeatherCondition {
+function weatherLabel(temperature: number, precipitation: number, wind: number, cloudCover: number): WeatherCondition {
   if (temperature <= 0 && precipitation > 0.5) return "snow"
   if (temperature <= -3) return "extreme_cold"
   if (precipitation > 2) return "rain"
@@ -94,7 +94,7 @@ export const weather: Weather[] = matches.map((match) => {
     wind_speed_kmh,
     humidity_pct,
     cloud_cover_pct,
-    condition: conditionFor(temperature_c, precipitation_mm, wind_speed_kmh, cloud_cover_pct),
+    condition: weatherLabel(temperature_c, precipitation_mm, wind_speed_kmh, cloud_cover_pct),
   }
 })
 
