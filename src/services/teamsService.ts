@@ -19,7 +19,7 @@ export async function getTeams(): Promise<PaginatedResponse<Team>> {
  * GET /api/teams/:id — przy braku zwraca 404 `{ error: "Team not found" }`.
  *
  * Na backendzie za requireAuth + requirePermission("teams"), a strona drużyny
- * jest trasą publiczną. Luka opisana w CLAUDE.md.
+ * jest trasą publiczną.
  */
 export async function getTeamById(id: number): Promise<Team> {
   const team = teams.find((t) => t.id === id);

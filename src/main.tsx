@@ -16,7 +16,7 @@ import Teams from './pages/Teams.tsx'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
-    <BrowserRouter>
+      <BrowserRouter>
         <Routes>
           {/*TODO: Auth */}
           <Route path='/login' element={<div>Login page...</div>} />

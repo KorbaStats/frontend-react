@@ -40,6 +40,7 @@ const TeamDetails = () => {
 
   const { id } = useParams();
   const teamId = Number(id);
+
   const [matches, setMatches] = useState<MatchWithWeather[]>([]);
   const [team, setTeam] = useState<Team>();
 
@@ -92,7 +93,7 @@ const TeamDetails = () => {
       })
       .catch((err) => {
         setError(`Nie znaleziono drużyny o danym id.`);
-        console.log(err);
+        console.error(err);
       })
       .finally(() => setIsLoading(false));
   }, [teamId, reset]);
