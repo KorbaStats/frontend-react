@@ -8,6 +8,7 @@ export type WeatherProfile = {
   temp: TempBand
   precip: PrecipBand
   wind: WindBand
+  severity: number
 }
 
 // progi wymyślone, nie bezposrednio z danych 
@@ -16,6 +17,15 @@ export const weatherThresholds = {
   precip: { dry: 0.2, light: 2.5 },
   wind: { calm: 15, breezy: 30 },
   snowTemp: 0,
+} as const
+
+export const severityParams = {
+  idealTemp: 15,
+  tempRange: 20, // odchylenie o tyle stopni od idealnej = maksymalna kara
+  precipMax: 8, // mm, powyżej kara maksymalna
+  windFree: 10, // km/h bez kary
+  windRange: 40, // km/h ponad windFree do kary maksymalnej
+  weights: { temp: 0.4, precip: 0.35, wind: 0.25 },
 } as const
 
 export function tempBandFor(temperature_c: number): TempBand {
@@ -42,11 +52,30 @@ export function windBandFor(wind_speed_kmh: number): WindBand {
   return "strong"
 }
 
+function clamp01(value: number): number {
+  return Math.min(Math.max(value, 0), 1)
+}
+
+export function severityFor(weather: Weather): number {
+  const p = severityParams
+
+  const tempPenalty = clamp01(Math.abs(weather.temperature_c - p.idealTemp) / p.tempRange)
+  const precipPenalty = clamp01(weather.precipitation_mm / p.precipMax)
+  const windPenalty = clamp01(Math.max(weather.wind_speed_kmh - p.windFree, 0) / p.windRange)
+
+  return clamp01(
+    p.weights.temp * tempPenalty +
+      p.weights.precip * precipPenalty +
+      p.weights.wind * windPenalty,
+  )
+}
+
 export function profileFor(weather: Weather): WeatherProfile {
   return {
     temp: tempBandFor(weather.temperature_c),
     precip: precipBandFor(weather.precipitation_mm, weather.temperature_c),
     wind: windBandFor(weather.wind_speed_kmh),
+    severity: severityFor(weather),
   }
 }
 
