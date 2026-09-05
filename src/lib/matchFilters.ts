@@ -1,37 +1,66 @@
-import type { WeatherCondition } from "@/data/types"
 import type { MatchWithWeather } from "@/services/matchesService"
+import { profileFor, type PrecipBand, type TempBand, type WindBand } from "./weatherProfile"
 
-export type MatchFilters = {
+// OR w obrębie osi, AND między osiami; pusta tablica = oś nie ogranicza
+export type WeatherBandFilters = {
+  temp: TempBand[]
+  precip: PrecipBand[]
+  wind: WindBand[]
+}
+
+export type MatchFilters = WeatherBandFilters & {
   query: string
-  condition: WeatherCondition | "all"
   season: string | "all"
   leagueId: number | "all"
   dateFrom: string
   dateTo: string
 }
 
+export const emptyBandFilters: WeatherBandFilters = {
+  temp: [],
+  precip: [],
+  wind: [],
+}
+
 export const emptyFilters: MatchFilters = {
+  ...emptyBandFilters,
   query: "",
-  condition: "all",
   season: "all",
   leagueId: "all",
   dateFrom: "",
   dateTo: "",
 }
 
+// do wyszukiwania bez polskich znakow np. Śląsk -> slask
 function normalize(text: string): string {
   return text.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "")
+}
+
+// czy filtry są zaznaczone
+export function hasBandFilters(filters: WeatherBandFilters): boolean {
+  return filters.temp.length > 0 || filters.precip.length > 0 || filters.wind.length > 0
+}
+
+// czy dany mecz przechodzi przez filtry pogodowe
+export function matchesBands(match: MatchWithWeather, filters: WeatherBandFilters): boolean {
+  if (!hasBandFilters(filters)) return true
+  if (match.weather === null) return false
+
+  const profile = profileFor(match.weather)
+  if (filters.temp.length > 0 && !filters.temp.includes(profile.temp)) return false
+  if (filters.precip.length > 0 && !filters.precip.includes(profile.precip)) return false
+  if (filters.wind.length > 0 && !filters.wind.includes(profile.wind)) return false
+  return true
 }
 
 export function filterMatches(
   matches: MatchWithWeather[],
   filters: MatchFilters
 ): MatchWithWeather[] {
-  // normalizowane raz na cały przebieg, nie osobno dla każdego meczu
   const needle = normalize(filters.query.trim())
 
   return matches.filter((match) => {
-    if (filters.condition !== "all" && match.weather?.condition !== filters.condition) return false;
+    if (!matchesBands(match, filters)) return false;
     if (filters.season !== "all" && match.season !== filters.season) return false;
     if (filters.leagueId !== "all" && match.league_id !== filters.leagueId) return false;
 
@@ -61,34 +90,11 @@ function teamHaystack(match: MatchWithWeather): string {
   )
 }
 
-/**
- * Warunki pogodowe występujące w tym zbiorze meczów.
- *
- * Drużyna gra tylko we własnym kraju, więc pełna lista siedmiu warunków dawałaby
- * filtry zwracające zero meczów. Kolejność wyświetlania ustala weatherConfig.
- */
-export function getConditions(matches: MatchWithWeather[]): WeatherCondition[] {
-  const conditions = new Set<WeatherCondition>()
-  for (const match of matches) {
-    if (match.weather !== null) conditions.add(match.weather.condition)
-  }
-  return [...conditions]
-}
-
-// Sezony do dropdowna, od najnowszych. Wartość jest już w każdym meczu.
-export function getSeasons(matches: MatchWithWeather[]): string[] {
-  const seasons = new Set<string>()
-  for (const match of matches) {
-    if (match.season !== null) seasons.add(match.season)
-  }
-  return [...seasons].sort().reverse()
-}
-
-/** Widoczność przycisku "reset". */
+// reset filtrow
 export function hasActiveFilters(filters: MatchFilters): boolean {
   return (
     filters.query.trim() !== "" ||
-    filters.condition !== "all" ||
+    hasBandFilters(filters) ||
     filters.season !== "all" ||
     filters.leagueId !== "all" ||
     filters.dateFrom !== "" ||

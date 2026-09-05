@@ -72,3 +72,16 @@ export async function getMatchById(id: number): Promise<MatchWithWeather> {
   if (!match) throw new Error(`Match id=${id} not found`);
   return withWeather(match);
 }
+
+/**
+ * Sezony do filtrów, od najnowszego. Sidebar nie ma listy meczów, więc nie da
+ * się ich policzyć w lib/.
+ *TODO: zweryfikować z prawdziwym API — backend nie ma takiego endpointu
+ */
+export async function getAvailableSeasons(): Promise<string[]> {
+  const seasons = new Set<string>();
+  for (const match of matches) {
+    if (match.season !== null) seasons.add(match.season);
+  }
+  return [...seasons].sort().reverse();
+}

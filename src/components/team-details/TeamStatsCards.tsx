@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface TeamStatsProps {
   stats: TeamStats;
-  baseline: TeamStats;
+  baseline: TeamStats | null;
 }
 
 type MetricCard = {
@@ -41,6 +41,7 @@ function formatMetricCard(
   baselineValue: number | null,
   decimals: number,
   unit: string,
+  emptyMessage: string,
 ) {
   const displayValue = value !== null ? `${value.toFixed(decimals)}${unit}` : "—";
 
@@ -49,7 +50,7 @@ function formatMetricCard(
 
   const deltaText =
     delta === null
-      ? "Brak danych do porównania"
+      ? emptyMessage
       : delta === 0
         ? "W linii ze średnią."
         : `${delta > 0 ? "+" : ""}${delta.toFixed(decimals)}${unit} vs. średnia`;
@@ -70,9 +71,12 @@ const TeamStatsCards = ({ stats, baseline }: TeamStatsProps) => {
       {metrics.map((metric) => {
         const { displayValue, deltaText, deltaClass } = formatMetricCard(
           stats[metric.key],
-          baseline[metric.key],
+          baseline === null ? null : baseline[metric.key],
           metric.decimals,
           metric.unit,
+          baseline === null
+            ? "Wybierz warunki pogodowe"
+            : "Brak danych do porównania",
         );
 
         return (
