@@ -12,5 +12,7 @@ Backend w trakcie budowy. Frontend rozwijany równolegle na warstwie mocków odz
 Warstwa serwisów odseparowana od komponentów, przygotowana pod podmianę na realne endpointy.
 
 ## Uruchomienie
+```bash
 npm install
 npm run dev
+```
