@@ -12,7 +12,7 @@ export type WeatherProfile = {
 
 // progi wymyślone, nie bezposrednio z danych 
 export const weatherThresholds = {
-  temp: { freezing: 0, cold: 8, mild: 18, warm: 26 },
+  temp: { freezing: 0, cold: 8, mild: 18, warm: 28 },
   precip: { dry: 0.2, light: 2.5 },
   wind: { calm: 15, breezy: 30 },
   snowTemp: 0,
@@ -60,8 +60,8 @@ export const weatherAxes = [
       { value: "freezing" as const, label: "≤ 0" },
       { value: "cold" as const, label: "0 – 8" },
       { value: "mild" as const, label: "8 – 18" },
-      { value: "warm" as const, label: "18 – 26" },
-      { value: "hot" as const, label: "> 26" },
+      { value: "warm" as const, label: "18 – 28" },
+      { value: "hot" as const, label: "> 28" },
     ],
   },
   {
@@ -69,8 +69,8 @@ export const weatherAxes = [
     label: "Opady",
     bands: [
       { value: "dry" as const, label: "Brak" },
-      { value: "light" as const, label: "Mżawka" },
-      { value: "heavy" as const, label: "Ulewa" },
+      { value: "light" as const, label: "Niskie" },
+      { value: "heavy" as const, label: "Wysokie" },
       { value: "snow" as const, label: "Śnieg" },
     ],
   },

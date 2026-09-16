@@ -27,6 +27,7 @@ import { hasBandFilters, matchesBands } from "@/lib/matchFilters";
 import type { FiltersContext } from "@/components/layout/MainLayout";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
 import ShowMoreFooter from "@/components/shared/ShowMoreFooter"
+import WeatherScoreBadge from "@/components/shared/WeatherScoreBadge";
 
 const TeamDetails = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -58,9 +59,7 @@ const TeamDetails = () => {
   );
 
   // własny hook do paginacji
-  const { visibleItems, hiddenCount, showMore, reset } =
-    useVisibleItems(filteredMatches);
-
+  const { visibleItems, hiddenCount, showMore, reset } = useVisibleItems(filteredMatches);
   useEffect(() => reset(), [filters, reset]);
 
   // pobieranie danych po teamId
@@ -108,6 +107,7 @@ const TeamDetails = () => {
         baseline={hasBandFilters(filters) ? baselineStats : null}
       />
       {/* Karta z tabelą meczów */}
+      <WeatherScoreBadge matches={matches} teamId={teamId} />
       <Card>
         <CardHeader className="border-b pb-6">
           <CardTitle className="flex items-center gap-2 text-base">

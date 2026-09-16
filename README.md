@@ -4,8 +4,8 @@ Aplikacja webowa do analizy zależności między warunkami pogodowymi a statysty
 W trakcie realizacji
 
 ## Stack
-React, TypeScript, Vite — frontend
-Node.js, Express, PostgreSQL — backend (osobne repo)
+- React, TypeScript, Vite — frontend
+- Node.js, Express, PostgreSQL — backend (osobne repo)
 
 ## Status
 Backend w trakcie budowy. Frontend rozwijany równolegle na warstwie mocków odzwierciedlającej docelową strukturę odpowiedzi API. 
