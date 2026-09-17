@@ -4,20 +4,22 @@
 // dlatego są w services/, a nie w lib/.
 //
 // Proponowane endpointy:
-//   GET /api/weather-stats/goals-by-condition  → WeatherGoalsStat[]
-//   GET /api/weather-stats/insights            → WeatherGoalsInsights
-//   GET /api/weather-stats/coldest-match       → ColdestMatch
-//   GET /api/weather-stats/match-averages      → ConditionAverages
-//   GET /api/weather-stats/percentiles         → WeatherPercentile[]
+//   GET /api/weather-stats/goals-by-condition -> WeatherGoalsStat[]
+//   GET /api/weather-stats/insights           -> WeatherGoalsInsights
+//   GET /api/weather-stats/coldest-match      -> ColdestMatch
+//   GET /api/weather-stats/match-averages     -> ConditionAverages
+//   GET /api/weather-stats/percentiles        -> WeatherPercentile[]
+//   GET /api/teams/:id/weather-score          -> WeatherScore | null
 //TODO: verify against real API response once the backend has weather
 
-import { getMatches } from "@/services/matchesService";
+import { getMatches, getTeamMatches } from "@/services/matchesService";
 import type { WeatherCondition } from "@/data/types";
 import {
   averageCombinedStats,
   getCombinedMatchStats,
   type CombinedMatchStats,
 } from "@/lib/combinedMatchStats";
+ import { type WeatherScore, computeWeatherScore } from "@/lib/weatherScore";
 
 export type WeatherGoalsStat = {
   condition: WeatherCondition;
@@ -210,4 +212,10 @@ export async function getColdestMatch(): Promise<ColdestMatch> {
       temperature_c: match.weather!.temperature_c,
     }))
     .sort((a, b) => a.temperature_c - b.temperature_c)[0];
+}
+
+/** GET /api/teams/:id/weather-score  */
+export async function getTeamWeatherScore(teamId: number): Promise<WeatherScore | null> {
+  const teamMatches = await getTeamMatches(teamId);
+  return computeWeatherScore(teamMatches, teamId);
 }

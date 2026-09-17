@@ -67,7 +67,7 @@ function formatMetricCard(
 
 const TeamStatsCards = ({ stats, baseline }: TeamStatsProps) => {
   return (
-    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-2">
       {metrics.map((metric) => {
         const { displayValue, deltaText, deltaClass } = formatMetricCard(
           stats[metric.key],
@@ -80,14 +80,16 @@ const TeamStatsCards = ({ stats, baseline }: TeamStatsProps) => {
         );
 
         return (
-          <Card key={metric.key}>
-            <CardHeader className="flex justify-between items-center">
-              <CardTitle>{metric.label}</CardTitle>
-              <metric.Icon size={16} />
+          <Card key={metric.key} className="gap-3 py-5">
+            <CardHeader className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {metric.label}
+              </CardTitle>
+              <metric.Icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent>
-              <h1 className="text-3xl font-bold">{displayValue}</h1>
-              <h2 className={`text-sm ${deltaClass}`}>{deltaText}</h2>
+            <CardContent className="flex flex-col gap-1">
+              <p className="text-2xl font-bold tabular-nums">{displayValue}</p>
+              <p className={`text-xs ${deltaClass}`}>{deltaText}</p>
             </CardContent>
           </Card>
         );

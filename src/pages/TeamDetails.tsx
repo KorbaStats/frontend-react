@@ -1,14 +1,16 @@
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useOutletContext, useParams } from "react-router";
-import { History } from "lucide-react";
+import { ChartColumn, History } from "lucide-react";
 
 import type { Team } from "@/data/types";
+import type { FiltersContext } from "@/components/layout/MainLayout";
 
-import {
-  getTeamMatches,
-  type MatchWithWeather,
-} from "@/services/matchesService";
+import { getTeamMatches, type MatchWithWeather } from "@/services/matchesService";
 import { getTeamById } from "@/services/teamsService";
+
+import { computeTeamStats } from "@/lib/teamStats";
+import { hasBandFilters, matchesBands } from "@/lib/matchFilters";
+import { useVisibleItems } from "@/hooks/useVisibleItems";
 
 import {
   Card,
@@ -17,37 +19,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import MatchesTable from "@/components/shared/MatchesTable";
+import ShowMoreFooter from "@/components/shared/ShowMoreFooter";
+import WeatherScoreCard from "@/components/shared/WeatherScoreCard";
 import TeamInfoCard from "@/components/team-details/TeamInfoCard";
 import TeamStatsCards from "@/components/team-details/TeamStatsCards";
 
-import { computeTeamStats } from "@/lib/teamStats";
-import { hasBandFilters, matchesBands } from "@/lib/matchFilters";
-import type { FiltersContext } from "@/components/layout/MainLayout";
-import { useVisibleItems } from "@/hooks/useVisibleItems";
-import ShowMoreFooter from "@/components/shared/ShowMoreFooter"
-import WeatherScoreBadge from "@/components/shared/WeatherScoreBadge";
-
 const TeamDetails = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
-
   const { id } = useParams();
   const teamId = Number(id);
-
-  const [matches, setMatches] = useState<MatchWithWeather[]>([]);
-  const [team, setTeam] = useState<Team>();
-
-  // ze wspólnych filtrów strona drużyny używa tylko pasm pogodowych
   const { filters } = useOutletContext<FiltersContext>();
+
+  const [team, setTeam] = useState<Team>();
+  const [matches, setMatches] = useState<MatchWithWeather[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>();
 
   const filteredMatches = useMemo(
     () => matches.filter((match) => matchesBands(match, filters)),
     [matches, filters],
   );
 
-  // dane dla TeamStatsCards: po filtrze pogodowym i wszystkie mecze jako baza
   const filteredStats = useMemo(
     () => computeTeamStats(filteredMatches, teamId),
     [filteredMatches, teamId],
@@ -58,26 +50,24 @@ const TeamDetails = () => {
     [matches, teamId],
   );
 
-  // własny hook do paginacji
   const { visibleItems, hiddenCount, showMore, reset } = useVisibleItems(filteredMatches);
-  useEffect(() => reset(), [filters, reset]);
 
-  // pobieranie danych po teamId
   useEffect(() => {
     Promise.all([getTeamMatches(teamId), getTeamById(teamId)])
       .then(([matches, team]) => {
         setMatches(matches);
-        reset(); //reset pagination each re-render (switching teams)
         setTeam(team);
+        reset();
       })
       .catch((err) => {
-        setError(`Nie znaleziono drużyny o danym id.`);
+        setError("Nie znaleziono drużyny o danym id.");
         console.error(err);
       })
       .finally(() => setIsLoading(false));
   }, [teamId, reset]);
 
-  // obsługa stanów ładowania i błędu
+  useEffect(() => reset(), [filters, reset]);
+
   if (isLoading) {
     return (
       <Card className="mb-4">
@@ -101,13 +91,36 @@ const TeamDetails = () => {
   return (
     <>
       <TeamInfoCard matches={matches} team={team} />
-      {/* Statystyki */}
-      <TeamStatsCards
-        stats={filteredStats}
-        baseline={hasBandFilters(filters) ? baselineStats : null}
-      />
-      {/* Karta z tabelą meczów */}
-      <WeatherScoreBadge matches={matches} teamId={teamId} />
+      {/* Team stats Section */}
+      <section className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <h2 className="flex items-center gap-2 text-lg font-semibold">
+              <ChartColumn className="h-5 w-5 text-primary" />
+              Statystyki drużyny
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Statystyki drużyny - weather score ze wszystkich meczów i średnie statystyki po filtrach pogodowych.
+            </p>
+          </div>
+          <span className="rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground">
+            {hasBandFilters(filters)
+              ? `Po filtrach: ${filteredMatches.length} z ${matches.length} meczów`
+              : `Wszystkie mecze (${matches.length})`}
+          </span>
+        </div>
+
+        <div className="grid gap-4 xl:grid-cols-3">
+          <WeatherScoreCard teamId={teamId} />
+          <div className="xl:col-span-2">
+            <TeamStatsCards
+              stats={filteredStats}
+              baseline={hasBandFilters(filters) ? baselineStats : null}
+            />
+          </div>
+        </div>
+      </section>
+
       <Card>
         <CardHeader className="border-b pb-6">
           <CardTitle className="flex items-center gap-2 text-base">
