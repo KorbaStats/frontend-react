@@ -1,20 +1,12 @@
 import { useState, useEffect } from "react";
 import { type WeatherScore, weatherScoreLabel } from "@/lib/weatherScore";
+import { weatherScoreColor } from "@/lib/weatherConfig";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTeamWeatherScore } from "@/services/weatherStatsService";
+import WeatherScoreRing from "@/components/shared/weather-score/WeatherScoreRing";
 
 interface WeatherScoreCardProps {
   teamId: number;
-}
-
-const RADIUS = 40;
-const STROKE = 8;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-
-function scoreColor(score: number): string {
-  if (score >= 55) return "text-green-600 dark:text-green-500/90";
-  if (score >= 45) return "text-muted-foreground";
-  return "text-destructive";
 }
 
 const WeatherScoreCard = ({ teamId }: WeatherScoreCardProps) => {
@@ -66,56 +58,23 @@ const WeatherScoreCard = ({ teamId }: WeatherScoreCardProps) => {
     difficultMatches,
     normalMatches,
   } = weatherScore;
-  const offset = CIRCUMFERENCE * (1 - score / 100);
-  const color = scoreColor(score);
+  const color = weatherScoreColor(score);
 
   return (
-    <Card>
+    <Card className="">
       {header}
-      <CardContent className="flex flex-1 flex-col items-center justify-between gap-6">
+      <CardContent className="flex flex-1 flex-col items-center justify-between gap-6 lg:flex-row lg:justify-center lg:gap-12 xl:flex-col xl:justify-between xl:gap-6">
         <div className="flex flex-col items-center gap-4">
-          {/* pierścień z wynikiem */}
-          <div className="relative size-40 xl:size-48">
-            <svg viewBox="0 0 100 100" className="size-full -rotate-90">
-              {/* tło — pełny szary okrąg */}
-              <circle
-                cx="50"
-                cy="50"
-                r={RADIUS}
-                fill="none"
-                strokeWidth={STROKE}
-                className="stroke-muted"
-              />
-              {/* wypełnienie */}
-              <circle
-                cx="50"
-                cy="50"
-                r={RADIUS}
-                fill="none"
-                strokeWidth={STROKE}
-                strokeDasharray={CIRCUMFERENCE}
-                strokeDashoffset={offset}
-                className={`stroke-current ${color} transition-[stroke-dashoffset] duration-500`}
-              />
-            </svg>
-
-            {/* liczba na środku */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-4xl font-bold tabular-nums xl:text-5xl">
-                {score}
-              </span>
-              <span className="text-xs text-muted-foreground">/100</span>
-            </div>
-          </div>
+          <WeatherScoreRing score={score} size="lg" />
 
           <p className={`text-center text-sm font-medium ${color}`}>
             {weatherScoreLabel(score)}
           </p>
         </div>
 
-        {/* skąd wynik */}
-        <dl className="flex w-full max-w-sm flex-col gap-3 border-t pt-4 text-sm xl:gap-4 xl:pt-6">
+        <dl className="flex w-full max-w-sm flex-col gap-3 pt-4 text-sm lg:border-l lg:pt-0 lg:pl-12 xl:gap-4 xl:border-l-0 xl:pt-6 xl:pl-0">
           <div className="flex items-start justify-between gap-2">
+            {/* Trudne warunki */}
             <div>
               <dt className="font-medium">Trudne warunki</dt>
               <dd className="text-xs text-muted-foreground">
@@ -133,6 +92,7 @@ const WeatherScoreCard = ({ teamId }: WeatherScoreCardProps) => {
           </div>
 
           <div className="flex items-start justify-between gap-2">
+            {/* Normalne warunki */}
             <div>
               <dt className="font-medium">Normalne warunki</dt>
               <dd className="text-xs text-muted-foreground">
@@ -149,6 +109,7 @@ const WeatherScoreCard = ({ teamId }: WeatherScoreCardProps) => {
             </dd>
           </div>
 
+          {/* Różnica */}
           <div className="flex items-center justify-between gap-2 border-t pt-3">
             <dt className="text-muted-foreground">Różnica</dt>
             <dd className={`font-semibold tabular-nums ${color}`}>

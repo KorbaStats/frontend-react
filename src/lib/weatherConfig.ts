@@ -33,6 +33,13 @@ export const weatherConfig: Record<WeatherCondition, {
   extreme_cold: { icon: ThermometerSnowflake, label: "Mróz", bg: "bg-indigo-100 dark:bg-indigo-900/40", text: "text-indigo-500 dark:text-indigo-400", chartColor: "var(--weather-extreme-cold)" },
 };
 
+// kolor weather score — progi jak w weatherScoreLabel
+export function weatherScoreColor(score: number): string {
+  if (score >= 55) return "text-green-600 dark:text-green-500/90";
+  if (score >= 45) return "text-muted-foreground";
+  return "text-destructive";
+}
+
 // ikony do pigulek filtrow
 export const bandIcons: Record<string, typeof Sun> = {
   // temperatura

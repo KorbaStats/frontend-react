@@ -79,10 +79,10 @@ export function computeWeatherScore(
 }
 
 export function weatherScoreLabel(score: number): string {
-  if (score <= 34) return "Wyraźnie gorzej w trudnej pogodzie."
-  else if (score >= 35 && score <= 44) return "Gorzej w trudnej pogodzie."
-  else if (score >= 45 && score <= 54) return "Pogoda nie robi różnicy."
-  else if (score >= 55 && score <= 64) return "Lepiej w trudnej pogodzie."
-  else if (score >= 65) return "Wyraźnie lepiej w trudnej pogodzie."
-  else return "Brak danych.";
+  if (score <= 34) return "Wyraźnie gorzej w trudnej pogodzie"
+  else if (score >= 35 && score <= 44) return "Gorzej w trudnej pogodzie"
+  else if (score >= 45 && score <= 54) return "Pogoda nie robi różnicy"
+  else if (score >= 55 && score <= 64) return "Lepiej w trudnej pogodzie"
+  else if (score >= 65) return "Wyraźnie lepiej w trudnej pogodzie"
+  else return "Brak danych";
 }

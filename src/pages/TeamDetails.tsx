@@ -5,7 +5,10 @@ import { ChartColumn, History } from "lucide-react";
 import type { Team } from "@/data/types";
 import type { FiltersContext } from "@/components/layout/MainLayout";
 
-import { getTeamMatches, type MatchWithWeather } from "@/services/matchesService";
+import {
+  getTeamMatches,
+  type MatchWithWeather,
+} from "@/services/matchesService";
 import { getTeamById } from "@/services/teamsService";
 
 import { computeTeamStats } from "@/lib/teamStats";
@@ -21,7 +24,7 @@ import {
 } from "@/components/ui/card";
 import MatchesTable from "@/components/shared/MatchesTable";
 import ShowMoreFooter from "@/components/shared/ShowMoreFooter";
-import WeatherScoreCard from "@/components/shared/WeatherScoreCard";
+import WeatherScoreCard from "@/components/shared/weather-score/WeatherScoreCard";
 import TeamInfoCard from "@/components/team-details/TeamInfoCard";
 import TeamStatsCards from "@/components/team-details/TeamStatsCards";
 
@@ -50,7 +53,8 @@ const TeamDetails = () => {
     [matches, teamId],
   );
 
-  const { visibleItems, hiddenCount, showMore, reset } = useVisibleItems(filteredMatches);
+  const { visibleItems, hiddenCount, showMore, reset } =
+    useVisibleItems(filteredMatches);
 
   useEffect(() => {
     Promise.all([getTeamMatches(teamId), getTeamById(teamId)])
@@ -100,7 +104,8 @@ const TeamDetails = () => {
               Statystyki drużyny
             </h2>
             <p className="text-sm text-muted-foreground">
-              Statystyki drużyny - weather score ze wszystkich meczów i średnie statystyki po filtrach pogodowych.
+              Statystyki drużyny - weather score ze wszystkich meczów i średnie
+              statystyki po filtrach pogodowych.
             </p>
           </div>
           <span className="rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground">
