@@ -11,7 +11,6 @@ import Matches from './pages/Matches.tsx'
 import MatchDetails from './pages/MatchDetails.tsx'
 import LeagueDetails from './pages/LeagueDetails.tsx'
 import NotFound from './pages/NotFound.tsx'
-import Teams from './pages/Teams.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -29,8 +28,7 @@ createRoot(document.getElementById('root')!).render(
               {/* TODO: <Route path='leagues' element={<Leagues />} /> */}
               <Route path='league/:id' element={<LeagueDetails />}/>
 
-              {/* Druzyny */}
-              <Route path='teams' element={<Teams />} />
+              {/* Druzyna */}
               <Route path='team/:id' element={<TeamDetails />} />
               {/* Mecze */}
               <Route path='matches' element={<Matches />} />

@@ -1,9 +1,13 @@
+import { Link } from "react-router";
+
 import { Card } from "@/components/ui/card";
+import { MapPin, Users } from "lucide-react";
+
 import type { Team } from "@/data/types";
 import type { MatchWithWeather } from "@/services/matchesService";
-import { MapPin, Users } from "lucide-react";
-import TeamLogo from "../shared/TeamLogo";
-import ResultBadge from "../shared/ResultBadge";
+
+import TeamLogo from "@/components/shared/TeamLogo";
+import ResultBadge from "@/components/shared/ResultBadge";
 
 interface TeamInfoProps {
   matches: MatchWithWeather[];
@@ -13,14 +17,13 @@ interface TeamInfoProps {
 const TeamInfoCard = ({ matches, team }: TeamInfoProps) => {
   return (
     <Card className="flex-col gap-4 p-4 lg:flex-row lg:items-center lg:justify-between">
-      {/* Zdjęcie / skrót nazwy */}
       <div className="flex items-center gap-4">
         <TeamLogo name={team?.name} short_name={team?.short_name} />
         {/* Dane drużyny */}
         <div>
-          <p className=" text-md text-primary font-bold tracking-widest ">
+          <Link to={`/league/${team?.league_id}`} className=" text-md text-primary font-bold tracking-widest ">
             {team?.league?.name.toUpperCase()}
-          </p>
+          </Link>
           <h1 className="mb-1 text-3xl font-bold">{team?.name}</h1>
           <dl className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
             <div className="flex items-center gap-1">
