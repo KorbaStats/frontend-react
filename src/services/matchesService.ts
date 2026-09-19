@@ -30,7 +30,9 @@ function byNewestFirst(a: Match, b: Match): number {
  * Sortowanie od najnowszych ustawiane tu raz, bo `data/matches.ts` trzyma mecze
  * od najstarszych.
  */
-export async function getMatches(): Promise<PaginatedResponse<MatchWithWeather>> {
+export async function getMatches(): Promise<
+  PaginatedResponse<MatchWithWeather>
+> {
   const data = matches.map(withWeather).sort(byNewestFirst);
 
   return {
@@ -42,9 +44,7 @@ export async function getMatches(): Promise<PaginatedResponse<MatchWithWeather>>
 /** GET /api/matches?sort=datetime&order=desc&limit=N */
 const DEFAULT_MATCHES_LIMIT = 10;
 
-export async function getRecentMatches(
-  limit = DEFAULT_MATCHES_LIMIT,
-): Promise<MatchWithWeather[]> {
+export async function getRecentMatches( limit = DEFAULT_MATCHES_LIMIT ): Promise<MatchWithWeather[]> {
   const { data } = await getMatches();
   return data.slice(0, limit);
 }
@@ -84,4 +84,15 @@ export async function getAvailableSeasons(): Promise<string[]> {
     if (match.season !== null) seasons.add(match.season);
   }
   return [...seasons].sort().reverse();
+}
+
+export async function getLeagueMatches(
+  leagueId: number,
+  season: string,
+): Promise<MatchWithWeather[]> {
+  const matchesData = (await getMatches()).data.filter(
+    (m) => m.league_id === leagueId && m.season === season,
+  );
+
+  return matchesData;
 }

@@ -1,4 +1,4 @@
-type MatchResult = "W" | "D" | "L";
+export type MatchResult = "W" | "D" | "L";
 
 const resultStylesConfig = {
   W: { text: "W", title: "Wygrana", bg: "bg-green-500 dark:bg-green-500/80" },
@@ -11,27 +11,21 @@ const sizeStyles = {
   md: "h-8 w-8 text-xl",
 };
 
-interface ResultBadgeProps {
-  goalsFor: number;
-  goalsAgainst: number;
-  size?: keyof typeof sizeStyles;
+// albo gotowy wynik (forma w tabeli), albo bramki do przeliczenia
+type ResultBadgeProps = { size?: keyof typeof sizeStyles } & (
+  | { result: MatchResult }
+  | { goalsFor: number; goalsAgainst: number }
+);
+
+function getResult(props: ResultBadgeProps): MatchResult {
+  if ("result" in props) return props.result;
+  if (props.goalsFor === props.goalsAgainst) return "D";
+  return props.goalsFor > props.goalsAgainst ? "W" : "L";
 }
 
-const ResultBadge = ({
-  goalsFor,
-  goalsAgainst,
-  size = "md",
-}: ResultBadgeProps) => {
-  let result: MatchResult;
-  if (goalsFor === goalsAgainst) {
-    result = "D";
-  } else if (goalsFor > goalsAgainst) {
-    result = "W";
-  } else {
-    result = "L";
-  }
-
-  const config = resultStylesConfig[result];
+const ResultBadge = (props: ResultBadgeProps) => {
+  const size = props.size ?? "md";
+  const config = resultStylesConfig[getResult(props)];
 
   return (
     <span
