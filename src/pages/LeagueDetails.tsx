@@ -16,6 +16,7 @@ import { computeLeagueWeatherSummary } from "@/lib/leagueWeather";
 import LeagueHeader from "@/components/league-details/LeagueHeader";
 import LeagueTable from "@/components/league-details/LeagueTable";
 import TopWeatherScores from "@/components/league-details/TopWeatherScores";
+import LeagueRecentMatches from "@/components/league-details/LeagueRecentMatches";
 
 const LeagueDetails = () => {
   const { id } = useParams();
@@ -106,6 +107,14 @@ const LeagueDetails = () => {
         <LeagueTable matches={leagueMatches} />
         <TopWeatherScores matches={allLeagueMatches} />
       </div>
+
+      {/* key: zmiana sezonu resetuje "Pokaż więcej" */}
+      <LeagueRecentMatches
+        key={selectedSeason}
+        matches={leagueMatches}
+        leagueName={league?.name ?? null}
+        season={selectedSeason}
+      />
     </>
   );
 };
