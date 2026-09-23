@@ -1,7 +1,5 @@
-import { useMemo } from "react";
 import { Link } from "react-router";
 import { Trophy } from "lucide-react";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -11,23 +9,21 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import ResultBadge from "@/components/shared/ResultBadge";
 
 import type { Match } from "@/data/types";
 import { computeStandings } from "@/lib/standings";
+
+import ResultBadge from "@/components/shared/ResultBadge";
 
 interface LeagueTableProps {
   matches: Match[] | null;
 }
 
 const LeagueTable = ({ matches }: LeagueTableProps) => {
-  const standingRows = useMemo(
-    () => computeStandings(matches ?? []),
-    [matches],
-  );
+  const standingRows = computeStandings(matches ?? []);
 
   return (
-    <Card>
+    <Card className="col-span-2">
       <CardHeader className="border-b pb-6">
         <CardTitle className="flex items-center gap-2 text-base">
           <Trophy className="h-4 w-4 text-primary" />

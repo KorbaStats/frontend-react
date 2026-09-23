@@ -1,4 +1,4 @@
-import { Moon, Search, Sun } from "lucide-react";
+import { Menu, Moon, Search, Sun } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTheme } from "@/hooks/useTheme";
@@ -18,25 +18,41 @@ const navLinks: NavLink[] = [
   // { label: "Predykcje", to: "/predictions", isActive: (pathname) => pathname === "/predictions" },
 ];
 
-const Navbar = () => {
+interface NavbarProps {
+  onMenuClick: () => void;
+}
+
+const Navbar = ({ onMenuClick }: NavbarProps) => {
   const { theme, toggleTheme } = useTheme();
   const { pathname } = useLocation();
 
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-background/70 backdrop-blur-md border-b">
       <div className="mx-auto flex h-16 w-full max-w-400 items-center justify-between gap-4 px-6">
-        <Link to="/">
-          <div className="flex items-center gap-2">
-            <div className="border bg-white dark:bg-primary p-1.5 rounded-sm">
-              <img
-                src="/ks_logo.png"
-                alt="KorbaStats logo"
-                className="h-8 w-8"
-              />
+        <div className="flex shrink-0 items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onMenuClick}
+            aria-label="Menu boczne"
+            className="2xl:hidden"
+          >
+            <Menu />
+          </Button>
+
+          <Link to="/">
+            <div className="flex items-center gap-2">
+              <div className="border bg-white dark:bg-primary p-1.5 rounded-sm">
+                <img
+                  src="/ks_logo.png"
+                  alt="KorbaStats logo"
+                  className="h-8 w-8"
+                />
+              </div>
+              <span className="text-lg font-semibold">KorbaStats</span>
             </div>
-            <span className="text-lg font-semibold">KorbaStats</span>
-          </div>
-        </Link>
+          </Link>
+        </div>
 
         <nav className="hidden items-center gap-1 lg:flex">
           {navLinks.map((link) => {

@@ -1,6 +1,5 @@
 import type { MatchWithWeather } from "@/services/matchesService"
 import { profileFor, type PrecipBand, type TempBand, type WindBand } from "./weatherProfile"
-
 // OR w obrębie osi, AND między osiami; pusta tablica = oś nie ogranicza
 export type WeatherBandFilters = {
   temp: TempBand[]

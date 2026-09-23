@@ -44,7 +44,9 @@ export async function getMatches(): Promise<
 /** GET /api/matches?sort=datetime&order=desc&limit=N */
 const DEFAULT_MATCHES_LIMIT = 10;
 
-export async function getRecentMatches( limit = DEFAULT_MATCHES_LIMIT ): Promise<MatchWithWeather[]> {
+export async function getRecentMatches(
+  limit = DEFAULT_MATCHES_LIMIT,
+): Promise<MatchWithWeather[]> {
   const { data } = await getMatches();
   return data.slice(0, limit);
 }
@@ -88,11 +90,11 @@ export async function getAvailableSeasons(): Promise<string[]> {
 
 export async function getLeagueMatches(
   leagueId: number,
-  season: string,
+  season?: string,
 ): Promise<MatchWithWeather[]> {
-  const matchesData = (await getMatches()).data.filter(
-    (m) => m.league_id === leagueId && m.season === season,
-  );
+  const {data} = await getMatches();
 
-  return matchesData;
+  return data.filter(
+    (m) => m.league_id === leagueId && (m.season === season || season === undefined)
+  );
 }

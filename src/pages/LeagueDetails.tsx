@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,38 +15,42 @@ import { computeLeagueWeatherSummary } from "@/lib/leagueWeather";
 
 import LeagueHeader from "@/components/league-details/LeagueHeader";
 import LeagueTable from "@/components/league-details/LeagueTable";
+import TopWeatherScores from "@/components/league-details/TopWeatherScores";
 
 const LeagueDetails = () => {
   const { id } = useParams();
   const leagueId = Number(id);
 
   const [league, setLeague] = useState<League | null>(null);
-  const [leagueMatches, setLeagueMatches] = useState<MatchWithWeather[] | null>(null);
+  const [leagueMatches, setLeagueMatches] = useState<MatchWithWeather[] | []>(
+    [],
+  );
+  const [allLeagueMatches, setAllLeagueMatches] = useState<
+    MatchWithWeather[] | []
+  >([]);
   const [seasons, setSeasons] = useState<string[]>([]);
   const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const teamsCount = useMemo(
-    () => new Set(leagueMatches?.flatMap((m) => [m.home_team_id, m.away_team_id])).size,
-    [leagueMatches],
-  );
+  const teamsCount = new Set(
+    leagueMatches?.flatMap((m) => [m.home_team_id, m.away_team_id]),
+  ).size;
 
-  const weatherSummary = useMemo(
-    () => computeLeagueWeatherSummary(leagueMatches ?? []),
-    [leagueMatches],
-  );
+  const weatherSummary = computeLeagueWeatherSummary(leagueMatches ?? []);
 
   useEffect(() => {
     Promise.all([
       getLeagueById(leagueId),
       getAvailableSeasons(),
+      getLeagueMatches(leagueId),
     ])
-      .then(([league, seasons]) => {
+      .then(([league, seasons, allMatches]) => {
         setLeague(league);
         setSeasons(seasons);
         setSelectedSeason(seasons[0]); //najnowszy sezon
+        setAllLeagueMatches(allMatches);
       })
       .catch((err) => {
         setError("Failed to load data");
@@ -64,7 +68,7 @@ const LeagueDetails = () => {
         console.log(err);
       })
       .finally(() => setIsLoading(false));
-  }, [leagueId, selectedSeason])
+  }, [leagueId, selectedSeason]);
 
   if (isLoading) {
     return (
@@ -97,13 +101,10 @@ const LeagueDetails = () => {
         matchesCount={leagueMatches?.length ?? 0}
         weatherSummary={weatherSummary}
       />
-      <div className="grid items-start gap-4 xl:grid-cols-5">
-        <div className="xl:col-span-3">
-          <LeagueTable matches={leagueMatches} />
-        </div>
-        <div className="flex flex-col gap-4 xl:col-span-2">
-          {/* TODO: top 5 weather score, pogoda w lidze */}
-        </div>
+
+      <div className="grid gap-4 grid-cols-3 ">
+        <LeagueTable matches={leagueMatches} />
+        <TopWeatherScores matches={allLeagueMatches} />
       </div>
     </>
   );

@@ -9,7 +9,7 @@ export type StandingRow = {
   form: ("W" | "D" | "L")[] //the last 5 matches
 }
 
-// helpers functions for computeStandings
+// helper functions for computeStandings
 function getOrCreateRow(map: Map<number, StandingRow>, team: Team): StandingRow {
   let row = map.get(team.id);
   if (!row) {

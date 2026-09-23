@@ -47,9 +47,11 @@ const Leagues = ({ leagues }: { leagues: League[] }) => {
 interface SidebarProps {
   filters: MatchFilters;
   onFiltersChange: (next: MatchFilters) => void;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-const Sidebar = ({ filters, onFiltersChange }: SidebarProps) => {
+const Sidebar = ({ filters, onFiltersChange, isOpen, onClose }: SidebarProps) => {
   const { pathname } = useLocation();
 
   const [leagues, setLeagues] = useState<League[]>([]);
@@ -65,8 +67,8 @@ const Sidebar = ({ filters, onFiltersChange }: SidebarProps) => {
   const showMatchesFilters = pathname === "/matches";
   const showTeamFilters = pathname.startsWith("/team/");
 
-  return (
-    <aside className="no-scrollbar sticky top-16 hidden h-[calc(100vh-4rem)] w-80 shrink-0 flex-col gap-4 overflow-y-auto px-6 py-4 lg:flex xl:w-96">
+  const sections = (
+    <>
       {showMatchesFilters && (
         <MatchesFilters
           value={filters}
@@ -85,7 +87,36 @@ const Sidebar = ({ filters, onFiltersChange }: SidebarProps) => {
 
       <FavouriteTeams />
       <Leagues leagues={leagues} />
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      <aside className="no-scrollbar sticky top-16 hidden h-[calc(100vh-4rem)] w-80 shrink-0 flex-col gap-4 overflow-y-auto py-4 pr-3 pl-6 2xl:flex">
+        {sections}
+      </aside>
+
+      <div
+        className={`fixed inset-0 top-16 z-40 2xl:hidden ${
+          isOpen ? "" : "pointer-events-none"
+        }`}
+        aria-hidden={!isOpen}
+      >
+        <div
+          onClick={onClose}
+          className={`absolute inset-0 bg-black/50 transition-opacity duration-200 ${
+            isOpen ? "opacity-100" : "opacity-0"
+          }`}
+        />
+        <aside
+          className={`no-scrollbar absolute inset-y-0 left-0 flex w-80 max-w-[85vw] flex-col gap-4 overflow-y-auto border-r bg-background px-4 py-4 shadow-xl transition-transform duration-200 ${
+            isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          {sections}
+        </aside>
+      </div>
+    </>
   );
 };
 

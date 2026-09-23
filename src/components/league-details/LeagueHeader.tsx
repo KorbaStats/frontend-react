@@ -1,4 +1,10 @@
-import { CalendarCheck, CloudRain, Thermometer, Users, Wind } from "lucide-react";
+import {
+  CalendarCheck,
+  CloudRain,
+  Thermometer,
+  Users,
+  Wind,
+} from "lucide-react";
 
 import { type League } from "@/data/types";
 import { Card } from "@/components/ui/card";
@@ -27,16 +33,34 @@ const LeagueHeader = ({
   weatherSummary,
 }: LeagueHeaderProps) => {
   const weatherItems = weatherSummary && [
-    { icon: Thermometer, style: weatherConfig.clear, label: "Śr. temperatura", value: `${weatherSummary.avgTemp}°C` },
-    { icon: CloudRain, style: weatherConfig.rain, label: "Mecze z opadami", value: `${weatherSummary.precipPct}%` },
-    { icon: Wind, style: weatherConfig.wind, label: "Śr. wiatr", value: `${weatherSummary.avgWind} km/h` },
+    {
+      icon: Thermometer,
+      style: weatherConfig.clear,
+      label: "Śr. temperatura",
+      value: `${weatherSummary.avgTemp}°C`,
+    },
+    {
+      icon: CloudRain,
+      style: weatherConfig.rain,
+      label: "Mecze z opadami",
+      value: `${weatherSummary.precipPct}%`,
+    },
+    {
+      icon: Wind,
+      style: weatherConfig.wind,
+      label: "Śr. wiatr",
+      value: `${weatherSummary.avgWind} km/h`,
+    },
   ];
 
   return (
     <Card className="gap-0 py-0">
       <div className="flex items-start justify-between gap-4 p-4">
         <div className="flex items-center gap-4">
-          <TeamLogo name={league?.name} short_name={league ? getLeagueCountryCode(league) : ""} />
+          <TeamLogo
+            name={league?.name}
+            short_name={league ? getLeagueCountryCode(league) : ""}
+          />
           <div>
             <p className="text-md font-bold tracking-widest text-primary">
               {league?.country.toUpperCase()}
@@ -75,12 +99,16 @@ const LeagueHeader = ({
         <dl className="flex flex-wrap gap-x-8 gap-y-3 border-t px-4 py-3">
           {weatherItems.map(({ icon: Icon, style, label, value }) => (
             <div key={label} className="flex items-center gap-2">
-              <span className={`flex h-8 w-8 items-center justify-center rounded-full ${style.bg} ${style.text}`}>
+              <span
+                className={`flex h-8 w-8 items-center justify-center rounded-full ${style.bg} ${style.text}`}
+              >
                 <Icon className="h-4 w-4" />
               </span>
               <div className="flex flex-col-reverse leading-tight">
                 <dt className="text-xs text-muted-foreground">{label}</dt>
-                <dd className="font-semibold tabular-nums text-foreground">{value}</dd>
+                <dd className="font-semibold tabular-nums text-foreground">
+                  {value}
+                </dd>
               </div>
             </div>
           ))}

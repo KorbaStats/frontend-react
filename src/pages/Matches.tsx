@@ -47,9 +47,7 @@ const Matches = () => {
 
   // zawężenie listy cofa paginację na początek
   useEffect(() => reset(), [filters, reset]);
-
-  console.log(matches);
-
+  
   return (
     <Card>
       <CardHeader className="border-b pb-6">
