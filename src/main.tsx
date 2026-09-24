@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard.tsx'
 import TeamDetails from './pages/TeamDetails.tsx'
 import Matches from './pages/Matches.tsx'
 import MatchDetails from './pages/MatchDetails.tsx'
+import Leagues from './pages/Leagues.tsx'
 import LeagueDetails from './pages/LeagueDetails.tsx'
 import NotFound from './pages/NotFound.tsx'
 
@@ -25,7 +26,7 @@ createRoot(document.getElementById('root')!).render(
             <Route index element={<Dashboard />} />
 
               {/* Liga */}
-              {/* TODO: <Route path='leagues' element={<Leagues />} /> */}
+              <Route path='leagues' element={<Leagues />} />
               <Route path='league/:id' element={<LeagueDetails />}/>
 
               {/* Druzyna */}
