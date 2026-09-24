@@ -3,10 +3,11 @@ import { type MatchWithWeather } from "@/services/matchesService";
 import { getMatchFromTeamPerspective } from "./teamStats";
 import { profileFor } from "./weatherProfile";
 
-const MIN_MATCHES = 10;
+const MIN_MATCHES = 5;
 const MULTIPLIER = 100 / 3;
+// próba, przy której ufamy różnicy w połowie
+const SHRINKAGE_K = 10;
 
-// ilosc punktow za dany mecz danej druzyny
 function pointsFor(match: MatchWithWeather, teamId: number): number {
   const result = getMatchFromTeamPerspective(match, teamId).result;
 
@@ -31,7 +32,6 @@ function isDifficultWeather(weather: Weather): boolean {
   );
 }
 
-// srednie punkty druzyny z id=teamId i meczami=matches (przefiltrowane mecze wyzej w logice)
 function averagePoints(matches: MatchWithWeather[], teamId: number): number {
   const sum = matches
     .map((match) => pointsFor(match, teamId))
@@ -42,12 +42,14 @@ function averagePoints(matches: MatchWithWeather[], teamId: number): number {
 
 // weather score for a team
 export type WeatherScore = {
-  score: number; 
-  difference: number; 
-  difficultAvg: number; 
-  normalAvg: number; 
+  score: number;
+  difference: number;
+  difficultAvg: number;
+  normalAvg: number;
   difficultMatches: number;
   normalMatches: number;
+  //0-1 - jak mocno proba moze ufac roznicy 
+  reliability: number;
 };
 
 export function computeWeatherScore(
@@ -58,23 +60,28 @@ export function computeWeatherScore(
   const difficult = matches.filter((match) => match.weather !== null && isDifficultWeather(match.weather));
   const normal = matches.filter((match) => match.weather !== null && !isDifficultWeather(match.weather));
 
-  //sprawdzenie liczby meczy
   if (normal.length < MIN_MATCHES || difficult.length < MIN_MATCHES) return null;
 
   const normalAvgPoints = averagePoints(normal, teamId);
   const difficultAvgPoints = averagePoints(difficult, teamId);
   const difference = difficultAvgPoints - normalAvgPoints;
 
-  //  mozna dodac "ściąganie" do srodka przy malej probie np score = 50+R*33,3 * t/(t+10) - gdzie t to liczba trudnych meczow - przy 10 meczach wynik jest sciagany o polowe, a przy 40 prawie wcale"
-  const weatherScore = Math.round(Math.min(Math.max(50 + difference * MULTIPLIER, 0), 100));
+  // ściąganie wyniku do 50 przy malej probie 
+  const sampleSize = Math.min(difficult.length, normal.length);
+  const reliability = sampleSize / (sampleSize + SHRINKAGE_K);
+
+  const weatherScore = Math.round(
+    Math.min(Math.max(50 + difference * MULTIPLIER * reliability, 0), 100),
+  );
 
   return {
     score: weatherScore,
     difference: difference,
     difficultAvg: difficultAvgPoints,
     normalAvg: normalAvgPoints,
-    difficultMatches: difficult.length,  
+    difficultMatches: difficult.length,
     normalMatches: normal.length,
+    reliability,
   }
 }
 

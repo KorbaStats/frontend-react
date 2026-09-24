@@ -9,7 +9,7 @@
 //   GET /api/weather-stats/coldest-match      -> ColdestMatch
 //   GET /api/weather-stats/match-averages     -> ConditionAverages
 //   GET /api/weather-stats/percentiles        -> WeatherPercentile[]
-//   GET /api/teams/:id/weather-score          -> WeatherScore | null
+//   GET /api/teams/:id/weather-score?season=  -> WeatherScore | null
 //TODO: verify against real API response once the backend has weather
 
 import { getMatches, getTeamMatches } from "@/services/matchesService";
@@ -214,8 +214,15 @@ export async function getColdestMatch(): Promise<ColdestMatch> {
     .sort((a, b) => a.temperature_c - b.temperature_c)[0];
 }
 
-/** GET /api/teams/:id/weather-score  */
-export async function getTeamWeatherScore(teamId: number): Promise<WeatherScore | null> {
+/** GET /api/teams/:id/weather-score?season=2025/2026 */
+export async function getTeamWeatherScore(
+  teamId: number,
+  season?: string | null,
+): Promise<WeatherScore | null> {
   const teamMatches = await getTeamMatches(teamId);
-  return computeWeatherScore(teamMatches, teamId);
+  const scoped = season
+    ? teamMatches.filter((match) => match.season === season)
+    : teamMatches;
+
+  return computeWeatherScore(scoped, teamId);
 }

@@ -26,9 +26,6 @@ const LeagueDetails = () => {
   const [leagueMatches, setLeagueMatches] = useState<MatchWithWeather[] | []>(
     [],
   );
-  const [allLeagueMatches, setAllLeagueMatches] = useState<
-    MatchWithWeather[] | []
-  >([]);
   const [seasons, setSeasons] = useState<string[]>([]);
   const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
 
@@ -42,19 +39,14 @@ const LeagueDetails = () => {
   const weatherSummary = computeLeagueWeatherSummary(leagueMatches ?? []);
 
   useEffect(() => {
-    Promise.all([
-      getLeagueById(leagueId),
-      getAvailableSeasons(),
-      getLeagueMatches(leagueId),
-    ])
-      .then(([league, seasons, allMatches]) => {
+    Promise.all([getLeagueById(leagueId), getAvailableSeasons()])
+      .then(([league, seasons]) => {
         setLeague(league);
         setSeasons(seasons);
         setSelectedSeason(seasons[0]); //najnowszy sezon
-        setAllLeagueMatches(allMatches);
       })
       .catch((err) => {
-        setError("Failed to load data");
+        setError("Nie udało się pobrać danych ligi.");
         console.log(err);
       })
       .finally(() => setIsLoading(false));
@@ -65,7 +57,7 @@ const LeagueDetails = () => {
     getLeagueMatches(leagueId, selectedSeason)
       .then(setLeagueMatches)
       .catch((err) => {
-        setError("Failed to load sesons");
+        setError("Nie udało się pobrać meczów sezonu.");
         console.log(err);
       })
       .finally(() => setIsLoading(false));
@@ -105,7 +97,7 @@ const LeagueDetails = () => {
 
       <div className="grid gap-4 grid-cols-3 ">
         <LeagueTable matches={leagueMatches} />
-        <TopWeatherScores matches={allLeagueMatches} />
+        <TopWeatherScores matches={leagueMatches} season={selectedSeason} />
       </div>
 
       {/* key: zmiana sezonu resetuje "Pokaż więcej" */}

@@ -8,25 +8,28 @@ import WeatherScoreRing from "@/components/shared/weather-score/WeatherScoreRing
 interface WeatherScoreIndicatorProps {
   teamId: number;
   teamName: string;
+  /** null = ze wszystkich sezonów */
+  season?: string | null;
 }
 
 const WeatherScoreIndicator = ({
   teamId,
   teamName,
+  season = null,
 }: WeatherScoreIndicatorProps) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [weatherScore, setWeatherScore] = useState<WeatherScore | null>(null);
 
   useEffect(() => {
-    getTeamWeatherScore(teamId)
+    getTeamWeatherScore(teamId, season)
       .then(setWeatherScore)
       .catch((err) => {
         setError("Nie udało się pobrać weather score.");
         console.error(err);
       })
       .finally(() => setIsLoading(false));
-  }, [teamId]);
+  }, [teamId, season]);
 
   if (isLoading || error || weatherScore === null) {
     const message = isLoading

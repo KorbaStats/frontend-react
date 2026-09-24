@@ -16,9 +16,10 @@ import { weatherScoreLabel } from "@/lib/weatherScore";
 
 interface TopWeatherScoresProps {
   matches: MatchWithWeather[];
+  season: string | null;
 }
 
-const TopWeatherScores = ({ matches }: TopWeatherScoresProps) => {
+const TopWeatherScores = ({ matches, season }: TopWeatherScoresProps) => {
   const wsData = computeTopWeatherScores(matches);
 
   return (
@@ -28,7 +29,10 @@ const TopWeatherScores = ({ matches }: TopWeatherScoresProps) => {
           <CloudLightning className="h-4 w-4 text-primary" />
           Top Weather Score's w lidze
         </CardTitle>
-        <CardDescription>Najlepsze drużyny w trudnej pogodzie</CardDescription>
+        <CardDescription>
+          Najlepsze drużyny w trudnej pogodzie
+          {season ? ` — sezon ${season}` : ""}
+        </CardDescription>
       </CardHeader>
 
       <CardContent className="px-0">

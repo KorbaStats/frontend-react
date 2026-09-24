@@ -6,6 +6,7 @@ import type { Team } from "@/data/types";
 import type { FiltersContext } from "@/components/layout/MainLayout";
 
 import {
+  getAvailableSeasons,
   getTeamMatches,
   type MatchWithWeather,
 } from "@/services/matchesService";
@@ -35,6 +36,7 @@ const TeamDetails = () => {
 
   const [team, setTeam] = useState<Team>();
   const [matches, setMatches] = useState<MatchWithWeather[]>([]);
+  const [latestSeason, setLatestSeason] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>();
 
@@ -57,10 +59,15 @@ const TeamDetails = () => {
     useVisibleItems(filteredMatches);
 
   useEffect(() => {
-    Promise.all([getTeamMatches(teamId), getTeamById(teamId)])
-      .then(([matches, team]) => {
+    Promise.all([
+      getTeamMatches(teamId),
+      getTeamById(teamId),
+      getAvailableSeasons(),
+    ])
+      .then(([matches, team, seasons]) => {
         setMatches(matches);
         setTeam(team);
+        setLatestSeason(seasons[0] ?? null);
         reset();
       })
       .catch((err) => {
@@ -104,8 +111,9 @@ const TeamDetails = () => {
               Statystyki drużyny
             </h2>
             <p className="text-sm text-muted-foreground">
-              Statystyki drużyny - weather score ze wszystkich meczów i średnie
-              statystyki po filtrach pogodowych.
+              Statystyki drużyny - weather score z sezonu
+              {latestSeason ? ` ${latestSeason}` : ""} i średnie statystyki po
+              filtrach pogodowych.
             </p>
           </div>
           <span className="rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground">
@@ -116,7 +124,7 @@ const TeamDetails = () => {
         </div>
 
         <div className="grid gap-4 xl:grid-cols-3">
-          <WeatherScoreCard teamId={teamId} />
+          <WeatherScoreCard teamId={teamId} season={latestSeason} />
           <div className="xl:col-span-2">
             <TeamStatsCards
               stats={filteredStats}

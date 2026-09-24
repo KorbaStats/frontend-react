@@ -12,6 +12,7 @@ export type LeagueWeatherSummary = {
 
 const round1 = (value: number) => Math.round(value * 10) / 10;
 
+// summary pogody - srednia temperatura, opady i wiatr oraz ilosc meczy
 export function computeLeagueWeatherSummary(
   matches: MatchWithWeather[],
 ): LeagueWeatherSummary | null {

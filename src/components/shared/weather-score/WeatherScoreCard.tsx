@@ -1,28 +1,36 @@
 import { useState, useEffect } from "react";
 import { type WeatherScore, weatherScoreLabel } from "@/lib/weatherScore";
 import { weatherScoreColor } from "@/lib/weatherConfig";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { getTeamWeatherScore } from "@/services/weatherStatsService";
 import WeatherScoreRing from "@/components/shared/weather-score/WeatherScoreRing";
 
 interface WeatherScoreCardProps {
   teamId: number;
+  /** null = ze wszystkich sezonów */
+  season?: string | null;
 }
 
-const WeatherScoreCard = ({ teamId }: WeatherScoreCardProps) => {
+const WeatherScoreCard = ({ teamId, season = null }: WeatherScoreCardProps) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [weatherScore, setWeatherScore] = useState<WeatherScore | null>(null);
 
   useEffect(() => {
-    getTeamWeatherScore(teamId)
+    getTeamWeatherScore(teamId, season)
       .then(setWeatherScore)
       .catch((err) => {
         setError("Nie udało się pobrać weather score.");
         console.error(err);
       })
       .finally(() => setIsLoading(false));
-  }, [teamId]);
+  }, [teamId, season]);
 
   const header = (
     <CardHeader>
@@ -31,6 +39,9 @@ const WeatherScoreCard = ({ teamId }: WeatherScoreCardProps) => {
           WEATHER SCORE
         </h1>
       </CardTitle>
+      <CardDescription>
+        {season ? `Sezon ${season}` : "Wszystkie sezony"}
+      </CardDescription>
     </CardHeader>
   );
 

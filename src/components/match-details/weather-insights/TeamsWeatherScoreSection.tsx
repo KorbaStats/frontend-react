@@ -15,7 +15,8 @@ const TeamsWeatherScoreSection = ({ match }: TeamsWeatherScoreSectionProps) => {
         <CloudSun size={16} className="text-primary" />
         <h3 className="font-semibold text-foreground">Weather Score drużyn</h3>
         <span className="text-sm text-muted-foreground">
-          (trudna pogoda na tle normalnej)
+          (trudna pogoda na tle normalnej
+          {match.season ? `, sezon ${match.season}` : ""})
         </span>
       </div>
 
@@ -24,11 +25,13 @@ const TeamsWeatherScoreSection = ({ match }: TeamsWeatherScoreSectionProps) => {
           <WeatherScoreIndicator
             teamId={match.home_team_id}
             teamName={match.homeTeam.name}
+            season={match.season}
           />
           <div className="h-24 w-px bg-border" />
           <WeatherScoreIndicator
             teamId={match.away_team_id}
             teamName={match.awayTeam.name}
+            season={match.season}
           />
         </CardContent>
       </Card>
