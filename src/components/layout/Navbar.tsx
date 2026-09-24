@@ -1,9 +1,9 @@
-import { Menu, Moon, Search, Sun } from "lucide-react";
+import { Menu, Moon, Sun } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useTheme } from "@/hooks/useTheme";
 
 import { Link, useLocation } from "react-router";
+import Searchbar from "./Searchbar";
 
 type NavLink = {
   label: string;
@@ -75,14 +75,7 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
         </nav>
 
         <div className="flex shrink-0 items-center gap-3">
-          <div className="relative hidden lg:block">
-            <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Wyszukaj drużynę..."
-              className="w-48 pl-8 xl:w-64"
-            />
-          </div>
-
+          <Searchbar />
           <Button
             variant="ghost"
             size="icon"

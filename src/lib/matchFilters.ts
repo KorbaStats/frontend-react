@@ -1,5 +1,6 @@
 import type { MatchWithWeather } from "@/services/matchesService"
 import { profileFor, type PrecipBand, type TempBand, type WindBand } from "./weatherProfile"
+import { normalize } from "@/lib/utils.ts";
 // OR w obrębie osi, AND między osiami; pusta tablica = oś nie ogranicza
 export type WeatherBandFilters = {
   temp: TempBand[]
@@ -28,11 +29,6 @@ export const emptyFilters: MatchFilters = {
   leagueId: "all",
   dateFrom: "",
   dateTo: "",
-}
-
-// do wyszukiwania bez polskich znakow np. Śląsk -> slask
-function normalize(text: string): string {
-  return text.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "")
 }
 
 // czy filtry są zaznaczone
