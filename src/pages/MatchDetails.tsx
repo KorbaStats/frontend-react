@@ -3,11 +3,13 @@ import { useParams } from "react-router";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+
 import { getMatchById, type MatchWithWeather } from "@/services/matchesService";
 
 import MatchHeaderCard from "@/components/match-details/MatchHeaderCard";
 import MatchStats from "@/components/match-details/MatchStats";
 import MatchWeatherInsights from "@/components/match-details/MatchWeatherInsights";
+import ExportReportButton from "@/components/shared/ExportReportButton";
 
 const MatchDetails = () => {
   const { id } = useParams();
@@ -55,7 +57,7 @@ const MatchDetails = () => {
   return (
     <>
       <MatchHeaderCard match={match} />
-      <div className="flex gap-2">
+      <div className="flex gap-2 print:hidden">
         <Button
           aria-pressed={activeTab === "stats"}
           variant={activeTab === "stats" ? "secondary" : "outline"}
@@ -77,6 +79,9 @@ const MatchDetails = () => {
       ) : (
         <MatchWeatherInsights match={match} />
       )}
+      <ExportReportButton
+        fileName={`Raport - ${match.homeTeam.name} vs ${match.awayTeam.name} - ${new Date(match.datetime).toLocaleDateString("pl-PL")}`}
+      />
     </>
   );
 };

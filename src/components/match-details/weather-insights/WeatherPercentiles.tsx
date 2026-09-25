@@ -176,7 +176,7 @@ const WeatherPercentiles = ({ match }: WeatherPercentilesProps) => {
         : null;
 
   return (
-    <Card>
+    <Card className="break-inside-avoid"> 
       <CardHeader className="flex flex-wrap items-start justify-between gap-2 border-b pb-6">
         <div className="min-w-0">
           <CardTitle className="flex items-center gap-2 text-base">

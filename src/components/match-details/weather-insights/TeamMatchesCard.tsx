@@ -39,7 +39,7 @@ const TeamMatchesCard = ({
   const navigate = useNavigate();
 
   return (
-    <Card>
+    <Card className="break-inside-avoid">
       <CardHeader className="border-b pb-6">
         <CardTitle className="text-base">{teamName}</CardTitle>
         <CardDescription>
@@ -47,7 +47,7 @@ const TeamMatchesCard = ({
         </CardDescription>
       </CardHeader>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto print:overflow-visible">
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">

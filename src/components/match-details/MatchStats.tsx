@@ -68,7 +68,7 @@ const MatchStats = ({ match }: MatchStatsProps) => {
           ))}
       </CardContent>
 
-      <CardFooter className="justify-center border-t pt-6">
+      <CardFooter className="justify-center border-t pt-6 print:hidden">
         <Button variant="outline" onClick={() => setShowAll(!showAll)}>
           {showAll ? "Pokaż mniej" : "Pokaż więcej"}
         </Button>

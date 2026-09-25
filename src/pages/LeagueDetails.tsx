@@ -109,7 +109,7 @@ const LeagueDetails = () => {
         season={selectedSeason}
       />
       <ExportReportButton
-        fileName={`KorbaStats - ${league?.name ?? "liga"} ${selectedSeason ?? ""}`}
+        fileName={`Raport - ${league?.name ?? "liga"} ${selectedSeason ?? ""}`}
       />
     </>
   );

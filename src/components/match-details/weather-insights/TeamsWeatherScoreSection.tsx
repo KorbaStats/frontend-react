@@ -20,7 +20,7 @@ const TeamsWeatherScoreSection = ({ match }: TeamsWeatherScoreSectionProps) => {
         </span>
       </div>
 
-      <Card>
+      <Card className="break-inside-avoid">
         <CardContent className="grid grid-cols-[1fr_auto_1fr] items-center gap-6">
           <WeatherScoreIndicator
             teamId={match.home_team_id}

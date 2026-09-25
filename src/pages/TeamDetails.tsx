@@ -150,7 +150,7 @@ const TeamDetails = () => {
         </CardContent>
         <ShowMoreFooter hiddenCount={hiddenCount} onClick={showMore} />
       </Card>
-      <ExportReportButton fileName={`KorbaStats - ${team?.name ?? "drużyna"}`} />
+      <ExportReportButton fileName={`Raport - ${team?.name ?? "drużyna"}`} />
     </>
   );
 };
