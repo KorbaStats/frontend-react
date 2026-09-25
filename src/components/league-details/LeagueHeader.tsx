@@ -54,7 +54,7 @@ const LeagueHeader = ({
   ];
 
   return (
-    <Card className="gap-0 py-0">
+    <Card className="gap-0 py-0 break-inside-avoid">
       <div className="flex items-start justify-between gap-4 p-4">
         <div className="flex items-center gap-4">
           <TeamLogo

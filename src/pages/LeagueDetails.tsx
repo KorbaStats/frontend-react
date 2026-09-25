@@ -17,6 +17,7 @@ import LeagueHeader from "@/components/league-details/LeagueHeader";
 import LeagueTable from "@/components/league-details/LeagueTable";
 import TopWeatherScores from "@/components/league-details/TopWeatherScores";
 import LeagueRecentMatches from "@/components/league-details/LeagueRecentMatches";
+import ExportReportButton from "@/components/shared/ExportReportButton";
 
 const LeagueDetails = () => {
   const { id } = useParams();
@@ -95,7 +96,7 @@ const LeagueDetails = () => {
         weatherSummary={weatherSummary}
       />
 
-      <div className="grid gap-4 grid-cols-3 ">
+      <div className="grid gap-4 grid-cols-3 print:grid-cols-1">
         <LeagueTable matches={leagueMatches} />
         <TopWeatherScores matches={leagueMatches} season={selectedSeason} />
       </div>
@@ -106,6 +107,9 @@ const LeagueDetails = () => {
         matches={leagueMatches}
         leagueName={league?.name ?? null}
         season={selectedSeason}
+      />
+      <ExportReportButton
+        fileName={`KorbaStats - ${league?.name ?? "liga"} ${selectedSeason ?? ""}`}
       />
     </>
   );

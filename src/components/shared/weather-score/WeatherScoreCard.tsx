@@ -72,7 +72,7 @@ const WeatherScoreCard = ({ teamId, season = null }: WeatherScoreCardProps) => {
   const color = weatherScoreColor(score);
 
   return (
-    <Card className="">
+    <Card className="break-inside-avoid">
       {header}
       <CardContent className="flex flex-1 flex-col items-center justify-between gap-6 lg:flex-row lg:justify-center lg:gap-12 xl:flex-col xl:justify-between xl:gap-6">
         <div className="flex flex-col items-center gap-4">

@@ -80,7 +80,7 @@ const TeamStatsCards = ({ stats, baseline }: TeamStatsProps) => {
         );
 
         return (
-          <Card key={metric.key} className="gap-3 py-5">
+          <Card key={metric.key} className="gap-3 py-5 break-inside-avoid">
             <CardHeader className="flex items-center justify-between">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {metric.label}

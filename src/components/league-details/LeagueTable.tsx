@@ -23,7 +23,7 @@ const LeagueTable = ({ matches }: LeagueTableProps) => {
   const standingRows = computeStandings(matches ?? []);
 
   return (
-    <Card className="col-span-2">
+    <Card className="col-span-2 print:col-span-1">
       <CardHeader className="border-b pb-6">
         <CardTitle className="flex items-center gap-2 text-base">
           <Trophy className="h-4 w-4 text-primary" />
@@ -31,7 +31,8 @@ const LeagueTable = ({ matches }: LeagueTableProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="px-0">
-        <Table containerClassName="max-h-[calc(11*2.5rem)] overflow-y-auto">
+        {/* na wydruku cała tabela, bez przewijania */}
+        <Table containerClassName="max-h-[calc(11*2.5rem)] overflow-y-auto print:max-h-none">
           <TableHeader className="sticky top-0 z-10 bg-card [&_th]:shadow-[inset_0_-1px_0_var(--border)] [&_tr]:border-0">
             <TableRow className="hover:bg-transparent">
               <TableHead className="w-10 pl-6 text-center">#</TableHead>

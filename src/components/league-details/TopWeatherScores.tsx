@@ -23,7 +23,7 @@ const TopWeatherScores = ({ matches, season }: TopWeatherScoresProps) => {
   const wsData = computeTopWeatherScores(matches);
 
   return (
-    <Card className="col-span-1">
+    <Card className="col-span-1 break-inside-avoid">
       <CardHeader className="border-b pb-6">
         <CardTitle className="flex items-center gap-2 text-base">
           <CloudLightning className="h-4 w-4 text-primary" />

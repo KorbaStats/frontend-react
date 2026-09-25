@@ -5,12 +5,12 @@ import { searchTeams } from "@/lib/search";
 import { getTeams } from "@/services/teamsService";
 
 export function useTeamSearch() {
-  const [query, setQuery] = useState("");
-  const [teams, setTeams] = useState<Team[]>([]);
+  const [query, setQuery] = useState(""); 
+  const [teams, setTeams] = useState<Team[]>([]); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const requested = useRef(false);
+  const requested = useRef(false); 
 
   const loadTeams = useCallback(async () => {
     if (requested.current) return;

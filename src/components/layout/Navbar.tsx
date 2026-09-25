@@ -27,7 +27,7 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
   const { pathname } = useLocation();
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-background/70 backdrop-blur-md border-b">
+    <header className="sticky top-0 z-50 bg-white dark:bg-background/70 backdrop-blur-md border-b print:hidden">
       <div className="mx-auto flex h-16 w-full max-w-400 items-center justify-between gap-4 px-6">
         <div className="flex shrink-0 items-center gap-2">
           <Button

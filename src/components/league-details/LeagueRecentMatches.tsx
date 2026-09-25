@@ -48,7 +48,7 @@ const LeagueRecentMatches = ({
       </CardHeader>
 
       <CardContent className="px-0">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto print:overflow-visible">
           <MatchesTable matches={visibleItems} />
         </div>
       </CardContent>

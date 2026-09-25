@@ -8,7 +8,7 @@ interface ShowMoreFooterProps {
 
 const ShowMoreFooter = ({ hiddenCount, onClick }: ShowMoreFooterProps) => {
   return hiddenCount > 0 ? (
-    <CardFooter className="justify-center border-t pt-6">
+    <CardFooter className="justify-center border-t pt-6 print:hidden">
       <Button variant="outline" onClick={onClick}>
         Pokaż więcej ({hiddenCount})
       </Button>

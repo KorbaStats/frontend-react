@@ -92,12 +92,12 @@ const Sidebar = ({ filters, onFiltersChange, isOpen, onClose }: SidebarProps) =>
 
   return (
     <>
-      <aside className="no-scrollbar sticky top-16 hidden h-[calc(100vh-4rem)] w-80 shrink-0 flex-col gap-4 overflow-y-auto py-4 pr-3 pl-6 2xl:flex">
+      <aside className="no-scrollbar sticky top-16 hidden h-[calc(100vh-4rem)] w-80 shrink-0 flex-col gap-4 overflow-y-auto py-4 pr-3 pl-6 2xl:flex print:hidden">
         {sections}
       </aside>
 
       <div
-        className={`fixed inset-0 top-16 z-40 2xl:hidden ${
+        className={`fixed inset-0 top-16 z-40 2xl:hidden print:hidden ${
           isOpen ? "" : "pointer-events-none"
         }`}
         aria-hidden={!isOpen}

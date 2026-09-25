@@ -28,6 +28,7 @@ import ShowMoreFooter from "@/components/shared/ShowMoreFooter";
 import WeatherScoreCard from "@/components/shared/weather-score/WeatherScoreCard";
 import TeamInfoCard from "@/components/team-details/TeamInfoCard";
 import TeamStatsCards from "@/components/team-details/TeamStatsCards";
+import ExportReportButton from "@/components/shared/ExportReportButton";
 
 const TeamDetails = () => {
   const { id } = useParams();
@@ -149,6 +150,7 @@ const TeamDetails = () => {
         </CardContent>
         <ShowMoreFooter hiddenCount={hiddenCount} onClick={showMore} />
       </Card>
+      <ExportReportButton fileName={`KorbaStats - ${team?.name ?? "drużyna"}`} />
     </>
   );
 };
