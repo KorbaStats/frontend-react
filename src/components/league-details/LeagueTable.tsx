@@ -33,7 +33,7 @@ const LeagueTable = ({ matches }: LeagueTableProps) => {
       <CardContent className="px-0">
         {/* na wydruku cała tabela, bez przewijania */}
         <Table containerClassName="max-h-[calc(11*2.5rem)] overflow-y-auto print:max-h-none">
-          <TableHeader className="sticky top-0 z-10 bg-card [&_th]:shadow-[inset_0_-1px_0_var(--border)] [&_tr]:border-0">
+          <TableHeader className="sticky top-0 z-10 bg-card print:static [&_th]:shadow-[inset_0_-1px_0_var(--border)] [&_tr]:border-0">
             <TableRow className="hover:bg-transparent">
               <TableHead className="w-10 pl-6 text-center">#</TableHead>
               <TableHead>Drużyna</TableHead>

@@ -27,7 +27,6 @@ const LeagueRecentMatches = ({
   leagueName,
   pageSize = 10,
 }: LeagueRecentMatchesProps) => {
-  // mecze przychodzą z serwisu posortowane od najnowszych
   const { visibleItems, hiddenCount, showMore } = useVisibleItems(
     matches,
     pageSize,
