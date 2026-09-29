@@ -21,7 +21,7 @@ function pointsFor(match: MatchWithWeather, teamId: number): number {
   }
 }
 
-function isDifficultWeather(weather: Weather): boolean {
+export function isDifficultWeather(weather: Weather): boolean {
   const { temp, precip, wind } = profileFor(weather);
   return (
     temp === "freezing" ||

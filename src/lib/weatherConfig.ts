@@ -13,6 +13,7 @@ import {
   CloudDrizzle,
   Leaf,
   Tornado,
+  type LucideIcon,
 } from "lucide-react";
 
 // `chartColor` to token CSS, nie klasa Tailwinda — recharts ustawia fill/stroke
@@ -41,7 +42,7 @@ export function weatherScoreColor(score: number): string {
 }
 
 // ikony do pigulek filtrow
-export const bandIcons: Record<string, typeof Sun> = {
+export const bandIcons: Record<string, LucideIcon> = {
   // temperatura
   freezing: ThermometerSnowflake,
   cold: Snowflake,

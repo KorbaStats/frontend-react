@@ -11,11 +11,14 @@ import {
   type MatchWithWeather,
 } from "@/services/matchesService";
 
-import { computeLeagueWeatherSummary } from "@/lib/leagueWeather";
+import {
+  computeLeagueWeatherSummary,
+  computeTopWeatherScores,
+} from "@/lib/leagueWeather";
 
 import LeagueHeader from "@/components/league-details/LeagueHeader";
 import LeagueTable from "@/components/league-details/LeagueTable";
-import TopWeatherScores from "@/components/league-details/TopWeatherScores";
+import WeatherScoreRankingCard from "@/components/shared/weather-score/WeatherScoreRankingCard";
 import LeagueRecentMatches from "@/components/league-details/LeagueRecentMatches";
 import ExportReportButton from "@/components/shared/ExportReportButton";
 
@@ -98,7 +101,13 @@ const LeagueDetails = () => {
 
       <div className="grid gap-4 grid-cols-3 print:grid-cols-1">
         <LeagueTable matches={leagueMatches} />
-        <TopWeatherScores matches={leagueMatches} season={selectedSeason} />
+        <WeatherScoreRankingCard
+          scores={computeTopWeatherScores(leagueMatches)}
+          title="Top Weather Score's w lidze"
+          description={`Najlepsze drużyny w trudnej pogodzie${
+            selectedSeason ? ` — sezon ${selectedSeason}` : ""
+          }`}
+        />
       </div>
 
       {/* key: zmiana sezonu resetuje "Pokaż więcej" */}

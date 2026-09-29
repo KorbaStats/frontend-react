@@ -44,8 +44,8 @@ export function computeLeagueWeatherSummary(
 
 // top 5 weather score'ow w lidze
 export type TeamWeatherScore = {
-  team: Team 
-  score: WeatherScore
+  team: Team;
+  score: WeatherScore;
 };
 
 type TeamMatches = { team: Team; matches: MatchWithWeather[] };
@@ -60,9 +60,8 @@ function addMatch(
   else map.set(team.id, { team, matches: [match] });
 }
 
-export function computeTopWeatherScores(
+function computeAllWeatherScores(
   matches: MatchWithWeather[],
-  limit: number = 5,
 ): TeamWeatherScore[] {
   const teamsMap = new Map<number, TeamMatches>();
 
@@ -79,7 +78,23 @@ export function computeTopWeatherScores(
     weatherScores.push({ team, score });
   }
 
-  return weatherScores
+  return weatherScores;
+}
+
+export function computeTopWeatherScores(
+  matches: MatchWithWeather[],
+  limit: number = 5,
+): TeamWeatherScore[] {
+  return computeAllWeatherScores(matches)
     .sort((a, b) => b.score.score - a.score.score)
+    .slice(0, limit);
+}
+
+export function computeBottomWeatherScores(
+  matches: MatchWithWeather[],
+  limit: number = 5,
+): TeamWeatherScore[] {
+  return computeAllWeatherScores(matches)
+    .sort((a, b) => a.score.score - b.score.score)
     .slice(0, limit);
 }
