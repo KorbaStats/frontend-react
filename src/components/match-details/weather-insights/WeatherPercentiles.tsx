@@ -185,8 +185,7 @@ const WeatherPercentiles = ({ match }: WeatherPercentilesProps) => {
           </CardTitle>
           <CardDescription>
             Warunki pogodowe w tym meczu na tle {matchCount || "wszystkich"} meczów
-            {match.league ? ` ${match.league.name}` : ""}. Środek toru to norma,
-            a wypełnienie pokazuje, jak daleko od niej były te warunki.
+            {match.league ? ` ${match.league.name}` : ""}.
           </CardDescription>
         </div>
         {!isLoading && !error && extremity && (

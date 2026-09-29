@@ -1,18 +1,48 @@
 import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, type LucideIcon } from "lucide-react";
 
 import type { MatchStatsSummary } from "@/data/types";
 import { getMatchStatsSummary } from "@/services/matchStatsService";
-import type { ColdestMatch, WeatherGoalsInsights } from "@/services/weatherStatsService";
-import { getColdestMatch, getWeatherGoalsInsights } from "@/services/weatherStatsService";
-
+import type {
+  ColdestMatch,
+  WeatherGoalsInsights,
+} from "@/services/weatherStatsService";
+import {
+  getColdestMatch,
+  getWeatherGoalsInsights,
+} from "@/services/weatherStatsService";
 
 import { weatherConfig } from "@/lib/weatherConfig";
 
+interface StatCardProps {
+  title: string;
+  Icon?: LucideIcon;
+  value: React.ReactNode;
+  hint: string;
+}
+
+const StatCard = ({ title, Icon, value, hint }: StatCardProps) => (
+  <Card className="flex flex-col border-primary/20 bg-primary/5">
+    <CardHeader className="flex items-center justify-between">
+      <CardTitle className="text-xs text-muted-foreground">{title}</CardTitle>
+      {Icon && (
+        <span className="rounded-md bg-primary/10 p-1.5">
+          <Icon size={16} className="text-primary" />
+        </span>
+      )}
+    </CardHeader>
+    <CardContent className="flex flex-1 flex-col justify-end">
+      <span className="text-3xl font-bold text-primary">{value}</span>
+      <p className="mt-1 text-xs text-muted-foreground">{hint}</p>
+    </CardContent>
+  </Card>
+);
+
 const SummaryCards = () => {
   const [statsSummary, setStatsSummary] = useState<MatchStatsSummary>();
-  const [weatherInsights, setWeatherInsights] = useState<WeatherGoalsInsights>();
+  const [weatherInsights, setWeatherInsights] =
+    useState<WeatherGoalsInsights>();
   const [coldestMatch, setColdestMatch] = useState<ColdestMatch>();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -56,98 +86,42 @@ const SummaryCards = () => {
     );
   }
 
-  const bestWeatherConfig =
-    weatherInsights && weatherConfig[weatherInsights.bestWeatherForGoals.condition];
-  const worstWeatherConfig =
-    weatherInsights && weatherConfig[weatherInsights.worstWeatherForGoals.condition];
+  const best = weatherInsights?.bestWeatherForGoals;
+  const worst = weatherInsights?.worstWeatherForGoals;
 
-  const BestIcon = bestWeatherConfig?.icon;
-  const WorstIcon = worstWeatherConfig?.icon;
-
+  const bestConfig = best && weatherConfig[best.condition];
+  const worstConfig = worst && weatherConfig[worst.condition];
   const coldestConfig = coldestMatch && weatherConfig[coldestMatch.condition];
-  const ColdestIcon = coldestConfig?.icon;
 
   return (
-    <div className="grid grid-cols-2 gap-4 xl:grid-cols-4 items-stretch">
-      {/* Ilość meczy */}
-      <Card className="flex flex-col">
-        <CardHeader className="flex justify-between items-center">
-          <CardTitle className="text-muted-foreground text-xs">
-            Śledzone mecze
-          </CardTitle>
-          <CalendarDays size={16} className="text-muted-foreground" />
-        </CardHeader>
-        <CardContent className="flex-1 flex flex-col justify-end">
-          <span className="text-3xl font-bold">
-            {statsSummary?.total_matches}
-          </span>
-          <p className="text-xs text-muted-foreground mt-1">łącznie w bazie</p>
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-2 items-stretch gap-4 xl:grid-cols-4">
+      <StatCard
+        title="Śledzone mecze"
+        Icon={CalendarDays}
+        value={statsSummary?.total_matches}
+        hint="łącznie w bazie"
+      />
 
-      {/* Najlepsza pogoda do bramek */}
-      <Card className="flex flex-col">
-        <CardHeader className="flex justify-between items-center">
-          <CardTitle className="text-muted-foreground text-xs">
-            Najlepsza pogoda na gole
-          </CardTitle>
-          {BestIcon && <BestIcon size={16} className="text-muted-foreground" />}
-        </CardHeader>
-        <CardContent className="flex-1 flex flex-col justify-end">
-          <span className="text-3xl font-bold">
-            {weatherInsights?.bestWeatherForGoals.avgGoals}
-          </span>
-          <p className="text-xs text-muted-foreground mt-1">
-            {bestWeatherConfig?.label} · {weatherInsights?.bestWeatherForGoals.matchCount}{" "}
-            meczów
-          </p>
-        </CardContent>
-      </Card>
-{/* 
-                  <span className={`text-2xl font-bold ${stylesConfig.bg}`} key={m.id}>
-              {stylesConfig.text}
-            </span> */}
+      <StatCard
+        title="Najlepsza pogoda na gole"
+        Icon={bestConfig?.icon}
+        value={best?.avgGoals}
+        hint={`${bestConfig?.label} · ${best?.matchCount} meczów`}
+      />
 
-      {/* Najgorsza pogoda do bramek */}
-      <Card className="flex flex-col">
-        <CardHeader className="flex justify-between items-center">
-          <CardTitle className="text-muted-foreground text-xs">
-            Najgorsza pogoda na gole
-          </CardTitle>
-          {WorstIcon && (
-            <WorstIcon size={16} className="text-muted-foreground" />
-          )}
-        </CardHeader>
-        <CardContent className="flex-1 flex flex-col justify-end">
-          <span className="text-3xl font-bold">
-            {weatherInsights?.worstWeatherForGoals.avgGoals}
-          </span>
-          <p className="text-xs text-muted-foreground mt-1">
-            {worstWeatherConfig?.label} · {weatherInsights?.worstWeatherForGoals.matchCount}{" "}
-            meczów
-          </p>
-        </CardContent>
-      </Card>
+      <StatCard
+        title="Najgorsza pogoda na gole"
+        Icon={worstConfig?.icon}
+        value={worst?.avgGoals}
+        hint={`${worstConfig?.label} · ${worst?.matchCount} meczów`}
+      />
 
-      {/* Najzimniejszy mecz */}
-      <Card className="flex flex-col">
-        <CardHeader className="flex justify-between items-center">
-          <CardTitle className="text-muted-foreground text-xs">
-            Najzimniejszy mecz
-          </CardTitle>
-          {ColdestIcon && (
-            <ColdestIcon size={16} className="text-muted-foreground" />
-          )}
-        </CardHeader>
-        <CardContent className="flex-1 flex flex-col justify-end">
-          <span className="text-3xl font-bold">
-            {coldestMatch?.temperature_c}°C
-          </span>
-          <p className="text-xs text-muted-foreground mt-1">
-            {coldestMatch?.city} · {coldestConfig?.label}
-          </p>
-        </CardContent>
-      </Card>
+      <StatCard
+        title="Najzimniejszy mecz"
+        Icon={coldestConfig?.icon}
+        value={`${coldestMatch?.temperature_c}°C`}
+        hint={`${coldestMatch?.city} · ${coldestConfig?.label}`}
+      />
     </div>
   );
 };
