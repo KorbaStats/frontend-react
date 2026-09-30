@@ -1,23 +1,51 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { Star, Trophy } from "lucide-react";
 
-import type { League } from "@/data/types";
+import type { Team, League } from "@/data/types";
 import type { MatchFilters } from "@/lib/matchFilters";
 import { getLeagueCountryCode } from "@/lib/leagueLabel";
 import { getLeagues } from "@/services/leaguesService";
 import { getAvailableSeasons } from "@/services/matchesService";
+import { getTeams } from "@/services/teamsService";
 
 import SidebarSection from "@/components/layout/SidebarSection";
 import MatchesFilters from "@/components/filters/MatchesFilters";
 import TeamWeatherFilters from "@/components/filters/TeamWeatherFilters";
+import { useFavouriteTeams } from "@/hooks/useFavouriteTeams";
+import FavouriteStar from "../shared/FavouriteStar";
 
-const FavouriteTeams = () => (
+const FavouriteTeams = ({ teams }: { teams: Team[] }) => (
   <SidebarSection icon={Star} title="Ulubione drużyny">
-    <p className="text-center text-sm text-muted-foreground">
-      Brak ulubionych drużyn
-    </p>
-    {/* TODO: */}
+    {teams.length === 0 ? (
+      <p className="text-center text-sm text-muted-foreground">
+        Brak ulubionych drużyn do wyświetlenia.
+      </p>
+    ) : (
+      <ul className="flex flex-col gap-1">
+        {teams.map((team) => (
+          <li
+            key={team.id}
+            className="group flex items-center gap-2 rounded-xl pr-1 transition-colors hover:bg-accent"
+          >
+            <Link
+              to={`/team/${team.id}`}
+              className="flex min-w-0 flex-1 items-center gap-3 px-2 py-2 text-sm font-medium group-hover:text-accent-foreground"
+            >
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary/20 to-secondary/20 text-[10px] font-extrabold">
+                {team.short_name}
+              </span>
+              <span className="truncate">{team.name}</span>
+            </Link>
+
+            <FavouriteStar
+              teamId={team.id}
+              className="opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+            />
+          </li>
+        ))}
+      </ul>
+    )}
   </SidebarSection>
 );
 
@@ -51,19 +79,29 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-const Sidebar = ({ filters, onFiltersChange, isOpen, onClose }: SidebarProps) => {
+const Sidebar = ({
+  filters,
+  onFiltersChange,
+  isOpen,
+  onClose,
+}: SidebarProps) => {
   const { pathname } = useLocation();
+  // favourite teams ids from context api
+  const { favouriteTeamsIds } = useFavouriteTeams();
 
   const [leagues, setLeagues] = useState<League[]>([]);
   const [seasons, setSeasons] = useState<string[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+
+  const favouriteTeams = teams.filter((t) => favouriteTeamsIds.includes(t.id));
 
   // ligi służą i sekcji nawigacyjnej, i dropdownowi w filtrach
   useEffect(() => {
+    getTeams().then((res) => setTeams(res.data));
     getLeagues().then((res) => setLeagues(res.data));
     getAvailableSeasons().then(setSeasons);
   }, []);
 
-  // "/teams" (lista) filtrów nie ma, tylko strona konkretnej drużyny
   const showMatchesFilters = pathname === "/matches";
   const showTeamFilters = pathname.startsWith("/team/");
 
@@ -85,7 +123,7 @@ const Sidebar = ({ filters, onFiltersChange, isOpen, onClose }: SidebarProps) =>
         />
       )}
 
-      <FavouriteTeams />
+      <FavouriteTeams teams={favouriteTeams} />
       <Leagues leagues={leagues} />
     </>
   );

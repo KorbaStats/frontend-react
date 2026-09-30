@@ -1,34 +1,37 @@
-import { useEffect, useState } from "react"
-import { Outlet, useLocation } from "react-router"
+import { useEffect, useState } from "react";
+import { Outlet, useLocation } from "react-router";
 
-import type { MatchFilters } from "@/lib/matchFilters"
-import { emptyFilters } from "@/lib/matchFilters"
+import type { MatchFilters } from "@/lib/matchFilters";
+import { emptyFilters } from "@/lib/matchFilters";
 
-import Navbar from "@/components/layout/Navbar"
-import Sidebar from "@/components/layout/Sidebar"
+import Navbar from "@/components/layout/Navbar";
+import Sidebar from "@/components/layout/Sidebar";
 
-export type FiltersContext = {
-  filters: MatchFilters
-  setFilters: (next: MatchFilters) => void
-}
+export type FiltersOutletContext = {
+  filters: MatchFilters;
+  setFilters: (next: MatchFilters) => void;
+};
 
 const MainLayout = () => {
-  const { pathname } = useLocation()
-  const [stored, setStored] = useState({ pathname, filters: emptyFilters })
-  const [openedOn, setOpenedOn] = useState<string | null>(null)
-  const isSidebarOpen = openedOn === pathname
-  const setIsSidebarOpen = (open: boolean) => setOpenedOn(open ? pathname : null)
+  const { pathname } = useLocation();
+  const [stored, setStored] = useState({ pathname, filters: emptyFilters });
+  const [openedOn, setOpenedOn] = useState<string | null>(null);
+  const isSidebarOpen = openedOn === pathname;
+  const setIsSidebarOpen = (open: boolean) =>
+    setOpenedOn(open ? pathname : null);
 
-  const filters = stored.pathname === pathname ? stored.filters : emptyFilters
-  const setFilters = (next: MatchFilters) => setStored({ pathname, filters: next })
+  const filters = stored.pathname === pathname ? stored.filters : emptyFilters;
+  const setFilters = (next: MatchFilters) =>
+    setStored({ pathname, filters: next });
 
-  // Escape zamyka szufladę
+  // Escape zamyka menu
   useEffect(() => {
-    if (!isSidebarOpen) return
-    const onKeyDown = (e: KeyboardEvent) => e.key === "Escape" && setOpenedOn(null)
-    document.addEventListener("keydown", onKeyDown)
-    return () => document.removeEventListener("keydown", onKeyDown)
-  }, [isSidebarOpen])
+    if (!isSidebarOpen) return;
+    const onKeyDown = (e: KeyboardEvent) =>
+      e.key === "Escape" && setOpenedOn(null);
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isSidebarOpen]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -41,11 +44,15 @@ const MainLayout = () => {
           onClose={() => setIsSidebarOpen(false)}
         />
         <main className="flex min-w-0 flex-1 flex-col gap-4 px-6 py-4 2xl:pl-3">
-          <Outlet context={{ filters, setFilters } satisfies FiltersContext} />
+          <Outlet
+            context={
+              { filters, setFilters } satisfies FiltersOutletContext
+            }
+          />
         </main>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MainLayout
+export default MainLayout;

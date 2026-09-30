@@ -11,7 +11,7 @@ import { CalendarDays } from "lucide-react";
 
 import { getMatches, type MatchWithWeather } from "@/services/matchesService";
 import { filterMatches } from "@/lib/matchFilters";
-import type { FiltersContext } from "@/components/layout/MainLayout";
+import type { FiltersOutletContext } from "@/components/layout/MainLayout";
 
 import MatchesTable from "@/components/shared/MatchesTable";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
@@ -25,7 +25,7 @@ const Matches = () => {
   const [error, setError] = useState<string | null>(null);
 
   // filtry ustawiane w sidebarze, stan trzyma MainLayout
-  const { filters } = useOutletContext<FiltersContext>();
+  const { filters } = useOutletContext<FiltersOutletContext>();
 
   useEffect(() => {
     getMatches()

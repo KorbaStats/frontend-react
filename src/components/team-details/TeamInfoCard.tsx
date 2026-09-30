@@ -8,6 +8,7 @@ import type { MatchWithWeather } from "@/services/matchesService";
 
 import TeamLogo from "@/components/shared/TeamLogo";
 import ResultBadge from "@/components/shared/ResultBadge";
+import FavouriteStar from "../shared/FavouriteStar";
 
 interface TeamInfoProps {
   matches: MatchWithWeather[];
@@ -18,7 +19,9 @@ const TeamInfoCard = ({ matches, team }: TeamInfoProps) => {
   return (
     <Card className="flex-col gap-4 p-4 break-inside-avoid lg:flex-row lg:items-center lg:justify-between">
       <div className="flex items-center gap-4">
+        {team && <FavouriteStar teamId={team.id} size={24} />}
         <TeamLogo name={team?.name} short_name={team?.short_name} />
+
         {/* Dane drużyny */}
         <div>
           <Link to={`/league/${team?.league_id}`} className=" text-md text-primary font-bold tracking-widest ">

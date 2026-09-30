@@ -3,7 +3,7 @@ import { useOutletContext, useParams } from "react-router";
 import { ChartColumn, History } from "lucide-react";
 
 import type { Team } from "@/data/types";
-import type { FiltersContext } from "@/components/layout/MainLayout";
+import type { FiltersOutletContext } from "@/components/layout/MainLayout";
 
 import {
   getAvailableSeasons,
@@ -33,7 +33,7 @@ import ExportReportButton from "@/components/shared/ExportReportButton";
 const TeamDetails = () => {
   const { id } = useParams();
   const teamId = Number(id);
-  const { filters } = useOutletContext<FiltersContext>();
+  const { filters } = useOutletContext<FiltersOutletContext>();
 
   const [team, setTeam] = useState<Team>();
   const [matches, setMatches] = useState<MatchWithWeather[]>([]);
