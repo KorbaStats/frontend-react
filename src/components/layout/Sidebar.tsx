@@ -97,9 +97,13 @@ const Sidebar = ({
 
   // ligi służą i sekcji nawigacyjnej, i dropdownowi w filtrach
   useEffect(() => {
-    getTeams().then((res) => setTeams(res.data));
-    getLeagues().then((res) => setLeagues(res.data));
-    getAvailableSeasons().then(setSeasons);
+    getTeams()
+      .then((res) => setTeams(res.data))
+      .catch(console.error);
+    getLeagues()
+      .then((res) => setLeagues(res.data))
+      .catch(console.error);
+    getAvailableSeasons().then(setSeasons).catch(console.error);
   }, []);
 
   const showMatchesFilters = pathname === "/matches";

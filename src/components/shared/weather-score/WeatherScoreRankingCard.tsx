@@ -66,7 +66,7 @@ const WeatherScoreRankingCard = ({
                 </span>
               </div>
 
-              <div className="ml-auto flex flex-col items-end leading-tight">
+              <div className="ml-auto flex shrink-0 flex-col items-end leading-tight">
                 <span
                   className={`text-lg font-bold tabular-nums ${weatherScoreColor(score.score)}`}
                 >

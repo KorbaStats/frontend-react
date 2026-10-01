@@ -27,7 +27,7 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
   const { pathname } = useLocation();
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-background/70 backdrop-blur-md border-b print:hidden">
+    <header className="sticky top-0 z-50 bg-card dark:bg-background/70 backdrop-blur-md border-b print:hidden">
       <div className="mx-auto flex h-16 w-full max-w-400 items-center justify-between gap-4 px-6">
         <div className="flex shrink-0 items-center gap-2">
           <Button
@@ -42,7 +42,7 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
 
           <Link to="/">
             <div className="flex items-center gap-2">
-              <div className="border bg-white dark:bg-primary p-1.5 rounded-sm">
+              <div className="border bg-card dark:bg-primary p-1.5 rounded-sm">
                 <img
                   src="/ks_logo.png"
                   alt="KorbaStats logo"

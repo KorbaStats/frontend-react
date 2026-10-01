@@ -137,7 +137,7 @@ const WinsByWeatherChart = ({ matches, season }: WinsByWeatherChartProps) => {
         <table className="w-full text-sm">
           <thead>
             <tr className="text-xs text-muted-foreground">
-              <th className="pb-1 text-right font-normal text-black dark:text-white">Warunki pogodowe: </th>
+              <th className="pb-1 text-right font-normal text-foreground">Warunki pogodowe: </th>
               <th className="pb-1 text-right font-normal">Normalne</th>
               <th className="pb-1 text-right font-normal">Trudne</th>
             </tr>
