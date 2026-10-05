@@ -19,7 +19,10 @@ import TeamLogo from "@/components/shared/TeamLogo";
 
 import { getFormatedDate, getLocalTime } from "@/lib/date";
 import { getLeagueCountryCode } from "@/lib/leagueLabel";
-import { weatherConfig } from "@/lib/weatherConfig";
+import {
+  weatherDisplay,
+  weatherDisplayFor,
+} from "@/lib/weatherStylesConfig";
 
 interface MatchHeaderCardProps {
   match: MatchWithWeather;
@@ -65,7 +68,7 @@ const WeatherTile = ({
 
 const MatchHeaderCard = ({ match }: MatchHeaderCardProps) => {
   const weather = match.weather;
-  const config = weather ? weatherConfig[weather.condition] : null;
+  const config = weather ? weatherDisplay[weatherDisplayFor(weather)] : null;
   const WeatherIcon = config?.icon;
 
   return (

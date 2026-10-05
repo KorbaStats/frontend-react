@@ -2,7 +2,10 @@ import { Link, useNavigate } from "react-router";
 
 import type { MatchWithWeather } from "@/services/matchesService";
 import { getFormatedDate, getLocalTime } from "@/lib/date";
-import { weatherConfig } from "@/lib/weatherConfig";
+import {
+  weatherDisplay,
+  weatherDisplayFor,
+} from "@/lib/weatherStylesConfig";
 
 import {
   Table,
@@ -45,9 +48,10 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
         )}
 
         {matches.map((m) => {
-          // Ikony i opisy pogody
-          const condition = m.weather?.condition || "clear";
-          const config = weatherConfig[condition];
+          // Ikona i opis pogody wyliczane z pasm, tak jak filtry
+          const config = m.weather
+            ? weatherDisplay[weatherDisplayFor(m.weather)]
+            : weatherDisplay.clear;
           const Icon = config.icon;
 
           return (

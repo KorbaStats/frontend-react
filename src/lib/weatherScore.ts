@@ -22,12 +22,13 @@ function pointsFor(match: MatchWithWeather, teamId: number): number {
 }
 
 export function isDifficultWeather(weather: Weather): boolean {
-  const { temp, precip, wind } = profileFor(weather);
+  const { temp, precip, precipType, wind } = profileFor(weather);
   return (
     temp === "freezing" ||
     temp === "hot" ||
     precip === "heavy" ||
-    precip === "snow" ||
+    precipType === "snow" ||
+    precipType === "sleet" ||
     wind === "strong"
   );
 }

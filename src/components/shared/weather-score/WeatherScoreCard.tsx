@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { type WeatherScore, weatherScoreLabel } from "@/lib/weatherScore";
-import { weatherScoreColor } from "@/lib/weatherConfig";
+import { weatherScoreColor } from "@/lib/weatherStylesConfig";
 import {
   Card,
   CardContent,

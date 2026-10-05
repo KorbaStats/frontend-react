@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import TeamLogo from "@/components/shared/TeamLogo";
 import { getLeagueCountryCode } from "@/lib/leagueLabel";
 import type { LeagueWeatherSummary } from "@/lib/leagueWeather";
-import { weatherConfig } from "@/lib/weatherConfig";
+import { weatherDisplay } from "@/lib/weatherStylesConfig";
 
 interface LeagueHeaderProps {
   league: League | null;
@@ -35,19 +35,19 @@ const LeagueHeader = ({
   const weatherItems = weatherSummary && [
     {
       icon: Thermometer,
-      style: weatherConfig.clear,
+      style: weatherDisplay.clear,
       label: "Śr. temperatura",
       value: `${weatherSummary.avgTemp}°C`,
     },
     {
       icon: CloudRain,
-      style: weatherConfig.rain,
+      style: weatherDisplay.rain,
       label: "Mecze z opadami",
       value: `${weatherSummary.precipPct}%`,
     },
     {
       icon: Wind,
-      style: weatherConfig.wind,
+      style: weatherDisplay.wind,
       label: "Śr. wiatr",
       value: `${weatherSummary.avgWind} km/h`,
     },

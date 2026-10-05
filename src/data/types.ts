@@ -259,6 +259,38 @@ export type TeamStatsOverTimePoint = {
 }
 
 // ---------------------------------------------------------------------------
+// Mecz nierozegrany (terminarz pod predykcje).
+//
+// Osobny typ, a nie `Match` z nullowalnymi golami: gdyby gole i statystyki
+// stały się nullowalne na `Match`, popsułoby to każdą funkcję w `lib/`, która
+// je porównuje. Tak TypeScript po prostu nie wpuści terminarza do agregatów.
+//
+// ---------------------------------------------------------------------------
+
+export type ScheduledMatch = {
+  id: number
+  home_team_id: number
+  away_team_id: number
+  datetime: string
+  stadium_id: number | null
+  season: string | null
+  league_id: number | null
+
+  // kursy przed meczem
+  home_win_odds: number
+  draw_odds: number
+  away_win_odds: number
+
+  created_at: string
+  updated_at: string
+
+  homeTeam: Team
+  awayTeam: Team
+  stadium: Stadium | null
+  league: League | null
+}
+
+// ---------------------------------------------------------------------------
 // Pogoda — kontrakt wymyślony, backend nie ma jeszcze nic podobnego.
 // ---------------------------------------------------------------------------
 
@@ -273,14 +305,19 @@ export type WeatherCondition =
   | "extreme_cold"
 
 //TODO: verify against real API response
+// Pola odwzorowują Open-Meteo 1:1, razem z jednostkami — patrz
+// ../docs/api-requirements.md. `precipitation_mm` to całość opadów w
+// ekwiwalencie wody (deszcz + śnieg), tak jak `precipitation` w API.
 export type Weather = {
   match_id: number
-  temperature_c: number
-  feels_like_c: number
-  precipitation_mm: number
-  wind_speed_kmh: number
-  humidity_pct: number
-  cloud_cover_pct: number
+  temperature_c: number       // temperature_2m
+  feels_like_c: number        // apparent_temperature
+  precipitation_mm: number    // precipitation — suma
+  rain_mm: number             // rain
+  snowfall_cm: number         // snowfall — UWAGA: centymetry, nie milimetry
+  wind_speed_kmh: number      // wind_speed_10m
+  humidity_pct: number        // relative_humidity_2m
+  cloud_cover_pct: number     // cloud_cover
   condition: WeatherCondition
 }
 

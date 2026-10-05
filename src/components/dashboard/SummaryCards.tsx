@@ -13,7 +13,7 @@ import {
   getWeatherGoalsInsights,
 } from "@/services/weatherStatsService";
 
-import { weatherConfig } from "@/lib/weatherConfig";
+import { weatherConfig } from "@/lib/weatherStylesConfig";
 
 interface StatCardProps {
   title: string;

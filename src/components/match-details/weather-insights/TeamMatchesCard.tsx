@@ -2,7 +2,10 @@ import { Link, useNavigate } from "react-router";
 
 import { getFormatedDate } from "@/lib/date";
 import { type MatchWithWeather } from "@/services/matchesService";
-import { weatherConfig } from "@/lib/weatherConfig";
+import {
+  weatherDisplay,
+  weatherDisplayFor,
+} from "@/lib/weatherStylesConfig";
 import { getMatchFromTeamPerspective } from "@/lib/teamStats";
 
 import {
@@ -87,7 +90,7 @@ const TeamMatchesCard = ({
                   colSpan={5}
                   className="py-6 text-center text-muted-foreground"
                 >
-                  Brak wcześniejszych meczów w takich warunkach.
+                  Brak wcześniejszych meczów.
                 </TableCell>
               </TableRow>
             )}
@@ -99,8 +102,9 @@ const TeamMatchesCard = ({
                 const isHome = m.home_team_id === teamId;
                 const opponent = isHome ? m.awayTeam : m.homeTeam;
 
-                const condition = m.weather?.condition ?? "clear";
-                const config = weatherConfig[condition];
+                const config = m.weather
+                  ? weatherDisplay[weatherDisplayFor(m.weather)]
+                  : weatherDisplay.clear;
                 const Icon = config.icon;
 
                 return (

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import type { WeatherBandFilters } from "@/lib/matchFilters";
-import { bandIcons } from "@/lib/weatherConfig";
+import { bandIcons } from "@/lib/weatherStylesConfig";
 import { weatherAxes } from "@/lib/weatherProfile";
 
 interface WeatherAxisFilterPillsProps {

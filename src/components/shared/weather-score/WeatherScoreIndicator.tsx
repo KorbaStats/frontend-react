@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { type WeatherScore, weatherScoreLabel } from "@/lib/weatherScore";
-import { weatherScoreColor } from "@/lib/weatherConfig";
+import { weatherScoreColor } from "@/lib/weatherStylesConfig";
 import { getTeamWeatherScore } from "@/services/weatherStatsService";
 import WeatherScoreRing from "@/components/shared/weather-score/WeatherScoreRing";
 

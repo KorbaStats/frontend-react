@@ -10,7 +10,7 @@ import {
 
 import type { LeagueSummary } from "@/lib/leagueSummaries";
 import { getLeagueCountryCode } from "@/lib/leagueLabel";
-import { weatherConfig } from "@/lib/weatherConfig";
+import { weatherDisplay } from "@/lib/weatherStylesConfig";
 
 import { Card } from "@/components/ui/card";
 import TeamLogo from "@/components/shared/TeamLogo";
@@ -24,19 +24,19 @@ const LeagueCard = ({
   const weatherItems = weather && [
     {
       icon: Thermometer,
-      style: weatherConfig.clear,
+      style: weatherDisplay.clear,
       label: "Śr. temp.",
       value: `${weather.avgTemp}°C`,
     },
     {
       icon: CloudRain,
-      style: weatherConfig.rain,
+      style: weatherDisplay.rain,
       label: "Z opadami",
       value: `${weather.precipPct}%`,
     },
     {
       icon: Wind,
-      style: weatherConfig.wind,
+      style: weatherDisplay.wind,
       label: "Śr. wiatr",
       value: `${weather.avgWind} km/h`,
     },

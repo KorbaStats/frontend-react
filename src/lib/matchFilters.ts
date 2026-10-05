@@ -1,10 +1,17 @@
 import type { MatchWithWeather } from "@/services/matchesService"
-import { profileFor, type PrecipBand, type TempBand, type WindBand } from "./weatherProfile"
+import {
+  profileFor,
+  type PrecipBand,
+  type PrecipTypeBand,
+  type TempBand,
+  type WindBand,
+} from "./weatherProfile"
 import { normalize } from "@/lib/utils.ts";
 // OR w obrębie osi, AND między osiami; pusta tablica = oś nie ogranicza
 export type WeatherBandFilters = {
   temp: TempBand[]
   precip: PrecipBand[]
+  precipType: PrecipTypeBand[]
   wind: WindBand[]
 }
 
@@ -19,6 +26,7 @@ export type MatchFilters = WeatherBandFilters & {
 export const emptyBandFilters: WeatherBandFilters = {
   temp: [],
   precip: [],
+  precipType: [],
   wind: [],
 }
 
@@ -33,7 +41,12 @@ export const emptyFilters: MatchFilters = {
 
 // czy filtry są zaznaczone
 export function hasBandFilters(filters: WeatherBandFilters): boolean {
-  return filters.temp.length > 0 || filters.precip.length > 0 || filters.wind.length > 0
+  return (
+    filters.temp.length > 0 ||
+    filters.precip.length > 0 ||
+    filters.precipType.length > 0 ||
+    filters.wind.length > 0
+  )
 }
 
 // czy dany mecz przechodzi przez filtry pogodowe
@@ -45,6 +58,13 @@ export function matchesBands(match: MatchWithWeather, filters: WeatherBandFilter
   if (filters.temp.length > 0 && !filters.temp.includes(profile.temp)) return false
   if (filters.precip.length > 0 && !filters.precip.includes(profile.precip)) return false
   if (filters.wind.length > 0 && !filters.wind.includes(profile.wind)) return false
+  // null = brak opadow, czyli zadnego rodzaju nie spelnia
+  if (
+    filters.precipType.length > 0 &&
+    (profile.precipType === null ||
+      !filters.precipType.includes(profile.precipType))
+  )
+    return false
   return true
 }
 

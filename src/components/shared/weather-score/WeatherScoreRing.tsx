@@ -1,4 +1,4 @@
-import { weatherScoreColor } from "@/lib/weatherConfig";
+import { weatherScoreColor } from "@/lib/weatherStylesConfig";
 
 interface WeatherScoreRingProps {
   score: number;

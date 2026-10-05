@@ -27,7 +27,7 @@ export function computeLeagueWeatherSummary(
     tempSum += weather.temperature_c;
     windSum += weather.wind_speed_kmh;
     if (
-      precipBandFor(weather.precipitation_mm, weather.temperature_c) !== "dry"
+      precipBandFor(weather.precipitation_mm) !== "dry"
     )
       precipCount++;
   }

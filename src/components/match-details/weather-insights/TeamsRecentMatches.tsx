@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
+import { History } from "lucide-react";
 
 import {
   getTeamMatches,
   type MatchWithWeather,
 } from "@/services/matchesService";
-import { weatherConfig } from "@/lib/weatherConfig";
 
 import TeamMatchesCard from "./TeamMatchesCard";
 
-const MAX_MATCHES_LENGTH = 3;
+const MAX_MATCHES_LENGTH = 5;
 
-interface RecentWeatherMatchesProps {
+interface TeamsRecentMatchesProps {
   match: MatchWithWeather;
 }
 
-const RecentWeatherMatches = ({ match }: RecentWeatherMatchesProps) => {
+const TeamsRecentMatches = ({ match }: TeamsRecentMatchesProps) => {
   const home_id = match.home_team_id;
   const away_id = match.away_team_id;
 
@@ -23,25 +23,17 @@ const RecentWeatherMatches = ({ match }: RecentWeatherMatchesProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const condition = match.weather?.condition ?? null;
-  const config = condition ? weatherConfig[condition] : null;
-
   useEffect(() => {
-    // tylko mecze w tej samej pogodzie, inny niz oglądany, wczesniejsze
-    const inSameWeather = (list: MatchWithWeather[]) =>
+    // mecze wczesniejsze niz ogladany, bez samego ogladanego
+    const beforeThisMatch = (list: MatchWithWeather[]) =>
       list
-        .filter(
-          (m) =>
-            m.id !== match.id &&
-            m.weather?.condition === condition &&
-            m.datetime < match.datetime,
-        )
+        .filter((m) => m.id !== match.id && m.datetime < match.datetime)
         .slice(0, MAX_MATCHES_LENGTH);
 
     Promise.all([getTeamMatches(home_id), getTeamMatches(away_id)])
       .then(([home, away]) => {
-        setHomeMatches(inSameWeather(home));
-        setAwayMatches(inSameWeather(away));
+        setHomeMatches(beforeThisMatch(home));
+        setAwayMatches(beforeThisMatch(away));
         setError(null);
       })
       .catch((err) => {
@@ -49,20 +41,15 @@ const RecentWeatherMatches = ({ match }: RecentWeatherMatchesProps) => {
         console.log(err);
       })
       .finally(() => setIsLoading(false));
-  }, [match, condition, home_id, away_id]);
+  }, [match, home_id, away_id]);
 
   return (
     <section className="space-y-3">
       <div className="flex items-center gap-2">
-        {config && <config.icon size={16} className="text-primary" />}
+        <History size={16} className="text-primary" />
         <h3 className="font-semibold text-foreground">
-          Ostatnie mecze w tej pogodzie
+          Ostatnie mecze obu drużyn
         </h3>
-        {config && (
-          <span className="text-sm text-muted-foreground">
-            ({config.label.toLowerCase()})
-          </span>
-        )}
       </div>
 
       <div className="grid grid-cols-1 gap-2 min-[1120px]:grid-cols-2">
@@ -87,4 +74,4 @@ const RecentWeatherMatches = ({ match }: RecentWeatherMatchesProps) => {
   );
 };
 
-export default RecentWeatherMatches;
+export default TeamsRecentMatches;

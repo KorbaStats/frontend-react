@@ -75,6 +75,35 @@ function weatherLabel(temperature: number, precipitation: number, wind: number, 
   return "clear"
 }
 
+/**
+ * Rozbija całość opadów na deszcz i śnieg, tak jak Open-Meteo rozbija
+ * `precipitation` na `rain` i `snowfall`.
+ *
+ * Udział śniegu zależy od temperatury: poniżej -1C wszystko jako śnieg, powyżej
+ * 2C wszystko jako deszcz, pomiędzy mieszanka (deszcz ze śniegiem).
+ *
+ * `snowfall` jest w centymetrach — przyjęta zamiana to 1 mm ekwiwalentu wody
+ * na 1 cm świeżego śniegu.
+ */
+function splitPrecipitation(
+  precipitation_mm: number,
+  temperature_c: number,
+): { rain_mm: number; snowfall_cm: number } {
+  if (precipitation_mm === 0) return { rain_mm: 0, snowfall_cm: 0 }
+
+  let snowShare: number
+  if (temperature_c <= -1) snowShare = 1
+  else if (temperature_c >= 2) snowShare = 0
+  else snowShare = (2 - temperature_c) / 3
+
+  const snowWater = precipitation_mm * snowShare
+
+  return {
+    rain_mm: Number((precipitation_mm - snowWater).toFixed(1)),
+    snowfall_cm: Number(snowWater.toFixed(1)),
+  }
+}
+
 export const weather: Weather[] = matches.map((match) => {
   const month = Number(match.datetime.slice(5, 7))
   const [minTemp, maxTemp] = monthTempRange[month] ?? [5, 20]
@@ -82,6 +111,7 @@ export const weather: Weather[] = matches.map((match) => {
   const offset = countryTempOffset[match.homeTeam.country] ?? 0
   const temperature_c = randFloat(minTemp + offset, maxTemp + offset)
   const precipitation_mm = rng() < (monthRainChance[month] ?? 0.35) ? randFloat(0.5, 12) : 0
+  const { rain_mm, snowfall_cm } = splitPrecipitation(precipitation_mm, temperature_c)
   const wind_speed_kmh = randFloat(5, monthWindMax[month] ?? 45)
   const humidity_pct = randInt(40, 95)
   const cloud_cover_pct = randInt(0, 100)
@@ -91,6 +121,8 @@ export const weather: Weather[] = matches.map((match) => {
     temperature_c,
     feels_like_c: Number((temperature_c - wind_speed_kmh / 15).toFixed(1)),
     precipitation_mm,
+    rain_mm,
+    snowfall_cm,
     wind_speed_kmh,
     humidity_pct,
     cloud_cover_pct,

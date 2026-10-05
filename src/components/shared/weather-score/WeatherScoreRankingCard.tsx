@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 
 import type { TeamWeatherScore } from "@/lib/leagueWeather";
-import { weatherScoreColor } from "@/lib/weatherConfig";
+import { weatherScoreColor } from "@/lib/weatherStylesConfig";
 import { weatherScoreLabel } from "@/lib/weatherScore";
 
 interface WeatherScoreRankingCardProps {
@@ -23,7 +23,7 @@ interface WeatherScoreRankingCardProps {
 
 const WeatherScoreRankingCard = ({
   Icon = CloudLightning,
-  iconColor = 'text-primary',
+  iconColor = "text-primary",
   scores,
   title,
   description,
