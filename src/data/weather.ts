@@ -4,7 +4,7 @@
 //TODO: verify against real API response
 
 import { matches } from "./matches"
-import type { Weather, WeatherCondition } from "./types"
+import type { Weather } from "./types"
 
 function mulberry32(seed: number) {
   return function random() {
@@ -44,8 +44,8 @@ const monthTempRange: Record<number, [number, number]> = {
   12: [-4, 5],
 }
 
-// Deszcz i wiatr sezonowo. conditionFor() sprawdza snow/rain/wind przed
-// extreme_heat, więc stała szansa opadów przez cały rok przykrywała upały.
+// Deszcz i wiatr sezonowo — stała szansa opadów przez cały rok dawała opady
+// w lipcu tak samo często jak w listopadzie.
 const monthRainChance: Record<number, number> = {
   1: 0.45, 2: 0.45, 3: 0.45, 4: 0.4, 5: 0.3, 6: 0.2,
   7: 0.15, 8: 0.15, 9: 0.3, 10: 0.45, 11: 0.5, 12: 0.5,
@@ -56,23 +56,13 @@ const monthWindMax: Record<number, number> = {
   7: 30, 8: 30, 9: 34, 10: 46, 11: 50, 12: 50,
 }
 
-// Przesunięcie przedziału o klimat kraju gospodarza. Bez tego `extreme_heat`
-// (>=28C) i `extreme_cold` (<=-3C) prawie nie występowały.
+// Przesunięcie przedziału o klimat kraju gospodarza. Bez tego skrajne pasma
+// temperatury (mróz, upał) prawie nie występowały.
 const countryTempOffset: Record<string, number> = {
   Spain: 8,
   Germany: 0,
   England: -1,
   Poland: -3,
-}
-
-function weatherLabel(temperature: number, precipitation: number, wind: number, cloudCover: number): WeatherCondition {
-  if (temperature <= 0 && precipitation > 0.5) return "snow"
-  if (temperature <= -3) return "extreme_cold"
-  if (precipitation > 2) return "rain"
-  if (temperature >= 28) return "extreme_heat"
-  if (wind > 35) return "wind"
-  if (cloudCover > 60) return "clouds"
-  return "clear"
 }
 
 /**
@@ -126,7 +116,6 @@ export const weather: Weather[] = matches.map((match) => {
     wind_speed_kmh,
     humidity_pct,
     cloud_cover_pct,
-    condition: weatherLabel(temperature_c, precipitation_mm, wind_speed_kmh, cloud_cover_pct),
   }
 })
 

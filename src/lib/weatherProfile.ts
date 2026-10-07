@@ -119,8 +119,3 @@ export const weatherAxes = [
     ],
   },
 ]
-
-export function bandLabel(axis: WeatherAxisKey, band: string): string {
-  const found = weatherAxes.find((a) => a.key === axis)?.bands.find((b) => b.value === band)
-  return found?.label ?? band
-}

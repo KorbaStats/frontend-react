@@ -295,19 +295,9 @@ export type ScheduledMatch = {
 // ---------------------------------------------------------------------------
 
 //TODO: verify against real API response
-export type WeatherCondition =
-  | "clear"
-  | "clouds"
-  | "rain"
-  | "snow"
-  | "wind"
-  | "extreme_heat"
-  | "extreme_cold"
-
-//TODO: verify against real API response
 // Pola odwzorowują Open-Meteo 1:1, razem z jednostkami — patrz
-// ../docs/api-requirements.md. `precipitation_mm` to całość opadów w
-// ekwiwalencie wody (deszcz + śnieg), tak jak `precipitation` w API.
+// api-requirements.md. `precipitation_mm` to całość opadów w ekwiwalencie
+// wody (deszcz + śnieg), tak jak `precipitation` w API.
 export type Weather = {
   match_id: number
   temperature_c: number       // temperature_2m
@@ -318,7 +308,6 @@ export type Weather = {
   wind_speed_kmh: number      // wind_speed_10m
   humidity_pct: number        // relative_humidity_2m
   cloud_cover_pct: number     // cloud_cover
-  condition: WeatherCondition
 }
 
 // Nie ma tu typu TeamWeatherScore — weather score jest wyliczany z meczów,

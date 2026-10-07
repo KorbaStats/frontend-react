@@ -46,7 +46,7 @@ const TeamMatchesCard = ({
       <CardHeader className="border-b pb-6">
         <CardTitle className="text-base">{teamName}</CardTitle>
         <CardDescription>
-          Ostatnie {maxMatchesLength} mecze przed tym spotkaniem
+          Ostatnie {maxMatchesLength} meczów przed tym spotkaniem
         </CardDescription>
       </CardHeader>
 
