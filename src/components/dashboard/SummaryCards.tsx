@@ -1,19 +1,26 @@
 import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { CalendarDays, type LucideIcon } from "lucide-react";
+import {
+  CalendarDays,
+  CloudLightning,
+  ThermometerSnowflake,
+  Wind,
+  type LucideIcon,
+} from "lucide-react";
 
 import type { MatchStatsSummary } from "@/data/types";
 import { getMatchStatsSummary } from "@/services/matchStatsService";
 import type {
-  ColdestMatch,
-  WeatherGoalsInsights,
+  DifficultWeatherShare,
+  ExtremeMatch,
+  WeatherExtremes,
 } from "@/services/weatherStatsService";
 import {
-  getColdestMatch,
-  getWeatherGoalsInsights,
+  getDifficultWeatherShare,
+  getWeatherExtremes,
 } from "@/services/weatherStatsService";
 
-import { weatherConfig } from "@/lib/weatherStylesConfig";
+import { weatherDisplay, weatherDisplayFor } from "@/lib/weatherStylesConfig";
 
 interface StatCardProps {
   title: string;
@@ -39,11 +46,13 @@ const StatCard = ({ title, Icon, value, hint }: StatCardProps) => (
   </Card>
 );
 
+const extremeHint = (match: ExtremeMatch | null | undefined) =>
+  match ? `${match.city} · ${weatherDisplay[weatherDisplayFor(match.weather)].label}` : "";
+
 const SummaryCards = () => {
   const [statsSummary, setStatsSummary] = useState<MatchStatsSummary>();
-  const [weatherInsights, setWeatherInsights] =
-    useState<WeatherGoalsInsights>();
-  const [coldestMatch, setColdestMatch] = useState<ColdestMatch>();
+  const [extremes, setExtremes] = useState<WeatherExtremes>();
+  const [difficultShare, setDifficultShare] = useState<DifficultWeatherShare>();
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,13 +60,13 @@ const SummaryCards = () => {
   useEffect(() => {
     Promise.all([
       getMatchStatsSummary(),
-      getWeatherGoalsInsights(),
-      getColdestMatch(),
+      getWeatherExtremes(),
+      getDifficultWeatherShare(),
     ])
-      .then(([summary, insights, coldestMatch]) => {
+      .then(([summary, extremes, difficultShare]) => {
         setStatsSummary(summary);
-        setWeatherInsights(insights);
-        setColdestMatch(coldestMatch);
+        setExtremes(extremes);
+        setDifficultShare(difficultShare);
       })
       .catch((err) => {
         setError("Pobieranie statystyk nie powiodło się.");
@@ -86,12 +95,13 @@ const SummaryCards = () => {
     );
   }
 
-  const best = weatherInsights?.bestWeatherForGoals;
-  const worst = weatherInsights?.worstWeatherForGoals;
+  const coldest = extremes?.coldest;
+  const windiest = extremes?.windiest;
 
-  const bestConfig = best && weatherConfig[best.condition];
-  const worstConfig = worst && weatherConfig[worst.condition];
-  const coldestConfig = coldestMatch && weatherConfig[coldestMatch.condition];
+  const difficultPct =
+    difficultShare && difficultShare.withWeather > 0
+      ? Math.round((difficultShare.difficult / difficultShare.withWeather) * 100)
+      : 0;
 
   return (
     <div className="grid grid-cols-2 items-stretch gap-4 xl:grid-cols-4">
@@ -103,24 +113,24 @@ const SummaryCards = () => {
       />
 
       <StatCard
-        title="Najlepsza pogoda na gole"
-        Icon={bestConfig?.icon}
-        value={best?.avgGoals}
-        hint={`${bestConfig?.label} · ${best?.matchCount} meczów`}
-      />
-
-      <StatCard
-        title="Najgorsza pogoda na gole"
-        Icon={worstConfig?.icon}
-        value={worst?.avgGoals}
-        hint={`${worstConfig?.label} · ${worst?.matchCount} meczów`}
+        title="Mecze w trudnej pogodzie"
+        Icon={CloudLightning}
+        value={difficultShare?.difficult}
+        hint={`${difficultPct}% wszystkich meczów`}
       />
 
       <StatCard
         title="Najzimniejszy mecz"
-        Icon={coldestConfig?.icon}
-        value={`${coldestMatch?.temperature_c}°C`}
-        hint={`${coldestMatch?.city} · ${coldestConfig?.label}`}
+        Icon={ThermometerSnowflake}
+        value={`${coldest?.weather.temperature_c}°C`}
+        hint={extremeHint(coldest)}
+      />
+
+      <StatCard
+        title="Najbardziej wietrzny mecz"
+        Icon={Wind}
+        value={`${windiest?.weather.wind_speed_kmh} km/h`}
+        hint={extremeHint(windiest)}
       />
     </div>
   );

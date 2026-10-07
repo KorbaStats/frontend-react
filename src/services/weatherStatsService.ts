@@ -4,114 +4,82 @@
 // dlatego są w services/, a nie w lib/.
 //
 // Proponowane endpointy:
-//   GET /api/weather-stats/goals-by-condition -> WeatherGoalsStat[]
-//   GET /api/weather-stats/insights           -> WeatherGoalsInsights
-//   GET /api/weather-stats/coldest-match      -> ColdestMatch
-//   GET /api/weather-stats/match-averages     -> ConditionAverages
+//   GET /api/weather-stats/extremes           -> WeatherExtremes
+//   GET /api/weather-stats/difficult-share    -> DifficultWeatherShare
 //   GET /api/weather-stats/percentiles        -> WeatherPercentile[]
 //   GET /api/teams/:id/weather-score?season=  -> WeatherScore | null
 //TODO: verify against real API response once the backend has weather
 
 import { getMatches, getTeamMatches } from "@/services/matchesService";
-import type { WeatherCondition } from "@/data/types";
+import type { Weather } from "@/data/types";
 import {
-  averageCombinedStats,
-  getCombinedMatchStats,
-  type CombinedMatchStats,
-} from "@/lib/combinedMatchStats";
- import { type WeatherScore, computeWeatherScore } from "@/lib/weatherScore";
+  type WeatherScore,
+  computeWeatherScore,
+  isDifficultWeather,
+} from "@/lib/weatherScore";
 
-export type WeatherGoalsStat = {
-  condition: WeatherCondition;
-  matchCount: number;
-  avgGoals: number;
-};
-
-export type WeatherGoalsInsights = {
-  bestWeatherForGoals: WeatherGoalsStat;
-  worstWeatherForGoals: WeatherGoalsStat;
-};
-
-export type ColdestMatch = {
+export type ExtremeMatch = {
   city: string | undefined;
-  temperature_c: number;
-  condition: WeatherCondition;
+  weather: Weather;
+};
+
+export type WeatherExtremes = {
+  coldest: ExtremeMatch | null;
+  windiest: ExtremeMatch | null;
 };
 
 /**
- * GET /api/weather-stats/goals-by-condition?league_id=1
+ * GET /api/weather-stats/extremes
  *
- * Bez `leagueId` średnia miesza ligi, które różnią się liczbą goli na mecz.
- * Pogoda koreluje z ligą (śnieg pada w Polsce, nie w Hiszpanii).
+ * Skrajne mecze w całym zbiorze. Pojedyncze mecze, nie średnie — dlatego wolno
+ * je liczyć ze wszystkich lig naraz.
  */
-export async function getGoalsByWeatherCondition(
-  leagueId?: number,
-): Promise<WeatherGoalsStat[]> {
+export async function getWeatherExtremes(): Promise<WeatherExtremes> {
   const { data } = await getMatches();
-  const buckets = new Map<WeatherCondition, number[]>();
 
-  for (const match of data) {
-    if (!match.weather) continue;
-    if (leagueId !== undefined && match.league_id !== leagueId) continue;
+  const withWeather = data
+    .filter((match) => match.weather !== null)
+    .map((match) => ({
+      city: match.stadium?.city,
+      weather: match.weather!,
+    }));
 
-    const totalGoals = match.home_goals + match.away_goals;
-    const bucket = buckets.get(match.weather.condition) ?? [];
-    bucket.push(totalGoals);
-    buckets.set(match.weather.condition, bucket);
-  }
-
-  return [...buckets.entries()].map(([condition, goalsList]) => ({
-    condition,
-    matchCount: goalsList.length,
-    avgGoals: Number(
-      (goalsList.reduce((sum, g) => sum + g, 0) / goalsList.length).toFixed(1),
-    ),
-  }));
-}
-
-/** GET /api/weather-stats/insights */
-export async function getWeatherGoalsInsights(): Promise<WeatherGoalsInsights> {
-  const stats = await getGoalsByWeatherCondition();
-  const sortedStats = stats
-    .filter((s) => s.matchCount > 0)
-    .sort((a, b) => b.avgGoals - a.avgGoals);
+  if (withWeather.length === 0) return { coldest: null, windiest: null };
 
   return {
-    bestWeatherForGoals: sortedStats[0],
-    worstWeatherForGoals: sortedStats[sortedStats.length - 1],
+    coldest: withWeather.reduce((lowest, match) =>
+      match.weather.temperature_c < lowest.weather.temperature_c
+        ? match
+        : lowest,
+    ),
+    windiest: withWeather.reduce((strongest, match) =>
+      match.weather.wind_speed_kmh > strongest.weather.wind_speed_kmh
+        ? match
+        : strongest,
+    ),
   };
 }
 
-export type ConditionAverages = {
-  condition: WeatherCondition;
-  /** Liczba meczów, z których liczone są średnie. */
-  matchCount: number;
-  averages: CombinedMatchStats;
+export type DifficultWeatherShare = {
+  difficult: number;
+  /** Mianownik to mecze Z pogodą — bez niej nie ma czego klasyfikować. */
+  withWeather: number;
 };
 
 /**
- * GET /api/weather-stats/match-averages?condition=rain&league_id=1
+ * GET /api/weather-stats/difficult-share
  *
- * Średnie statystyki meczu przy danym warunku pogodowym, obie drużyny razem.
+ * Ile meczów wpada w trudne warunki wg tego samego predykatu, na którym stoi
+ * weather score. Zliczanie, nie uśrednianie, więc ligi mogą iść razem.
  */
-export async function getMatchAveragesByCondition(
-  condition: WeatherCondition,
-  leagueId?: number,
-): Promise<ConditionAverages> {
+export async function getDifficultWeatherShare(): Promise<DifficultWeatherShare> {
   const { data } = await getMatches();
-
-  const statsList = data
-    .filter(
-      (match) =>
-        match.weather?.condition === condition &&
-        (leagueId === undefined || match.league_id === leagueId),
-    )
-    .map(getCombinedMatchStats);
+  const withWeather = data.filter((match) => match.weather !== null);
 
   return {
-    condition,
-    matchCount: statsList.length,
-    averages: averageCombinedStats(statsList),
+    difficult: withWeather.filter((match) => isDifficultWeather(match.weather!))
+      .length,
+    withWeather: withWeather.length,
   };
 }
 
@@ -198,20 +166,6 @@ export async function getWeatherPercentiles(
       matchCount: values.length,
     };
   });
-}
-
-/** GET /api/weather-stats/coldest-match */
-export async function getColdestMatch(): Promise<ColdestMatch> {
-  const { data } = await getMatches();
-
-  return data
-    .filter((match) => match.weather !== null)
-    .map((match) => ({
-      city: match.stadium?.city,
-      condition: match.weather!.condition,
-      temperature_c: match.weather!.temperature_c,
-    }))
-    .sort((a, b) => a.temperature_c - b.temperature_c)[0];
 }
 
 /** GET /api/teams/:id/weather-score?season=2025/2026 */
