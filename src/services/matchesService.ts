@@ -1,9 +1,3 @@
-// Odwzorowuje MatchesController (GET /api/matches, GET /api/matches/:id).
-//
-// Backend nie ma danych pogodowych (brak tabeli `weather`, kolumny i endpointu
-// — zweryfikowane 2026-08-05). Docelowo pogoda ma przychodzić zagnieżdżona
-// w payloadzie meczu, jak homeTeam/awayTeam/stadium/league. Na razie doklejana
-// z mocka w withWeather().
 //TODO: verify against real API response once the backend has weather
 
 import { matches } from "@/data/matches";
@@ -26,16 +20,7 @@ function byNewestFirst(a: Match, b: Match): number {
   return b.datetime.localeCompare(a.datetime);
 }
 
-/**
- * GET /api/matches?sort=datetime&order=desc
- *
- * Endpoint jest paginowany (helpers/pagination.js: 20 na stronę, maks. 100)
- * i obsługuje `league_id`, `season`, `home_team_id`, `away_team_id`, `page`,
- * `limit`, `sort`, `order`.
- *
- * Sortowanie od najnowszych ustawiane tu raz, bo `data/matches.ts` trzyma mecze
- * od najstarszych.
- */
+// GET /api/matches?sort=datetime&order=desc
 export async function getMatches(): Promise<
   PaginatedResponse<MatchWithWeather>
 > {
@@ -47,7 +32,7 @@ export async function getMatches(): Promise<
   };
 }
 
-/** GET /api/matches?sort=datetime&order=desc&limit=N */
+// GET /api/matches?sort=datetime&order=desc&limit=N
 const DEFAULT_MATCHES_LIMIT = 10;
 
 export async function getRecentMatches(
@@ -57,14 +42,7 @@ export async function getRecentMatches(
   return data.slice(0, limit);
 }
 
-/**
- * Wszystkie mecze jednej drużyny, u siebie i na wyjeździe, od najnowszych.
- *
- * Nie pokrywa tego żaden endpoint — GET /api/matches filtruje `home_team_id`
- * albo `away_team_id` osobno. MatchStatsController._applyFilters ma już
- * semantykę OR pod parametrem `team_id`.
- *TODO: przejść na GET /api/matches?team_id=X, gdy backend zacznie to przyjmować
- */
+// TODO: przejść na GET /api/matches?team_id=X, gdy backend zacznie to przyjmować
 export async function getTeamMatches(
   teamId: number,
 ): Promise<MatchWithWeather[]> {
@@ -74,18 +52,14 @@ export async function getTeamMatches(
   );
 }
 
-/** GET /api/matches/:id */
+// GET /api/matches/:id
 export async function getMatchById(id: number): Promise<MatchWithWeather> {
   const match = matches.find((m) => m.id === id);
   if (!match) throw new Error(`Match id=${id} not found`);
   return withWeather(match);
 }
 
-/**
- * Sezony do filtrów, od najnowszego. Sidebar nie ma listy meczów, więc nie da
- * się ich policzyć w lib/.
- *TODO: zweryfikować z prawdziwym API — backend nie ma takiego endpointu
- */
+// TODO: zweryfikować z prawdziwym API — backend nie ma takiego endpointu
 export async function getAvailableSeasons(): Promise<string[]> {
   const seasons = new Set<string>();
   for (const match of matches) {
@@ -105,15 +79,8 @@ export async function getLeagueMatches(
   );
 }
 
-/**
- * GET /api/matches?status=scheduled&sort=datetime&order=asc
- *
- * Terminarz, czyli mecze nierozegrane. Osobna funkcja, bo zwraca inny typ niż
- * getMatches() — dzięki temu `lib/` nie przyjmie terminarza do agregatów.
- *
- * Sortowane od najbliższego, odwrotnie niż mecze rozegrane.
- *TODO: zweryfikować z prawdziwym API — backend nie ma jeszcze kolumny `status`
- */
+// GET /api/matches?status=scheduled&sort=datetime&order=asc
+// TODO: zweryfikować z prawdziwym API — backend nie ma jeszcze kolumny `status`
 export async function getScheduledMatches(): Promise<
   PaginatedResponse<ScheduledMatch>
 > {
@@ -125,7 +92,7 @@ export async function getScheduledMatches(): Promise<
   };
 }
 
-/** GET /api/matches?status=scheduled&team_id=X */
+// GET /api/matches?status=scheduled&team_id=X
 export async function getScheduledTeamMatches(
   teamId: number,
 ): Promise<ScheduledMatch[]> {

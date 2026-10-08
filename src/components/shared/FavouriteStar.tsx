@@ -24,7 +24,6 @@ const FavouriteStar = ({ teamId, size = 16, className = "" }: FavouriteStarProps
         favourite ? "text-primary" : "text-muted-foreground hover:text-primary"
       } ${className}`}
     >
-      {/* currentColor - wypelnienie idzie za kolorem tekstu z klasy wyzej */}
       <Star
         size={size}
         strokeWidth={2}

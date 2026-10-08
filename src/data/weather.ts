@@ -1,6 +1,3 @@
-// Dane zamockowane — do podmiany na endpointy backendu.
-// Kontrakt wymyślony: backend nie ma danych pogodowych. Wartości generowane
-// z dat meczów z matches.ts.
 //TODO: verify against real API response
 
 import { matches } from "./matches"
@@ -26,9 +23,6 @@ function randFloat(min: number, max: number, decimals = 1): number {
   return Number((rng() * (max - min) + min).toFixed(decimals))
 }
 
-// Miesięczne przedziały temperatur dla Europy Środkowej. Mecze idą od sierpnia
-// do maja, ale czerwiec i lipiec są zdefiniowane, żeby szerszy kalendarz nie
-// wpadał w wartość domyślną.
 const monthTempRange: Record<number, [number, number]> = {
   1: [-6, 3],
   2: [-5, 5],
@@ -44,8 +38,6 @@ const monthTempRange: Record<number, [number, number]> = {
   12: [-4, 5],
 }
 
-// Deszcz i wiatr sezonowo — stała szansa opadów przez cały rok dawała opady
-// w lipcu tak samo często jak w listopadzie.
 const monthRainChance: Record<number, number> = {
   1: 0.45, 2: 0.45, 3: 0.45, 4: 0.4, 5: 0.3, 6: 0.2,
   7: 0.15, 8: 0.15, 9: 0.3, 10: 0.45, 11: 0.5, 12: 0.5,
@@ -56,8 +48,6 @@ const monthWindMax: Record<number, number> = {
   7: 30, 8: 30, 9: 34, 10: 46, 11: 50, 12: 50,
 }
 
-// Przesunięcie przedziału o klimat kraju gospodarza. Bez tego skrajne pasma
-// temperatury (mróz, upał) prawie nie występowały.
 const countryTempOffset: Record<string, number> = {
   Spain: 8,
   Germany: 0,
@@ -65,16 +55,6 @@ const countryTempOffset: Record<string, number> = {
   Poland: -3,
 }
 
-/**
- * Rozbija całość opadów na deszcz i śnieg, tak jak Open-Meteo rozbija
- * `precipitation` na `rain` i `snowfall`.
- *
- * Udział śniegu zależy od temperatury: poniżej -1C wszystko jako śnieg, powyżej
- * 2C wszystko jako deszcz, pomiędzy mieszanka (deszcz ze śniegiem).
- *
- * `snowfall` jest w centymetrach — przyjęta zamiana to 1 mm ekwiwalentu wody
- * na 1 cm świeżego śniegu.
- */
 function splitPrecipitation(
   precipitation_mm: number,
   temperature_c: number,
@@ -97,7 +77,6 @@ function splitPrecipitation(
 export const weather: Weather[] = matches.map((match) => {
   const month = Number(match.datetime.slice(5, 7))
   const [minTemp, maxTemp] = monthTempRange[month] ?? [5, 20]
-  // mecze gra się na stadionie gospodarza, więc jego kraj wyznacza klimat
   const offset = countryTempOffset[match.homeTeam.country] ?? 0
   const temperature_c = randFloat(minTemp + offset, maxTemp + offset)
   const precipitation_mm = rng() < (monthRainChance[month] ?? 0.35) ? randFloat(0.5, 12) : 0

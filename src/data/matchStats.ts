@@ -1,11 +1,3 @@
-// Dane zamockowane — do podmiany na endpointy backendu.
-// Kształt zweryfikowany z MatchStatsController (GET /api/match-stats/*).
-// Wartości wyliczane z matches.ts, żeby agregaty trzymały się listy meczów.
-//
-// summary / goals-over-time / attendance-over-time uderzają na backendzie
-// w knex.raw() bez parsowania, więc każda wartość liczbowa wraca jako string
-// (patrz types.ts).
-
 import { matches } from "./matches"
 import { leagues } from "./leagues"
 import type {
@@ -17,7 +9,7 @@ import type {
 } from "./types"
 
 function periodOf(datetime: string): string {
-  return datetime.slice(0, 7) // "YYYY-MM"
+  return datetime.slice(0, 7)
 }
 
 function average(values: number[]): number {
@@ -149,7 +141,6 @@ export const byTeam: TeamStatsByTeam[] = (() => {
       avg_goals_conceded: Number((t.goals_conceded / t.matches).toFixed(2)),
       points: t.wins * 3 + t.draws,
     }))
-    // zgodne z MatchStatsController.byTeam: ORDER BY points DESC, goals_scored DESC
     .sort((a, b) => b.points - a.points || b.goals_scored - a.goals_scored)
 })()
 

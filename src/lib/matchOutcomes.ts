@@ -7,7 +7,6 @@ export type OutcomeSplit = {
   matches: number
 }
 
-// do wykresu procentowo home wins / away wins i draws z podzialem na difficult/normal weather
 export function computeOutcomeSplit(matches: MatchWithWeather[]): OutcomeSplit {
   let homeWins = 0;
   let awayWins = 0;

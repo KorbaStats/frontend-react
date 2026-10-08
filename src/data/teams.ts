@@ -1,11 +1,3 @@
-// Dane zamockowane — do podmiany na endpointy backendu.
-// Kształt zweryfikowany z migracją 20260525140000_create_teams_table.js
-// i z TeamsController (GET /api/teams, GET /api/teams/:id) — oba endpointy
-// używają withGraphFetched("[league, homeStadium]"), co zwraca pełne wiersze
-// (jsonSchema waliduje tylko zapisy, żaden kontroler nie ogranicza kolumn w
-// SELECT), więc zagnieżdżone `league`/`homeStadium` niosą każdą kolumnę
-// League/Stadium.
-
 import { leagues } from "./leagues"
 import { stadiums } from "./stadiums"
 import type { League, Stadium, Team } from "./types"
@@ -31,13 +23,7 @@ type TeamSeed = {
   home_stadium_id: number
 }
 
-// Pełne składy lig: Ekstraklasa i Bundesliga po 18 drużyn, LaLiga i Premier
-// League po 20. matches.ts buduje z tego rundę i rewanż, czyli 306 albo 380 par
-// na ligę na sezon (34 lub 38 meczów na drużynę) — tyle, żeby najrzadsze warunki
-// pogodowe miały używalną próbę, a tabela ligowa wyglądała jak prawdziwa.
-// home_stadium_id == id drużyny, patrz stadiums.ts.
 const teamSeeds: TeamSeed[] = [
-  // Ekstraklasa (18)
   { id: 1, name: "Legia Warszawa", short_name: "LEG", city: "Warsaw", country: "Poland", league_id: 1, home_stadium_id: 1 },
   { id: 2, name: "Lech Poznań", short_name: "LECH", city: "Poznań", country: "Poland", league_id: 1, home_stadium_id: 2 },
   { id: 11, name: "Raków Częstochowa", short_name: "RAK", city: "Częstochowa", country: "Poland", league_id: 1, home_stadium_id: 11 },
@@ -57,7 +43,6 @@ const teamSeeds: TeamSeed[] = [
   { id: 41, name: "GKS Katowice", short_name: "GKS", city: "Katowice", country: "Poland", league_id: 1, home_stadium_id: 41 },
   { id: 42, name: "Puszcza Niepołomice", short_name: "PUS", city: "Niepołomice", country: "Poland", league_id: 1, home_stadium_id: 42 },
 
-  // LaLiga (20)
   { id: 3, name: "Real Madrid", short_name: "RMA", city: "Madrid", country: "Spain", league_id: 2, home_stadium_id: 3 },
   { id: 4, name: "FC Barcelona", short_name: "FCB", city: "Barcelona", country: "Spain", league_id: 2, home_stadium_id: 4 },
   { id: 5, name: "Atlético Madrid", short_name: "ATM", city: "Madrid", country: "Spain", league_id: 2, home_stadium_id: 5 },
@@ -79,7 +64,6 @@ const teamSeeds: TeamSeed[] = [
   { id: 53, name: "UD Las Palmas", short_name: "LPA", city: "Las Palmas", country: "Spain", league_id: 2, home_stadium_id: 53 },
   { id: 54, name: "CD Leganés", short_name: "LEA", city: "Leganés", country: "Spain", league_id: 2, home_stadium_id: 54 },
 
-  // Premier League (20)
   { id: 6, name: "Arsenal", short_name: "ARS", city: "London", country: "England", league_id: 3, home_stadium_id: 6 },
   { id: 7, name: "Liverpool", short_name: "LIV", city: "Liverpool", country: "England", league_id: 3, home_stadium_id: 7 },
   { id: 8, name: "Manchester City", short_name: "MCI", city: "Manchester", country: "England", league_id: 3, home_stadium_id: 8 },
@@ -101,7 +85,6 @@ const teamSeeds: TeamSeed[] = [
   { id: 65, name: "Southampton", short_name: "SOU", city: "Southampton", country: "England", league_id: 3, home_stadium_id: 65 },
   { id: 66, name: "Ipswich Town", short_name: "IPS", city: "Ipswich", country: "England", league_id: 3, home_stadium_id: 66 },
 
-  // Bundesliga (18)
   { id: 9, name: "Bayern Munich", short_name: "BAY", city: "Munich", country: "Germany", league_id: 4, home_stadium_id: 9 },
   { id: 10, name: "Borussia Dortmund", short_name: "BVB", city: "Dortmund", country: "Germany", league_id: 4, home_stadium_id: 10 },
   { id: 21, name: "RB Leipzig", short_name: "RBL", city: "Leipzig", country: "Germany", league_id: 4, home_stadium_id: 21 },

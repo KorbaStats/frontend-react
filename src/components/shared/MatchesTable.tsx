@@ -48,7 +48,6 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
         )}
 
         {matches.map((m) => {
-          // Ikona i opis pogody wyliczane z pasm, tak jak filtry
           const config = m.weather
             ? weatherDisplay[weatherDisplayFor(m.weather)]
             : weatherDisplay.clear;
@@ -60,9 +59,7 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
               onClick={() => navigate(`/match/${m.id}`)}
               className="cursor-pointer"
             >
-              {/* drużyny i wynik */}
               <TableCell className="pl-6 font-medium text-foreground hover:text-primary">
-                {/* stopPropagation: klik w drużynę idzie do drużyny, nie do meczu */}
                 <Link
                   to={`/team/${m.home_team_id}`}
                   onClick={(e) => e.stopPropagation()}
@@ -84,7 +81,6 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
                 </Link>
               </TableCell>
 
-              {/* warunek pogodowy */}
               <TableCell>
                 <div className="flex items-center gap-2">
                   <span
@@ -103,7 +99,6 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
                 </div>
               </TableCell>
 
-              {/* data i godzina */}
               <TableCell>
                 <div className="flex flex-col leading-tight">
                   <span className="font-medium text-foreground">
@@ -115,7 +110,6 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
                 </div>
               </TableCell>
 
-              {/* stadion */}
               <TableCell className="pr-6">
                 <div className="flex flex-col leading-tight">
                   <span className="font-medium text-foreground">

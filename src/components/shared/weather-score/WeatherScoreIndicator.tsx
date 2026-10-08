@@ -8,7 +8,6 @@ import WeatherScoreRing from "@/components/shared/weather-score/WeatherScoreRing
 interface WeatherScoreIndicatorProps {
   teamId: number;
   teamName: string;
-  /** null = ze wszystkich sezonów */
   season?: string | null;
 }
 

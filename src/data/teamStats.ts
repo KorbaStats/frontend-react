@@ -1,12 +1,8 @@
-// Dane zamockowane — do podmiany na endpointy backendu.
-// Kształt zweryfikowany z TeamStatsController (GET /api/team-stats/*).
-// Wyliczane z matches.ts, żeby liczby trzymały się listy meczów.
-
 import { matches } from "./matches"
 import type { TeamRanking, TeamStatsOverTimePoint } from "./types"
 
 function periodOf(datetime: string): string {
-  return datetime.slice(0, 7) // "YYYY-MM"
+  return datetime.slice(0, 7)
 }
 
 function average(values: number[]): number {
@@ -104,7 +100,6 @@ export const rankings: TeamRanking[] = (() => {
         xg_ratio: sumXg > 0 ? Number((goalsScored / sumXg).toFixed(3)) : null,
       }
     })
-    // zgodne z SQL-em TeamStatsController.rankings: ORDER BY points DESC, goals_scored DESC
     .sort((a, b) => b.points - a.points || b.goals_scored - a.goals_scored)
 })()
 

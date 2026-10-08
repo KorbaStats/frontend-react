@@ -22,7 +22,6 @@ const TeamInfoCard = ({ matches, team }: TeamInfoProps) => {
         {team && <FavouriteStar teamId={team.id} size={24} />}
         <TeamLogo name={team?.name} short_name={team?.short_name} />
 
-        {/* Dane drużyny */}
         <div>
           <Link to={`/league/${team?.league_id}`} className=" text-md text-primary font-bold tracking-widest ">
             {team?.league?.name.toUpperCase()}
@@ -45,7 +44,6 @@ const TeamInfoCard = ({ matches, team }: TeamInfoProps) => {
         </div>
       </div>
 
-      {/* Ostatnie 5 meczów (zwycięstwo / remis / porażka) */}
       <div className="flex flex-col gap-2 lg:items-end">
         <p className="text-sm text-muted-foreground/80 self-start">
           Ostatnie mecze

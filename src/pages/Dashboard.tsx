@@ -22,7 +22,7 @@ const Dashboard = () => {
   useEffect(() => {
     Promise.all([getMatches(), getAvailableSeasons()])
       .then(([res, seasons]) => {
-        const newest = seasons[0] ?? null; //tylko dame z najnowszego sezonu
+        const newest = seasons[0] ?? null;
         setSeason(newest);
         setMatches(res.data.filter((m) => m.season === newest));
       })

@@ -13,7 +13,6 @@ import WeatherScoreRing from "@/components/shared/weather-score/WeatherScoreRing
 
 interface WeatherScoreCardProps {
   teamId: number;
-  /** null = ze wszystkich sezonów */
   season?: string | null;
 }
 
@@ -85,7 +84,6 @@ const WeatherScoreCard = ({ teamId, season = null }: WeatherScoreCardProps) => {
 
         <dl className="flex w-full max-w-sm flex-col gap-3 pt-4 text-sm lg:border-l lg:pt-0 lg:pl-12 xl:gap-4 xl:border-l-0 xl:pt-6 xl:pl-0">
           <div className="flex items-start justify-between gap-2">
-            {/* Trudne warunki */}
             <div>
               <dt className="font-medium">Trudne warunki</dt>
               <dd className="text-xs text-muted-foreground">
@@ -103,7 +101,6 @@ const WeatherScoreCard = ({ teamId, season = null }: WeatherScoreCardProps) => {
           </div>
 
           <div className="flex items-start justify-between gap-2">
-            {/* Normalne warunki */}
             <div>
               <dt className="font-medium">Normalne warunki</dt>
               <dd className="text-xs text-muted-foreground">
@@ -120,7 +117,6 @@ const WeatherScoreCard = ({ teamId, season = null }: WeatherScoreCardProps) => {
             </dd>
           </div>
 
-          {/* Różnica */}
           <div className="flex items-center justify-between gap-2 border-t pt-3">
             <dt className="text-muted-foreground">Różnica</dt>
             <dd className={`font-semibold tabular-nums ${color}`}>

@@ -11,7 +11,6 @@ const sizeStyles = {
   md: "h-8 w-8 text-xl",
 };
 
-// albo gotowy wynik (forma w tabeli), albo bramki do przeliczenia
 type ResultBadgeProps = { size?: keyof typeof sizeStyles } & (
   | { result: MatchResult }
   | { goalsFor: number; goalsAgainst: number }

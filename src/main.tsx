@@ -27,13 +27,10 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/" element={<MainLayout />}>
               <Route index element={<Dashboard />} />
 
-              {/* Liga */}
               <Route path="leagues" element={<Leagues />} />
               <Route path="league/:id" element={<LeagueDetails />} />
 
-              {/* Druzyna */}
               <Route path="team/:id" element={<TeamDetails />} />
-              {/* Mecze */}
               <Route path="matches" element={<Matches />} />
               <Route path="match/:id" element={<MatchDetails />} />
 
@@ -43,7 +40,6 @@ createRoot(document.getElementById("root")!).render(
                 element={<div>Predictions page...</div>}
               />
 
-              {/* Not Found Page */}
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

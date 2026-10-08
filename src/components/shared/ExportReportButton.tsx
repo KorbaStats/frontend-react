@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button"
 import { Printer } from "lucide-react"
 
 interface ExportReportButtonProps {
-  // przeglądarka nazywa plik PDF według document.title
   fileName: string
 }
 
@@ -12,7 +11,6 @@ const ExportReportButton = ({ fileName }: ExportReportButtonProps) => {
     const wasDark = root.classList.contains("dark")
     const previousTitle = document.title
 
-    // wyrzucenie klasy dark mode (czytelnosc strony po wydruku)
     root.classList.remove("dark")
     document.title = fileName
 

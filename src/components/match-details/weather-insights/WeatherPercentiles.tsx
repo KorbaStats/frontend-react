@@ -70,7 +70,6 @@ const metricConfig: Record<WeatherMetricKey, MetricConfig> = {
   },
 };
 
-// odchylenia
 const deviationFromNorm = (p: WeatherPercentile) =>
   p.value === p.median ? 0 : Math.abs(p.percentile - 50);
 
@@ -123,7 +122,6 @@ const PercentileRow = ({ item }: { item: WeatherPercentile }) => {
         />
       </div>
 
-      {/* Norma dla percentyli */}
       <div className="relative mt-1.5 h-4 text-[10px] text-muted-foreground">
         <span className="absolute left-0">{format(item.min)}</span>
         <span className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap font-medium text-foreground">

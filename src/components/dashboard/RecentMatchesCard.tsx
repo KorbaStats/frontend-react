@@ -23,7 +23,6 @@ const RecentMatchesCard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // serwis na mockach, ale interfejs asynchroniczny jak przy prawdziwym API
   useEffect(() => {
     getRecentMatches()
       .then((data) => setRecentMatches(data))
@@ -34,7 +33,6 @@ const RecentMatchesCard = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
-  // obsługa stanów ładowania i błędu
   if (isLoading) {
     return (
       <Card>

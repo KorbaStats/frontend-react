@@ -58,10 +58,8 @@ const MatchStats = ({ match }: MatchStatsProps) => {
       </CardHeader>
 
       <CardContent className="space-y-3">
-        {/* Top statystyki */}
         <StatSection group={topGroup} />
 
-        {/* Wszystkie statystyki - po rozwinięciu  */}
         {showAll &&
           allGroups.map((group) => (
             <StatSection key={group.title} group={group} />

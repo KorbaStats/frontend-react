@@ -12,7 +12,6 @@ export type StatGroup = {
   rows: Row[];
 };
 
-// Top statystyki - zawsze na gorze
 export function getTopGroup(match: Match): StatGroup {
   return {
     title: "Top statystyki",
@@ -29,7 +28,6 @@ export function getTopGroup(match: Match): StatGroup {
   };
 }
 
-// wszystkie statystyki
 export function getAllGroups(match: Match): StatGroup[] {
   return [
     {

@@ -1,11 +1,4 @@
-// Dane zamockowane — do podmiany na endpointy backendu.
-// Kształt zweryfikowany z migracją 20260417113614_create_leagues.js
-// i z LeaguesController (GET /api/leagues, GET /api/leagues/:id).
-
 import type { League } from "./types"
-
-// Pole tylko dla UI (emoji flagi), backend go nie zwraca — trzymane dla Sidebar.tsx.
-// export type LeagueWithFlag = League & { flag: string }
 
 export const leagues: League[] = [
   {

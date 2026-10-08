@@ -24,7 +24,6 @@ const TeamsRecentMatches = ({ match }: TeamsRecentMatchesProps) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // mecze wczesniejsze niz ogladany, bez samego ogladanego
     const beforeThisMatch = (list: MatchWithWeather[]) =>
       list
         .filter((m) => m.id !== match.id && m.datetime < match.datetime)

@@ -28,7 +28,6 @@ interface MatchHeaderCardProps {
   match: MatchWithWeather;
 }
 
-// Meta Item: Ikonka + tekst (np Calendar + data)
 const MetaItem = ({
   icon: Icon,
   label,
@@ -45,7 +44,6 @@ const MetaItem = ({
   </div>
 );
 
-// Pojedyncza metryka pogodowa w dolnym pasku.
 const WeatherTile = ({
   icon: Icon,
   label,
@@ -73,7 +71,6 @@ const MatchHeaderCard = ({ match }: MatchHeaderCardProps) => {
 
   return (
     <Card className="gap-0 overflow-hidden py-0">
-      {/* Pasek meta: liga, data, stadion, sędzia, frekwencja */}
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b px-4 py-3 text-xs text-muted-foreground lg:px-6">
         <div className="flex items-center gap-2">
           {match.league && (
@@ -122,7 +119,6 @@ const MatchHeaderCard = ({ match }: MatchHeaderCardProps) => {
         </dl>
       </div>
 
-      {/* Wynik */}
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-6 lg:gap-6 lg:px-6">
         <Link
           to={`/team/${match.home_team_id}`}
@@ -172,7 +168,6 @@ const MatchHeaderCard = ({ match }: MatchHeaderCardProps) => {
         </Link>
       </div>
 
-      {/* Pasek pogodowy */}
       {weather && config && WeatherIcon ? (
         <div className="flex flex-col gap-4 border-t bg-muted/40 px-4 py-4 lg:flex-row lg:items-center lg:px-6">
           <div className="flex items-center gap-3 lg:w-60 lg:shrink-0">

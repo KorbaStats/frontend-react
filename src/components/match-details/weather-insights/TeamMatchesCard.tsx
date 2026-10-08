@@ -127,7 +127,6 @@ const TeamMatchesCard = ({
                     </TableCell>
 
                     <TableCell className="font-medium text-foreground hover:text-primary">
-                      {/* stopPropagation: klik w drużynę idzie do drużyny, nie do meczu */}
                       <Link
                         to={`/team/${opponent.id}`}
                         onClick={(e) => e.stopPropagation()}

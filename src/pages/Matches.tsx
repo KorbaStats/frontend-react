@@ -24,7 +24,6 @@ const Matches = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // filtry ustawiane w sidebarze, stan trzyma MainLayout
   const { filters } = useOutletContext<FiltersOutletContext>();
 
   useEffect(() => {
@@ -42,10 +41,8 @@ const Matches = () => {
     [matches, filters],
   );
 
-  // własny hook obsługujący paginację
   const {visibleItems, hiddenCount, showMore, reset} = useVisibleItems(filteredMatches);
 
-  // zawężenie listy cofa paginację na początek
   useEffect(() => reset(), [filters, reset]);
   
   return (

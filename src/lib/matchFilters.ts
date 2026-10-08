@@ -7,7 +7,6 @@ import {
   type WindBand,
 } from "./weatherProfile"
 import { normalize } from "@/lib/utils.ts";
-// OR w obrębie osi, AND między osiami; pusta tablica = oś nie ogranicza
 export type WeatherBandFilters = {
   temp: TempBand[]
   precip: PrecipBand[]
@@ -39,7 +38,6 @@ export const emptyFilters: MatchFilters = {
   dateTo: "",
 }
 
-// czy filtry są zaznaczone
 export function hasBandFilters(filters: WeatherBandFilters): boolean {
   return (
     filters.temp.length > 0 ||
@@ -49,7 +47,6 @@ export function hasBandFilters(filters: WeatherBandFilters): boolean {
   )
 }
 
-// czy dany mecz przechodzi przez filtry pogodowe
 export function matchesBands(match: MatchWithWeather, filters: WeatherBandFilters): boolean {
   if (!hasBandFilters(filters)) return true
   if (match.weather === null) return false
@@ -58,7 +55,6 @@ export function matchesBands(match: MatchWithWeather, filters: WeatherBandFilter
   if (filters.temp.length > 0 && !filters.temp.includes(profile.temp)) return false
   if (filters.precip.length > 0 && !filters.precip.includes(profile.precip)) return false
   if (filters.wind.length > 0 && !filters.wind.includes(profile.wind)) return false
-  // null = brak opadow, czyli zadnego rodzaju nie spelnia
   if (
     filters.precipType.length > 0 &&
     (profile.precipType === null ||
@@ -79,7 +75,6 @@ export function filterMatches(
     if (filters.season !== "all" && match.season !== filters.season) return false;
     if (filters.leagueId !== "all" && match.league_id !== filters.leagueId) return false;
 
-    // daty ISO porównują się leksykograficznie, więc parsowanie Date jest zbędne
     const day = match.datetime.slice(0, 10)
     if (filters.dateFrom !== "" && day < filters.dateFrom) return false;
     if (filters.dateTo !== "" && day > filters.dateTo) return false;
@@ -90,7 +85,6 @@ export function filterMatches(
   })
 }
 
-// Nazwa drużyny, skrót i miasto — dla obu stron spotkania.
 function teamHaystack(match: MatchWithWeather): string {
   const { homeTeam, awayTeam } = match
   return normalize(
@@ -105,7 +99,6 @@ function teamHaystack(match: MatchWithWeather): string {
   )
 }
 
-// reset filtrow
 export function hasActiveFilters(filters: MatchFilters): boolean {
   return (
     filters.query.trim() !== "" ||

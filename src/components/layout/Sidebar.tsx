@@ -86,7 +86,6 @@ const Sidebar = ({
   onClose,
 }: SidebarProps) => {
   const { pathname } = useLocation();
-  // favourite teams ids from context api
   const { favouriteTeamsIds } = useFavouriteTeams();
 
   const [leagues, setLeagues] = useState<League[]>([]);
@@ -95,7 +94,6 @@ const Sidebar = ({
 
   const favouriteTeams = teams.filter((t) => favouriteTeamsIds.includes(t.id));
 
-  // ligi służą i sekcji nawigacyjnej, i dropdownowi w filtrach
   useEffect(() => {
     getTeams()
       .then((res) => setTeams(res.data))

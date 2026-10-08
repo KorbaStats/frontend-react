@@ -1,9 +1,3 @@
-// Terminarz — mecze jeszcze nierozegrane, pod predykcje.
-// Do podmiany na GET /api/matches?status=scheduled.
-//
-// Daty liczone od dnia uruchomienia, żeby terminarz zawsze był "nadchodzący"
-// bez ręcznego poprawiania mocka.
-
 import { teams } from "./teams"
 import type { ScheduledMatch, Team } from "./types"
 
@@ -42,7 +36,6 @@ function groupByLeague(allTeams: Team[]): Map<number, Team[]> {
   return byLeague
 }
 
-/** Jedna kolejka: drużyny parowane po kolei, każda gra raz. */
 function round(leagueTeams: Team[]): { home: Team; away: Team }[] {
   const pairs: { home: Team; away: Team }[] = []
   for (let i = 0; i + 1 < leagueTeams.length; i += 2) {
@@ -51,7 +44,6 @@ function round(leagueTeams: Team[]): { home: Team; away: Team }[] {
   return pairs
 }
 
-/** Dzisiaj + `days` dni, o podanej godzinie. */
 function dateIn(days: number, hour: number): string {
   const d = new Date()
   d.setUTCDate(d.getUTCDate() + days)
@@ -62,7 +54,7 @@ function dateIn(days: number, hour: number): string {
 function generateScheduled(): ScheduledMatch[] {
   const leagueGroups = groupByLeague(teams)
   const generated: ScheduledMatch[] = []
-  let nextId = 90000 // z dala od id meczów rozegranych
+  let nextId = 90000
 
   for (let r = 0; r < ROUNDS; r++) {
     for (const leagueTeams of leagueGroups.values()) {

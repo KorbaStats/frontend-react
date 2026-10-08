@@ -6,10 +6,9 @@ export type StandingRow = {
   goalsFor: number, goalsAgainst: number,
   goalDiff: number,
   points: number,
-  form: ("W" | "D" | "L")[] //the last 5 matches
+  form: ("W" | "D" | "L")[]
 }
 
-// helper functions for computeStandings
 function getOrCreateRow(map: Map<number, StandingRow>, team: Team): StandingRow {
   let row = map.get(team.id);
   if (!row) {
@@ -50,7 +49,6 @@ function applyResult(row: StandingRow, goalsFor: number, goalsAgainst: number) {
   }
 }
 
-// oczekuje mecze od najnowszych (forma = pierwsze 5 meczy)
 export function computeStandings(matches: Match[]): StandingRow[] {
   const standingsMap = new Map<number, StandingRow>()
 

@@ -1,16 +1,8 @@
-// Dane zamockowane — do podmiany na endpointy backendu.
-// Kształt zweryfikowany z migracją 20260522120000_create_stadiums_table.js
-// i ze StadiumsController (GET /api/stadiums, GET /api/stadiums/:id).
-
 import type { Stadium } from "./types"
 
-// Jeden stadion na drużynę, id trzyma się id drużyny z teams.ts.
-// Zapis seedowy (bez powtarzanych created_at/updated_at), bo przy 76 wierszach
-// pełne obiekty były nieczytelne.
 type StadiumSeed = Omit<Stadium, "created_at" | "updated_at">
 
 const stadiumSeeds: StadiumSeed[] = [
-  // Ekstraklasa
   { id: 1, name: "Stadion Wojska Polskiego", city: "Warsaw", capacity: 31103, longitude: 21.0206, latitude: 52.2251, address: "ul. Łazienkowska 3, Warszawa" },
   { id: 2, name: "Enea Stadion", city: "Poznań", capacity: 42837, longitude: 16.8992, latitude: 52.4064, address: "ul. Bułgarska 5/7, Poznań" },
   { id: 11, name: "Stadion Miejski w Częstochowie", city: "Częstochowa", capacity: 5500, longitude: 19.1203, latitude: 50.8118, address: "ul. Limanowskiego 83, Częstochowa" },
@@ -30,7 +22,6 @@ const stadiumSeeds: StadiumSeed[] = [
   { id: 41, name: "Stadion GKS Katowice", city: "Katowice", capacity: 14000, longitude: 19.002, latitude: 50.26, address: "ul. Bukowa 1, Katowice" },
   { id: 42, name: "Stadion Puszczy Niepołomice", city: "Niepołomice", capacity: 2600, longitude: 20.217, latitude: 50.035, address: "ul. Bocheńska 20, Niepołomice" },
 
-  // LaLiga
   { id: 3, name: "Santiago Bernabéu", city: "Madrid", capacity: 78297, longitude: -3.6883, latitude: 40.4531, address: "Av. de Concha Espina, 1, Madrid" },
   { id: 4, name: "Camp Nou", city: "Barcelona", capacity: 99354, longitude: 2.1228, latitude: 41.3809, address: "C. d'Arístides Maillol, 12, Barcelona" },
   { id: 5, name: "Estadio Metropolitano", city: "Madrid", capacity: 68456, longitude: -3.5995, latitude: 40.4362, address: "Av. de Luis Aragonés, 4, Madrid" },
@@ -52,7 +43,6 @@ const stadiumSeeds: StadiumSeed[] = [
   { id: 53, name: "Estadio de Gran Canaria", city: "Las Palmas", capacity: 32400, longitude: -15.456, latitude: 28.1, address: "C. Fondos de Segura, s/n, 35019 Las Palmas" },
   { id: 54, name: "Estadio Butarque", city: "Leganés", capacity: 12454, longitude: -3.759, latitude: 40.34, address: "Av. Reina Sofía, 27, 28911 Leganés" },
 
-  // Premier League
   { id: 6, name: "Emirates Stadium", city: "London", capacity: 60704, longitude: -0.1085, latitude: 51.5549, address: "Hornsey Rd, London N7 7AJ" },
   { id: 7, name: "Anfield", city: "Liverpool", capacity: 61276, longitude: -2.9608, latitude: 53.4308, address: "Anfield Rd, Liverpool L4 0TH" },
   { id: 8, name: "Etihad Stadium", city: "Manchester", capacity: 53400, longitude: -2.2004, latitude: 53.4831, address: "Etihad Campus, Manchester M11 3FF" },
@@ -74,7 +64,6 @@ const stadiumSeeds: StadiumSeed[] = [
   { id: 65, name: "St Mary's Stadium", city: "Southampton", capacity: 32384, longitude: -1.3911, latitude: 50.9058, address: "Britannia Rd, Southampton SO14 5FP" },
   { id: 66, name: "Portman Road", city: "Ipswich", capacity: 30311, longitude: 1.145, latitude: 52.055, address: "Portman Rd, Ipswich IP1 2DA" },
 
-  // Bundesliga
   { id: 9, name: "Allianz Arena", city: "Munich", capacity: 75024, longitude: 11.6247, latitude: 48.2188, address: "Werner-Heisenberg-Allee 25, München" },
   { id: 10, name: "Signal Iduna Park", city: "Dortmund", capacity: 81365, longitude: 7.4517, latitude: 51.4926, address: "Strobelallee 50, Dortmund" },
   { id: 21, name: "Red Bull Arena", city: "Leipzig", capacity: 47069, longitude: 12.3483, latitude: 51.3459, address: "Am Sportforum 3, Leipzig" },

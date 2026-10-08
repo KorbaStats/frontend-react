@@ -24,7 +24,6 @@ const MainLayout = () => {
   const setFilters = (next: MatchFilters) =>
     setStored({ pathname, filters: next });
 
-  // Escape zamyka menu
   useEffect(() => {
     if (!isSidebarOpen) return;
     const onKeyDown = (e: KeyboardEvent) =>

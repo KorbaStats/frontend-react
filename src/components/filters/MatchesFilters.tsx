@@ -25,7 +25,6 @@ const MatchesFilters = ({
   seasons,
   leagues,
 }: MatchesFiltersProps) => {
-  // jeden setter na wszystkie pola
   const set = <K extends keyof MatchFilters>(
     key: K,
     fieldValue: MatchFilters[K],
@@ -48,15 +47,12 @@ const MatchesFilters = ({
         }
       >
         <div className="flex flex-col gap-4">
-          {/* wyszukiwarka drużyn */}
           <div className="relative">
             <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={value.query}
               onChange={(e) => set("query", e.target.value)}
               placeholder="Szukaj drużyny..."
-              // bez widocznej etykiety placeholder jest jedyną podpowiedzią,
-              // a znika przy pisaniu
               aria-label="Szukaj drużyny"
               className="h-9 pl-8"
             />

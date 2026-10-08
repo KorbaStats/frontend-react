@@ -1,14 +1,3 @@
-// Dane zamockowane — do podmiany na endpointy backendu.
-// Kształt zweryfikowany z docelową tabelą `matches` (po migracjach
-// 20260321175947, 20260522120000, 20260525123625, 20260525140000) i z
-// MatchesController (GET /api/matches, GET /api/matches/:id) — oba endpointy
-// używają withGraphFetched, więc każdy wiersz niesie zagnieżdżone
-// homeTeam/awayTeam/stadium/league.
-//
-// Generowane deterministycznie z RNG z ziarnem, żeby zbiór danych był stabilny
-// między przeładowaniami. Każdy mecz niesie każdą kolumnę, łącznie z jsonb —
-// patrz withFullDetail() niżej.
-
 import { teams } from "./teams"
 import type { Match, ParsedStat, Team } from "./types"
 
@@ -36,8 +25,6 @@ function pick<T>(items: T[]): T {
   return items[randInt(0, items.length - 1)]
 }
 
-// Fisher-Yates z ziarnem. Rozrzuca mecze domowe drużyny po całym sezonie —
-// bez tego połowa ligi nigdy nie grałaby u siebie zimą.
 function shuffle<T>(items: T[]): T[] {
   const result = [...items]
   for (let i = result.length - 1; i > 0; i--) {
@@ -47,8 +34,6 @@ function shuffle<T>(items: T[]): T[] {
   return result
 }
 
-// Odwzorowuje wyjście parseStat() ze scrapera dla statystyk "x% (n/m)".
-// `completed` liczone z procentu, żeby trzy pola zawsze się zgadzały.
 function parsedStat(total: number, minPct: number, maxPct: number): ParsedStat {
   const pct = randInt(minPct, maxPct)
   return { pct, completed: Math.round((total * pct) / 100), total }
@@ -81,7 +66,6 @@ function groupByLeague(allTeams: Team[]): Map<number, Team[]> {
 
 type Fixture = { home: Team; away: Team }
 
-// Każda uporządkowana para raz = pełna runda i rewanż (mecz i mecz u siebie).
 function doubleRoundRobin(leagueTeams: Team[]): Fixture[] {
   const fixtures: Fixture[] = []
   for (const home of leagueTeams) {
@@ -94,9 +78,6 @@ function doubleRoundRobin(leagueTeams: Team[]): Fixture[] {
 
 type SeasonDef = { season: string; months: { year: number; month: number }[] }
 
-// Sezon trwa od sierpnia do maja. Pełne 10 miesięcy jest potrzebne, bo
-// weather.ts wyprowadza warunki z miesiąca — krótsze okno nie wygenerowałoby
-// `extreme_heat`.
 const seasonDefs: SeasonDef[] = [
   {
     season: "2021/2022",
@@ -211,8 +192,8 @@ function buildMatch(id: number, home: Team, away: Team, season: string, datetime
     away_yellow_cards: randInt(0, 4),
     home_red_cards: rng() < 0.08 ? 1 : 0,
     away_red_cards: rng() < 0.08 ? 1 : 0,
-    home_fouls: randInt(6, 16), // moved from "withFullDetail" object builder
-    away_fouls: randInt(6, 16), //
+    home_fouls: randInt(6, 16),
+    away_fouls: randInt(6, 16),
     home_xg_on_target_xgot: Number(Math.min(homeXg * randFloat(0.6, 1.1), homeXg + 0.4).toFixed(2)),
     away_xg_on_target_xgot: Number(Math.min(awayXg * randFloat(0.6, 1.1), awayXg + 0.4).toFixed(2)),
     home_expected_assists_xa: randFloat(0.3, 1.8),
@@ -233,10 +214,6 @@ function buildMatch(id: number, home: Team, away: Team, season: string, datetime
   }
 }
 
-// Uzupełnia pozostałe kolumny `matches` (łącznie z jsonb), czyli pełny kształt
-// GET /api/matches/:id. Stosowane do każdego meczu, bo czytają je i szczegóły
-// meczu, i analiza pogodowa ligi. W types.ts zostają opcjonalne — prawdziwe
-// kolumny są nullowalne.
 function withFullDetail(match: Match): Match {
   const homeShots = match.home_total_shots
   const awayShots = match.away_total_shots

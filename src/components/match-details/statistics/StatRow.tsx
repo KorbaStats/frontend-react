@@ -1,6 +1,5 @@
 export type NumberRowProps = {
   label: string;
-  // opcjonalne, bo część kolumn w types.ts jest nullowalna
   home: number | undefined;
   away: number | undefined;
   suffix?: string;
@@ -8,7 +7,6 @@ export type NumberRowProps = {
 };
 
 const StatRow = ({label, home, away, suffix = "", decimals = 0}: NumberRowProps) => {
-  // jawne porównanie z undefined — przy !home znikałyby wiersze z zerem
   if (home === undefined || away === undefined) return null;
 
   const total = home+away;
