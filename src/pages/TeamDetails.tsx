@@ -13,6 +13,7 @@ import {
 import { getTeamById } from "@/services/teamsService";
 
 import { computeTeamStats } from "@/lib/teamStats";
+import { teamComparisonRows } from "@/lib/weatherComparison";
 import { hasBandFilters, matchesBands } from "@/lib/matchFilters";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
 
@@ -28,6 +29,7 @@ import ShowMoreFooter from "@/components/shared/ShowMoreFooter";
 import WeatherScoreCard from "@/components/shared/weather-score/WeatherScoreCard";
 import TeamInfoCard from "@/components/team-details/TeamInfoCard";
 import TeamStatsCards from "@/components/team-details/TeamStatsCards";
+import WeatherComparisonChart from "@/components/shared/WeatherComparisonChart";
 import ExportReportButton from "@/components/shared/ExportReportButton";
 
 const TeamDetails = () => {
@@ -103,7 +105,6 @@ const TeamDetails = () => {
   return (
     <>
       <TeamInfoCard matches={matches} team={team} />
-      {/* Team stats Section */}
       <section className="flex flex-col gap-3">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
@@ -134,6 +135,15 @@ const TeamDetails = () => {
           </div>
         </div>
       </section>
+
+      <WeatherComparisonChart
+        matches={matches}
+        buildRows={(condition, normal) =>
+          teamComparisonRows(condition, normal, teamId)
+        }
+        title="Wpływ warunków pogodowych"
+        description="Wszystkie sezony — statystyki drużyny względem jej meczów w sprzyjających warunkach pogodowych."
+      />
 
       <Card>
         <CardHeader className="border-b pb-6">

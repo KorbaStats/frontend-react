@@ -3,23 +3,19 @@ import type { Weather } from "@/data/types"
 export type TempBand = "freezing" | "cold" | "mild" | "warm" | "hot"
 export type PrecipBand = "dry" | "light" | "heavy"
 export type WindBand = "calm" | "breezy" | "strong"
-/** Rodzaj opadów. `null` przy braku opadów — nie ma wtedy czego klasyfikować. */
 export type PrecipTypeBand = "rain" | "snow" | "sleet"
 
 export type WeatherProfile = {
   temp: TempBand
   precip: PrecipBand
   wind: WindBand
-  /** Niezależny od natężenia — śnieg też bywa słaby albo obfity. */
   precipType: PrecipTypeBand | null
 }
 
-// progi wymyślone, nie bezposrednio z danych 
 export const weatherThresholds = {
   temp: { freezing: 0, cold: 8, mild: 18, warm: 28 },
   precip: { dry: 0.2, light: 2.5 },
   wind: { calm: 15, breezy: 30 },
-  // zapas, gdyby dostawca pogody nie miał opadu śniegu osobno
   snowTemp: 0,
 } as const
 
@@ -32,7 +28,6 @@ export function tempBandFor(temperature_c: number): TempBand {
   return "hot"
 }
 
-/** Samo natężenie opadów. Rodzaj (deszcz/śnieg) jest osobno — patrz snowFor(). */
 export function precipBandFor(precipitation_mm: number): PrecipBand {
   const p = weatherThresholds.precip
   if (precipitation_mm < p.dry) return "dry"
@@ -40,13 +35,6 @@ export function precipBandFor(precipitation_mm: number): PrecipBand {
   return "heavy"
 }
 
-/**
- * Rodzaj opadów z pomiaru `rain_mm` / `snowfall_cm`, a nie z progu temperatury.
- * Kategorie są rozłączne, żeby dały się porównywać: deszcz ze śniegiem nie
- * wlicza się ani do deszczu, ani do śniegu.
- *
- * Próg temperatury zostaje jako zapas dla dostawcy bez osobnego opadu śniegu.
- */
 export function precipTypeFor(weather: Weather): PrecipTypeBand | null {
   if (weather.precipitation_mm < weatherThresholds.precip.dry) return null
 
@@ -57,7 +45,6 @@ export function precipTypeFor(weather: Weather): PrecipTypeBand | null {
   if (hasSnow) return "snow"
   if (hasRain) return "rain"
 
-  // brak rozbicia u dostawcy — zostaje termometr
   return weather.temperature_c <= weatherThresholds.snowTemp ? "snow" : "rain"
 }
 
@@ -119,3 +106,24 @@ export const weatherAxes = [
     ],
   },
 ]
+
+export type DifficultConditionKey = "freezing" | "hot" | "heavyPrecip" | "snow" | "strongWind"
+
+export type DifficultCondition = {
+  key: DifficultConditionKey
+  label: string
+  matches: (profile: WeatherProfile) => boolean
+}
+
+export const difficultConditions: DifficultCondition[] = [
+  { key: "freezing", label: "Mróz", matches: (p) => p.temp === "freezing" },
+  { key: "hot", label: "Upał", matches: (p) => p.temp === "hot" },
+  { key: "heavyPrecip", label: "Silne opady", matches: (p) => p.precip === "heavy" },
+  { key: "snow", label: "Śnieg", matches: (p) => p.precipType === "snow" || p.precipType === "sleet" },
+  { key: "strongWind", label: "Silny wiatr", matches: (p) => p.wind === "strong" },
+]
+
+export function isDifficultWeather(weather: Weather): boolean {
+  const profile = profileFor(weather)
+  return difficultConditions.some((condition) => condition.matches(profile))
+}

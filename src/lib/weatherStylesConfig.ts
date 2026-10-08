@@ -1,5 +1,5 @@
 import type { Weather } from "@/data/types";
-import { profileFor } from "./weatherProfile";
+import { profileFor, type DifficultConditionKey } from "./weatherProfile";
 import {
   Sun,
   Cloudy,
@@ -17,15 +17,6 @@ import {
   Tornado,
   type LucideIcon,
 } from "lucide-react";
-
-// ---------------------------------------------------------------------------
-// Prezentacja pogody wyliczana z PASM — tych samych, na których stoją filtry
-// i weather score. Dzięki temu ikonka nie może powiedzieć czegoś innego
-// niż zaznaczony filtr.
-//
-// `chartColor` to token CSS, nie klasa Tailwinda — recharts ustawia fill/stroke
-// bezpośrednio na SVG. Wartości w globals.css, z wariantem dla dark mode.
-// ---------------------------------------------------------------------------
 
 export type WeatherDisplay =
   | "sleet"
@@ -115,10 +106,6 @@ export const weatherDisplay: Record<
 
 const CLOUDY_PCT = 60;
 
-/**
- * Najbardziej zauważalna cecha pogody meczu. Kolejność jest decyzją projektową:
- * opady przed temperaturą, bo stan murawy widać mocniej niż stopnie, a temperatura i tak jest obok ikony i opisu warunków. Niebo jest ostatnie - chmury nie zwiekszaja/zmniejszają produktywnosci czy tempa meczu.
- */
 export function weatherDisplayFor(weather: Weather): WeatherDisplay {
   const { temp, precip, precipType, wind } = profileFor(weather);
 
@@ -133,31 +120,33 @@ export function weatherDisplayFor(weather: Weather): WeatherDisplay {
   return weather.cloud_cover_pct > CLOUDY_PCT ? "clouds" : "clear";
 }
 
-// kolor weather score — progi jak w weatherScoreLabel
 export function weatherScoreColor(score: number): string {
   if (score >= 55) return "text-green-600 dark:text-green-500/90";
   if (score >= 45) return "text-muted-foreground";
   return "text-destructive";
 }
 
-// ikony do pigulek filtrow
 export const bandIcons: Record<string, LucideIcon> = {
-  // temperatura
   freezing: ThermometerSnowflake,
   cold: Snowflake,
   mild: Thermometer,
   warm: ThermometerSun,
   hot: Flame,
-  // opady
   dry: Sun,
   light: CloudDrizzle,
   heavy: CloudRain,
-  // rodzaj opadow
   rain: CloudRain,
   snow: CloudSnow,
   sleet: CloudHail,
-  // wiatr
   calm: Leaf,
   breezy: Wind,
   strong: Tornado,
+};
+
+export const conditionIcons: Record<DifficultConditionKey, LucideIcon> = {
+  freezing: bandIcons.freezing,
+  hot: bandIcons.hot,
+  heavyPrecip: bandIcons.heavy,
+  snow: bandIcons.snow,
+  strongWind: bandIcons.strong,
 };

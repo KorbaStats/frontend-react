@@ -1,11 +1,9 @@
-import type { Weather } from "@/data/types";
 import { type MatchWithWeather } from "@/services/matchesService";
 import { getMatchFromTeamPerspective } from "./teamStats";
-import { profileFor } from "./weatherProfile";
+import { isDifficultWeather } from "./weatherProfile";
 
-const MIN_MATCHES = 5;
+export const MIN_MATCHES = 5;
 const MULTIPLIER = 100 / 3;
-// próba, przy której ufamy różnicy w połowie
 const SHRINKAGE_K = 10;
 
 function pointsFor(match: MatchWithWeather, teamId: number): number {
@@ -21,18 +19,6 @@ function pointsFor(match: MatchWithWeather, teamId: number): number {
   }
 }
 
-export function isDifficultWeather(weather: Weather): boolean {
-  const { temp, precip, precipType, wind } = profileFor(weather);
-  return (
-    temp === "freezing" ||
-    temp === "hot" ||
-    precip === "heavy" ||
-    precipType === "snow" ||
-    precipType === "sleet" ||
-    wind === "strong"
-  );
-}
-
 function averagePoints(matches: MatchWithWeather[], teamId: number): number {
   const sum = matches
     .map((match) => pointsFor(match, teamId))
@@ -41,7 +27,6 @@ function averagePoints(matches: MatchWithWeather[], teamId: number): number {
   return sum / matches.length;
 }
 
-// weather score for a team
 export type WeatherScore = {
   score: number;
   difference: number;
@@ -49,7 +34,6 @@ export type WeatherScore = {
   normalAvg: number;
   difficultMatches: number;
   normalMatches: number;
-  //0-1 - jak mocno proba moze ufac roznicy 
   reliability: number;
 };
 
@@ -67,7 +51,6 @@ export function computeWeatherScore(
   const difficultAvgPoints = averagePoints(difficult, teamId);
   const difference = difficultAvgPoints - normalAvgPoints;
 
-  // ściąganie wyniku do 50 przy malej probie 
   const sampleSize = Math.min(difficult.length, normal.length);
   const reliability = sampleSize / (sampleSize + SHRINKAGE_K);
 

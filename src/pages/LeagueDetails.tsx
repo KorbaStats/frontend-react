@@ -15,11 +15,13 @@ import {
   computeLeagueWeatherSummary,
   computeTopWeatherScores,
 } from "@/lib/leagueWeather";
+import { leagueComparisonRows } from "@/lib/weatherComparison";
 
 import LeagueHeader from "@/components/league-details/LeagueHeader";
 import LeagueTable from "@/components/league-details/LeagueTable";
 import WeatherScoreRankingCard from "@/components/shared/weather-score/WeatherScoreRankingCard";
 import LeagueRecentMatches from "@/components/league-details/LeagueRecentMatches";
+import WeatherComparisonChart from "@/components/shared/WeatherComparisonChart";
 import ExportReportButton from "@/components/shared/ExportReportButton";
 
 const LeagueDetails = () => {
@@ -47,7 +49,7 @@ const LeagueDetails = () => {
       .then(([league, seasons]) => {
         setLeague(league);
         setSeasons(seasons);
-        setSelectedSeason(seasons[0]); //najnowszy sezon
+        setSelectedSeason(seasons[0]);
       })
       .catch((err) => {
         setError("Nie udało się pobrać danych ligi.");
@@ -110,7 +112,15 @@ const LeagueDetails = () => {
         />
       </div>
 
-      {/* key: zmiana sezonu resetuje "Pokaż więcej" */}
+      <WeatherComparisonChart
+        matches={leagueMatches}
+        buildRows={leagueComparisonRows}
+        title="Wpływ warunków pogodowych"
+        description={`${league?.name ?? "Liga"}${
+          selectedSeason ? `, sezon ${selectedSeason}` : ""
+        } — statystyki względem meczów w sprzyjających warunkach pogodowych.`}
+      />
+
       <LeagueRecentMatches
         key={selectedSeason}
         matches={leagueMatches}

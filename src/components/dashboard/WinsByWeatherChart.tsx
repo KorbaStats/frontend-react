@@ -9,7 +9,7 @@ import {
 import { Trophy } from "lucide-react";
 
 import type { MatchWithWeather } from "@/services/matchesService";
-import { isDifficultWeather } from "@/lib/weatherScore";
+import { isDifficultWeather } from "@/lib/weatherProfile";
 import { computeOutcomeSplit, type OutcomeSplit } from "@/lib/matchOutcomes";
 
 import {
@@ -64,7 +64,7 @@ const WinsByWeatherChart = ({ matches, season }: WinsByWeatherChartProps) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <Trophy size={18} strokeWidth={2} className="text-primary" />
-          Przewaga gospodarzy a pogoda
+          Wygrane gospodarzy, a pogoda
         </CardTitle>
         <CardDescription className="text-xs">
           <span className="font-bold">
@@ -78,7 +78,6 @@ const WinsByWeatherChart = ({ matches, season }: WinsByWeatherChartProps) => {
 
       <CardContent className="flex flex-col gap-4">
         <div className="h-36 w-full">
-          {/* Wykres % wygranych gospodarzy/gosci/remisow z podzialem na warunki trudne i normalne */}
           <ResponsiveContainer>
             <BarChart
               layout="vertical"

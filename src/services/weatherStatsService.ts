@@ -1,22 +1,9 @@
-// Agregaty pogodowe. Backend nie ma danych pogodowych (brak tabeli, kolumny
-// i route'a — sprawdzone 2026-08-05), więc poniższe endpointy to propozycja
-// kształtu przyszłego API. Każda funkcja potrzebuje pełnego zbioru meczów,
-// dlatego są w services/, a nie w lib/.
-//
-// Proponowane endpointy:
-//   GET /api/weather-stats/extremes           -> WeatherExtremes
-//   GET /api/weather-stats/difficult-share    -> DifficultWeatherShare
-//   GET /api/weather-stats/percentiles        -> WeatherPercentile[]
-//   GET /api/teams/:id/weather-score?season=  -> WeatherScore | null
 //TODO: verify against real API response once the backend has weather
 
 import { getMatches, getTeamMatches } from "@/services/matchesService";
 import type { Weather } from "@/data/types";
-import {
-  type WeatherScore,
-  computeWeatherScore,
-  isDifficultWeather,
-} from "@/lib/weatherScore";
+import { type WeatherScore, computeWeatherScore } from "@/lib/weatherScore";
+import { isDifficultWeather } from "@/lib/weatherProfile";
 
 export type ExtremeMatch = {
   city: string | undefined;
@@ -28,12 +15,7 @@ export type WeatherExtremes = {
   windiest: ExtremeMatch | null;
 };
 
-/**
- * GET /api/weather-stats/extremes
- *
- * Skrajne mecze w całym zbiorze. Pojedyncze mecze, nie średnie — dlatego wolno
- * je liczyć ze wszystkich lig naraz.
- */
+// GET /api/weather-stats/extremes
 export async function getWeatherExtremes(): Promise<WeatherExtremes> {
   const { data } = await getMatches();
 
@@ -62,16 +44,10 @@ export async function getWeatherExtremes(): Promise<WeatherExtremes> {
 
 export type DifficultWeatherShare = {
   difficult: number;
-  /** Mianownik to mecze Z pogodą — bez niej nie ma czego klasyfikować. */
   withWeather: number;
 };
 
-/**
- * GET /api/weather-stats/difficult-share
- *
- * Ile meczów wpada w trudne warunki wg tego samego predykatu, na którym stoi
- * weather score. Zliczanie, nie uśrednianie, więc ligi mogą iść razem.
- */
+// GET /api/weather-stats/difficult-share
 export async function getDifficultWeatherShare(): Promise<DifficultWeatherShare> {
   const { data } = await getMatches();
   const withWeather = data.filter((match) => match.weather !== null);
@@ -91,14 +67,10 @@ export type WeatherMetricKey =
 
 export type WeatherPercentile = {
   metric: WeatherMetricKey;
-  /** Wartość z tego meczu. */
   value: number;
-  /** 0-100, gdzie 50 to mediana rozkładu. */
   percentile: number;
-  /** % meczów ze ŚCIŚLE mniejszą / większą wartością — do opisu słownego. */
   below: number;
   above: number;
-  /** Mediana metryki w lidze. */
   median: number;
   min: number;
   max: number;
@@ -112,8 +84,6 @@ const percentileMetrics: WeatherMetricKey[] = [
   "humidity_pct",
 ];
 
-// Remisy liczone w połowie, żeby powtarzalne wartości (np. 0 mm opadów) nie
-// zawyżały percentyla.
 function percentileRank(values: number[], value: number): number {
   if (values.length === 0) return 0;
 
@@ -123,7 +93,6 @@ function percentileRank(values: number[], value: number): number {
   return ((below + equal / 2) / values.length) * 100;
 }
 
-// Mediana - odpowiada normie w danej lidze
 function median(values: number[]): number {
   if (values.length === 0) return 0;
 
@@ -135,11 +104,7 @@ function median(values: number[]): number {
     : sorted[middle];
 }
 
-/**
- * GET /api/weather-stats/percentiles?match_id=X&league_id=Y
- *
- * Pozycja warunków tego meczu w rozkładzie wszystkich meczów ligi.
- */
+// GET /api/weather-stats/percentiles?match_id=X&league_id=Y
 export async function getWeatherPercentiles(
   matchId: number,
   leagueId?: number,
@@ -173,7 +138,7 @@ export async function getWeatherPercentiles(
   });
 }
 
-/** GET /api/teams/:id/weather-score?season=2025/2026 */
+// GET /api/teams/:id/weather-score?season=2025/2026
 export async function getTeamWeatherScore(
   teamId: number,
   season?: string | null,

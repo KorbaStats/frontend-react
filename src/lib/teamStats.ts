@@ -1,7 +1,5 @@
 import type { MatchWithWeather } from "@/services/matchesService";
 
-// Nazwy pól jak w TeamRanking (types.ts). Te same średnie liczy już
-// TeamStatsController.rankings, więc podmiana na endpoint nie ruszy komponentów.
 export type TeamStats = {
   matches: number;
   wins: number;
@@ -17,7 +15,8 @@ export type TeamStats = {
   avg_shots_on_target: number | null;
   avg_yellow_cards: number | null;
   avg_fouls: number | null;
-  win_rate: number | null; // 0-100, no backend equivalent — ours to define
+  win_rate: number | null;
+  avg_points: number | null;
 };
 
 export type MatchFromTeamPerspective = {
@@ -81,6 +80,7 @@ export function computeTeamStats(
       avg_yellow_cards: null,
       avg_fouls: null,
       win_rate: null,
+      avg_points: null,
     };
   }
 
@@ -107,6 +107,7 @@ export function computeTeamStats(
     avg_shots_on_target: perspectives.reduce((acc, el) => acc + el.shotsOnTarget, 0) / perspectives.length,
     avg_yellow_cards: perspectives.reduce((acc, el) => acc + el.yellowCards, 0) / perspectives.length,
     avg_fouls: perspectives.reduce((acc, el) => acc + el.fouls, 0) / perspectives.length,
-    win_rate: (wins / perspectives.length) * 100
+    win_rate: (wins / perspectives.length) * 100,
+    avg_points: (wins * 3 + draws) / perspectives.length
   };
 }
