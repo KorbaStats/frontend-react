@@ -12,11 +12,15 @@ import {
 import { ChartBar } from "lucide-react";
 
 import type { MatchWithWeather } from "@/services/matchesService";
-import type { DifficultConditionKey } from "@/lib/weatherProfile";
+import {
+  difficultConditions,
+  type DifficultConditionKey,
+} from "@/lib/weatherProfile";
 import { MIN_MATCHES } from "@/lib/weatherScore";
 import {
-  countByCondition,
+  leagueComparisonRows,
   splitByCondition,
+  teamComparisonRows,
   type ComparisonRow,
 } from "@/lib/weatherComparison";
 import { conditionIcons } from "@/lib/weatherStylesConfig";
@@ -32,16 +36,12 @@ import {
 
 interface WeatherComparisonChartProps {
   matches: MatchWithWeather[];
-  buildRows: (
-    condition: MatchWithWeather[],
-    normal: MatchWithWeather[],
-  ) => ComparisonRow[];
+  teamId?: number;
   title: string;
   description: string;
 }
 
 const ROW_HEIGHT = 36;
-const MIN_SCALE = 10;
 
 const formatValue = (row: ComparisonRow, value: number) =>
   `${value.toFixed(row.decimals)}${row.unit}`;
@@ -54,30 +54,41 @@ const formatChange = (changePct: number | null) => {
 
 const WeatherComparisonChart = ({
   matches,
-  buildRows,
+  teamId,
   title,
   description,
 }: WeatherComparisonChartProps) => {
-  const [selectedKey, setSelectedKey] = useState<DifficultConditionKey | null>(
-    null,
-  );
+  const [selectedKey, setSelectedKey] = useState<DifficultConditionKey | null>(null);
 
-  const counts = countByCondition(matches);
-  const available = counts.filter((c) => c.count >= MIN_MATCHES);
+  const chips = difficultConditions.map((condition) => ({
+    condition,
+    count: splitByCondition(matches, condition).conditionMatches.length,
+  }));
+
+  const available = chips.filter((chip) => chip.count >= MIN_MATCHES);
   const selected =
-    available.find((c) => c.condition.key === selectedKey) ?? available[0];
+    available.find((chip) => chip.condition.key === selectedKey) ?? available[0];
 
   const split = selected ? splitByCondition(matches, selected.condition) : null;
-  const hasNormal = split !== null && split.normal.length >= MIN_MATCHES;
-  const rows = split && hasNormal ? buildRows(split.condition, split.normal) : [];
+  const hasNormal = split !== null && split.normalMatches.length >= MIN_MATCHES;
+
+  let rows: ComparisonRow[] = [];
+  if (split && hasNormal) {
+    rows =
+      teamId === undefined
+        ? leagueComparisonRows(split.conditionMatches, split.normalMatches)
+        : teamComparisonRows(split.conditionMatches, split.normalMatches, teamId);
+  }
 
   const data = rows.map((row) => ({ ...row, value: row.changePct ?? 0 }));
-  const maxChange = Math.max(MIN_SCALE, ...data.map((d) => Math.abs(d.value)));
-  const scale = Math.ceil((maxChange * 1.3) / 5) * 5;
+  // maksymalna wartosc danych 
+  const biggestChange = Math.max(...data.map((d) => Math.abs(d.value)), 10);
+  // skala: -scale-10...+scale+10 - skala musi sie zmiescic na wykresie łącznie z labelem +-x%
+  const scale = biggestChange + 10;
 
   const placeholder = !selected
     ? "Za mało meczów w trudnych warunkach, żeby porównać."
-    : "Za mało meczów w normalnej pogodzie, żeby porównać.";
+    : "Za mało meczów w normalnych warunkach, żeby porównać.";
 
   return (
     <Card className="break-inside-avoid">
@@ -91,7 +102,7 @@ const WeatherComparisonChart = ({
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {counts.map(({ condition, count }) => {
+          {chips.map(({ condition, count }) => {
             const Icon = conditionIcons[condition.key];
             const active = selected?.condition.key === condition.key;
 
@@ -123,11 +134,6 @@ const WeatherComparisonChart = ({
           </p>
         ) : (
           <>
-            <div className="flex justify-between px-1 text-xs text-muted-foreground">
-              <span>mniej niż w normalnej pogodzie</span>
-              <span>więcej</span>
-            </div>
-
             <div className="w-full" style={{ height: data.length * ROW_HEIGHT }}>
               <ResponsiveContainer>
                 <BarChart
@@ -182,13 +188,12 @@ const WeatherComparisonChart = ({
                       content={({ x, y, width, height, index }) => {
                         if (index === undefined) return null;
                         const row = data[index];
-                        const left = Number(x);
-                        const right = left + Number(width);
+                        const barEnd = Number(x) + Number(width);
                         const positive = row.value >= 0;
 
                         return (
                           <text
-                            x={positive ? Math.max(left, right) + 6 : Math.min(left, right) - 6}
+                            x={positive ? barEnd + 6 : barEnd - 6}
                             y={Number(y) + Number(height) / 2}
                             dy={4}
                             textAnchor={positive ? "start" : "end"}
@@ -207,9 +212,7 @@ const WeatherComparisonChart = ({
             </div>
 
             <p className="text-xs text-muted-foreground">
-              {split.condition.length} meczów w warunku „
-              {selected.condition.label.toLowerCase()}”,{" "}
-              {split.normal.length} w normalnej pogodzie. Warunki mogą się
+              {split.normalMatches.length} meczy w normalnych warunkach pogodowych. Warunki mogą się
               nakładać — mecz w mrozie ze śniegiem liczy się do obu.
             </p>
           </>

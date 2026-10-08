@@ -16,6 +16,7 @@ import {
   Leaf,
   Tornado,
   type LucideIcon,
+  CloudRainWind,
 } from "lucide-react";
 
 export type WeatherDisplay =
@@ -134,7 +135,7 @@ export const bandIcons: Record<string, LucideIcon> = {
   hot: Flame,
   dry: Sun,
   light: CloudDrizzle,
-  heavy: CloudRain,
+  heavy: CloudRainWind,
   rain: CloudRain,
   snow: CloudSnow,
   sleet: CloudHail,

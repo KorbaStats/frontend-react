@@ -54,7 +54,7 @@ export function windBandFor(wind_speed_kmh: number): WindBand {
   if (wind_speed_kmh < w.breezy) return "breezy"
   return "strong"
 }
-
+// zamniana liczb na pasma pogodowe: freezing, cold, hot itp 
 export function profileFor(weather: Weather): WeatherProfile {
   return {
     temp: tempBandFor(weather.temperature_c),
@@ -112,18 +112,18 @@ export type DifficultConditionKey = "freezing" | "hot" | "heavyPrecip" | "snow" 
 export type DifficultCondition = {
   key: DifficultConditionKey
   label: string
-  matches: (profile: WeatherProfile) => boolean
+  isMet: (profile: WeatherProfile) => boolean
 }
 
 export const difficultConditions: DifficultCondition[] = [
-  { key: "freezing", label: "Mróz", matches: (p) => p.temp === "freezing" },
-  { key: "hot", label: "Upał", matches: (p) => p.temp === "hot" },
-  { key: "heavyPrecip", label: "Silne opady", matches: (p) => p.precip === "heavy" },
-  { key: "snow", label: "Śnieg", matches: (p) => p.precipType === "snow" || p.precipType === "sleet" },
-  { key: "strongWind", label: "Silny wiatr", matches: (p) => p.wind === "strong" },
+  { key: "freezing", label: "Mróz", isMet: (p) => p.temp === "freezing" },
+  { key: "hot", label: "Upał", isMet: (p) => p.temp === "hot" },
+  { key: "heavyPrecip", label: "Silne opady", isMet: (p) => p.precip === "heavy" },
+  { key: "snow", label: "Śnieg", isMet: (p) => p.precipType === "snow" || p.precipType === "sleet" },
+  { key: "strongWind", label: "Silny wiatr", isMet: (p) => p.wind === "strong" },
 ]
 
 export function isDifficultWeather(weather: Weather): boolean {
   const profile = profileFor(weather)
-  return difficultConditions.some((condition) => condition.matches(profile))
+  return difficultConditions.some((condition) => condition.isMet(profile))
 }

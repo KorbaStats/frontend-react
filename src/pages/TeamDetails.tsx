@@ -13,7 +13,6 @@ import {
 import { getTeamById } from "@/services/teamsService";
 
 import { computeTeamStats } from "@/lib/teamStats";
-import { teamComparisonRows } from "@/lib/weatherComparison";
 import { hasBandFilters, matchesBands } from "@/lib/matchFilters";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
 
@@ -138,9 +137,7 @@ const TeamDetails = () => {
 
       <WeatherComparisonChart
         matches={matches}
-        buildRows={(condition, normal) =>
-          teamComparisonRows(condition, normal, teamId)
-        }
+        teamId={teamId}
         title="Wpływ warunków pogodowych"
         description="Wszystkie sezony — statystyki drużyny względem jej meczów w sprzyjających warunkach pogodowych."
       />

@@ -15,7 +15,6 @@ import {
   computeLeagueWeatherSummary,
   computeTopWeatherScores,
 } from "@/lib/leagueWeather";
-import { leagueComparisonRows } from "@/lib/weatherComparison";
 
 import LeagueHeader from "@/components/league-details/LeagueHeader";
 import LeagueTable from "@/components/league-details/LeagueTable";
@@ -114,7 +113,6 @@ const LeagueDetails = () => {
 
       <WeatherComparisonChart
         matches={leagueMatches}
-        buildRows={leagueComparisonRows}
         title="Wpływ warunków pogodowych"
         description={`${league?.name ?? "Liga"}${
           selectedSeason ? `, sezon ${selectedSeason}` : ""

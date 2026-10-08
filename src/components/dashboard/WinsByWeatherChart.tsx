@@ -64,7 +64,7 @@ const WinsByWeatherChart = ({ matches, season }: WinsByWeatherChartProps) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <Trophy size={18} strokeWidth={2} className="text-primary" />
-          Wygrane gospodarzy, a pogoda
+          Wygrane gospodarzy a pogoda
         </CardTitle>
         <CardDescription className="text-xs">
           <span className="font-bold">
