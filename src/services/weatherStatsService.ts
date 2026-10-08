@@ -95,6 +95,9 @@ export type WeatherPercentile = {
   value: number;
   /** 0-100, gdzie 50 to mediana rozkładu. */
   percentile: number;
+  /** % meczów ze ŚCIŚLE mniejszą / większą wartością — do opisu słownego. */
+  below: number;
+  above: number;
   /** Mediana metryki w lidze. */
   median: number;
   min: number;
@@ -160,6 +163,8 @@ export async function getWeatherPercentiles(
       metric,
       value,
       percentile: percentileRank(values, value),
+      below: (values.filter((v) => v < value).length / values.length) * 100,
+      above: (values.filter((v) => v > value).length / values.length) * 100,
       median: median(values),
       min: Math.min(...values),
       max: Math.max(...values),

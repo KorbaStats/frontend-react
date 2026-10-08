@@ -70,13 +70,14 @@ const metricConfig: Record<WeatherMetricKey, MetricConfig> = {
   },
 };
 
-// Liczone z odległości od mediany — 5. i 95. percentyl są tak samo nietypowe.
+// odchylenia
+const deviationFromNorm = (p: WeatherPercentile) =>
+  p.value === p.median ? 0 : Math.abs(p.percentile - 50);
+
 function extremityLabel(percentiles: WeatherPercentile[]): string | null {
   if (percentiles.length === 0) return null;
 
-  const deviation = Math.max(
-    ...percentiles.map((p) => Math.abs(p.percentile - 50)),
-  );
+  const deviation = Math.max(...percentiles.map(deviationFromNorm));
 
   if (deviation >= 40) return "Nietypowe warunki";
   if (deviation >= 25) return "Lekko nietypowe";
@@ -87,8 +88,9 @@ const PercentileRow = ({ item }: { item: WeatherPercentile }) => {
   const config = metricConfig[item.metric];
   const Icon = config.icon;
 
-  const isAboveMedian = item.percentile >= 50;
-  const share = isAboveMedian ? item.percentile : 100 - item.percentile;
+  const atNorm = item.value === item.median;
+  const isAboveMedian = item.value > item.median;
+  const share = isAboveMedian ? item.below : item.above;
   const verb = isAboveMedian ? config.higher : config.lower;
 
   const format = (value: number) =>
@@ -106,15 +108,13 @@ const PercentileRow = ({ item }: { item: WeatherPercentile }) => {
         </span>
       </div>
 
-      {/* Pasek wypełniony od środka (mediany) do percentyla meczu. Skala jest
-          percentylowa, nie w jednostkach. */}
       <div className="relative mt-2.5 h-2.5 overflow-hidden rounded-full bg-muted">
         <span
           aria-hidden
           className="absolute inset-y-0 bg-primary"
           style={{
             left: `${Math.min(50, item.percentile)}%`,
-            width: `${Math.abs(item.percentile - 50)}%`,
+            width: `${deviationFromNorm(item)}%`,
           }}
         />
         <span
@@ -123,8 +123,7 @@ const PercentileRow = ({ item }: { item: WeatherPercentile }) => {
         />
       </div>
 
-      {/* Norma na sztywno na 50%, żeby stała nad znacznikiem niezależnie od
-          szerokości liczb po bokach. */}
+      {/* Norma dla percentyli */}
       <div className="relative mt-1.5 h-4 text-[10px] text-muted-foreground">
         <span className="absolute left-0">{format(item.min)}</span>
         <span className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap font-medium text-foreground">
@@ -134,10 +133,16 @@ const PercentileRow = ({ item }: { item: WeatherPercentile }) => {
       </div>
 
       <p className="mt-1.5 text-xs text-muted-foreground">
-        <span className="font-medium text-foreground">
-          {verb} niż w {share.toFixed(0)}%
-        </span>{" "}
-        meczów
+        {atNorm ? (
+          <span className="font-medium text-foreground">w normie</span>
+        ) : (
+          <>
+            <span className="font-medium text-foreground">
+              {verb} niż w {share.toFixed(0)}%
+            </span>{" "}
+            meczów
+          </>
+        )}
       </p>
     </div>
   );
