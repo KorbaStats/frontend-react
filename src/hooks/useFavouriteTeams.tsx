@@ -9,6 +9,7 @@ import {
 
 type FavouriteTeamsContextValue = {
   favouriteTeamsIds: number[]
+  isLoadingFavourites: boolean
   isFavourite: (teamId: number) => boolean
   toggleFavouriteTeam: (teamId: number) => void
 }
@@ -22,9 +23,12 @@ export const FavouriteTeamsProvider = ({
   children: React.ReactNode
 }) => {
   const [favouriteTeamsIds, setFavouriteTeamsIds] = useState<number[]>([])
+  const [isLoadingFavourites, setIsLoadingFavourites] = useState(true)
 
   useEffect(() => {
-    getFavouriteTeamIds().then(setFavouriteTeamsIds)
+    getFavouriteTeamIds()
+      .then(setFavouriteTeamsIds)
+      .finally(() => setIsLoadingFavourites(false))
   }, [])
 
   const isFavourite = (teamId: number) => favouriteTeamsIds.includes(teamId)
@@ -40,7 +44,12 @@ export const FavouriteTeamsProvider = ({
 
   return (
     <FavouriteTeamsContext.Provider
-      value={{ favouriteTeamsIds, isFavourite, toggleFavouriteTeam }}
+      value={{
+        favouriteTeamsIds,
+        isLoadingFavourites,
+        isFavourite,
+        toggleFavouriteTeam,
+      }}
     >
       {children}
     </FavouriteTeamsContext.Provider>

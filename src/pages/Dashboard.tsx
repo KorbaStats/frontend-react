@@ -14,6 +14,7 @@ import {
   computeBottomWeatherScores,
 } from "@/lib/leagueWeather";
 import { TrendingDown, TrendingUp } from "lucide-react";
+import UpcomingMatchesCard from "@/components/dashboard/UpcomingMatchesCard";
 
 const Dashboard = () => {
   const [matches, setMatches] = useState<MatchWithWeather[]>([]);
@@ -50,6 +51,7 @@ const Dashboard = () => {
           description={seasonLabel}
         />
       </div>
+      <UpcomingMatchesCard />
       <RecentMatches />
     </>
   );
