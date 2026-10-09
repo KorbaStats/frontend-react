@@ -2,8 +2,8 @@ export type MatchResult = "W" | "D" | "L";
 
 const resultStylesConfig = {
   W: { text: "W", title: "Wygrana", bg: "bg-green-500 dark:bg-green-500/80" },
-  D: { text: "D", title: "Remis", bg: "bg-amber-300 dark:bg-amber-400/80" },
-  L: { text: "L", title: "Porażka", bg: "bg-red-500 dark:bg-red-500/80" },
+  D: { text: "R", title: "Remis", bg: "bg-amber-300 dark:bg-amber-400/80" },
+  L: { text: "P", title: "Porażka", bg: "bg-red-500 dark:bg-red-500/80" },
 };
 
 const sizeStyles = {
