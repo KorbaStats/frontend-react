@@ -66,8 +66,11 @@ const WeatherScoreCard = ({ teamId, season = null }: WeatherScoreCardProps) => {
     difficultAvg,
     normalAvg,
     difficultMatches,
+    difficultResults,
     normalMatches,
+    normalResults,
   } = weatherScore;
+
   const color = weatherScoreColor(score);
 
   return (
@@ -87,7 +90,11 @@ const WeatherScoreCard = ({ teamId, season = null }: WeatherScoreCardProps) => {
             <div>
               <dt className="font-medium">Trudne warunki</dt>
               <dd className="text-xs text-muted-foreground">
-                na podstawie {difficultMatches} meczów
+                na podstawie {difficultMatches} meczów |{" "}
+                <span>
+                  {difficultResults.wins}W · {difficultResults.draws}R ·{" "}
+                  {difficultResults.losses}P
+                </span>
               </dd>
             </div>
             <dd className="text-right">
@@ -104,7 +111,11 @@ const WeatherScoreCard = ({ teamId, season = null }: WeatherScoreCardProps) => {
             <div>
               <dt className="font-medium">Normalne warunki</dt>
               <dd className="text-xs text-muted-foreground">
-                na podstawie {normalMatches} meczów
+                na podstawie {normalMatches} meczów |{" "}
+                <span>
+                  {normalResults.wins}W · {normalResults.draws}R ·{" "}
+                  {normalResults.losses}P
+                </span>
               </dd>
             </div>
             <dd className="text-right">

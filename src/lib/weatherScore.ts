@@ -1,31 +1,16 @@
 import { type MatchWithWeather } from "@/services/matchesService";
-import { getMatchFromTeamPerspective } from "./teamStats";
+import {
+  computeTeamStats,
+  type TeamStats,
+} from "./teamStats";
 import { isDifficultWeather } from "./weatherProfile";
 
 export const MIN_MATCHES = 5;
 const MULTIPLIER = 100 / 3;
 const SHRINKAGE_K = 10;
 
-function pointsFor(match: MatchWithWeather, teamId: number): number {
-  const result = getMatchFromTeamPerspective(match, teamId).result;
 
-  switch (result) {
-    case "W":
-      return 3;
-    case "D":
-      return 1;
-    case "L":
-      return 0;
-  }
-}
-
-function averagePoints(matches: MatchWithWeather[], teamId: number): number {
-  const sum = matches
-    .map((match) => pointsFor(match, teamId))
-    .reduce((acc, points) => acc + points, 0);
-
-  return sum / matches.length;
-}
+type MatchResults = Pick<TeamStats, "wins" | "draws" | "losses">;
 
 export type WeatherScore = {
   score: number;
@@ -34,6 +19,8 @@ export type WeatherScore = {
   normalAvg: number;
   difficultMatches: number;
   normalMatches: number;
+  difficultResults: MatchResults;
+  normalResults: MatchResults;
   reliability: number;
 };
 
@@ -41,14 +28,31 @@ export function computeWeatherScore(
   matches: MatchWithWeather[],
   teamId: number,
 ): WeatherScore | null {
+  const difficult = matches.filter(
+    (match) => match.weather !== null && isDifficultWeather(match.weather),
+  );
+  const normal = matches.filter(
+    (match) => match.weather !== null && !isDifficultWeather(match.weather),
+  );
 
-  const difficult = matches.filter((match) => match.weather !== null && isDifficultWeather(match.weather));
-  const normal = matches.filter((match) => match.weather !== null && !isDifficultWeather(match.weather));
+  if (normal.length < MIN_MATCHES || difficult.length < MIN_MATCHES)
+    return null;
 
-  if (normal.length < MIN_MATCHES || difficult.length < MIN_MATCHES) return null;
+  const difficultStats = computeTeamStats(difficult, teamId);
+  const difficultResults = {
+    wins: difficultStats.wins,
+    draws: difficultStats.draws,
+    losses: difficultStats.losses,
+  };
+  const normalStats = computeTeamStats(normal, teamId);
+  const normalResults = {
+    wins: normalStats.wins,
+    draws: normalStats.draws,
+    losses: normalStats.losses,
+  };
 
-  const normalAvgPoints = averagePoints(normal, teamId);
-  const difficultAvgPoints = averagePoints(difficult, teamId);
+  const difficultAvgPoints = difficultStats.avg_points ?? 0;
+  const normalAvgPoints = normalStats.avg_points ?? 0;
   const difference = difficultAvgPoints - normalAvgPoints;
 
   const sampleSize = Math.min(difficult.length, normal.length);
@@ -65,15 +69,17 @@ export function computeWeatherScore(
     normalAvg: normalAvgPoints,
     difficultMatches: difficult.length,
     normalMatches: normal.length,
+    difficultResults,
+    normalResults,
     reliability,
-  }
+  };
 }
 
 export function weatherScoreLabel(score: number): string {
-  if (score <= 34) return "Wyraźnie gorzej w trudnej pogodzie"
-  else if (score >= 35 && score <= 44) return "Gorzej w trudnej pogodzie"
-  else if (score >= 45 && score <= 54) return "Pogoda nie robi różnicy"
-  else if (score >= 55 && score <= 64) return "Lepiej w trudnej pogodzie"
-  else if (score >= 65) return "Wyraźnie lepiej w trudnej pogodzie"
+  if (score <= 34) return "Wyraźnie gorzej w trudnej pogodzie";
+  else if (score >= 35 && score <= 44) return "Gorzej w trudnej pogodzie";
+  else if (score >= 45 && score <= 54) return "Pogoda nie robi różnicy";
+  else if (score >= 55 && score <= 64) return "Lepiej w trudnej pogodzie";
+  else if (score >= 65) return "Wyraźnie lepiej w trudnej pogodzie";
   else return "Brak danych";
 }
