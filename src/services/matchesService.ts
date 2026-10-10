@@ -1,12 +1,10 @@
 //TODO: verify against real API response once the backend has weather
 
 import { matches } from "@/data/matches";
-import { scheduledMatches } from "@/data/scheduledMatches";
 import { weatherByMatchId } from "@/data/weather";
 import type {
   Match,
   PaginatedResponse,
-  ScheduledMatch,
   Weather,
 } from "@/data/types";
 
@@ -76,28 +74,5 @@ export async function getLeagueMatches(
 
   return data.filter(
     (m) => m.league_id === leagueId && (m.season === season || season === undefined)
-  );
-}
-
-// GET /api/matches?status=scheduled&sort=datetime&order=asc
-// TODO: zweryfikować z prawdziwym API — backend nie ma jeszcze kolumny `status`
-export async function getScheduledMatches(): Promise<
-  PaginatedResponse<ScheduledMatch>
-> {
-  const data = [...scheduledMatches];
-
-  return {
-    data,
-    pagination: { total: data.length, page: 1, limit: data.length, pages: 1 },
-  };
-}
-
-// GET /api/matches?status=scheduled&team_id=X
-export async function getScheduledTeamMatches(
-  teamId: number,
-): Promise<ScheduledMatch[]> {
-  const { data } = await getScheduledMatches();
-  return data.filter(
-    (m) => m.home_team_id === teamId || m.away_team_id === teamId,
   );
 }

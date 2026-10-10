@@ -1,18 +1,15 @@
 import { scheduledMatches } from "@/data/scheduledMatches";
 import type { ScheduledMatch } from "@/data/types";
 
-// GET /api/scheduled-matches?team_ids=...&limit=...
+// GET /api/scheduled-matches?team_ids=...&sort=datetime&order=asc
 export async function getUpcomingMatchesForTeams(
   teamIds: number[],
-  limit?: number,
 ): Promise<ScheduledMatch[]> {
   if (teamIds.length === 0) return [];
-  const data = scheduledMatches
+  return scheduledMatches
     .filter(
       (m) =>
         teamIds.includes(m.home_team_id) || teamIds.includes(m.away_team_id),
     )
-    .slice(0, limit);
-
-  return data;
+    .sort((a, b) => a.datetime.localeCompare(b.datetime));
 }

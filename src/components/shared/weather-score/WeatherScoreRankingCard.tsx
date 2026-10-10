@@ -28,7 +28,7 @@ const WeatherScoreRankingCard = ({
   title,
   description,
 }: WeatherScoreRankingCardProps) => (
-  <Card className="break-inside-avoid">
+  <Card className="@container break-inside-avoid">
     <CardHeader className="border-b pb-6">
       <CardTitle className="flex items-center gap-2 text-base">
         <Icon className={`h-4 w-4 ${iconColor}`} />
@@ -61,7 +61,7 @@ const WeatherScoreRankingCard = ({
                 >
                   {team.name}
                 </Link>
-                <span className="hidden truncate text-xs text-muted-foreground xl:inline">
+                <span className="hidden truncate text-xs text-muted-foreground @sm:inline">
                   {weatherScoreLabel(score.score)}
                 </span>
               </div>
@@ -72,7 +72,7 @@ const WeatherScoreRankingCard = ({
                 >
                   {score.score}
                 </span>
-                <span className="hidden text-xs tabular-nums text-muted-foreground lg:inline">
+                <span className="hidden text-xs tabular-nums text-muted-foreground @sm:inline">
                   {score.difference > 0 ? "+" : ""}
                   {score.difference.toFixed(2)} pkt/mecz
                 </span>

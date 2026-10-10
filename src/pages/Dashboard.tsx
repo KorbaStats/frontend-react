@@ -35,8 +35,11 @@ const Dashboard = () => {
   return (
     <>
       <SummaryCards />
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[3fr_2fr] xl:grid-cols-[2fr_1fr]">
+        <UpcomingMatchesCard />
         <WinsByWeatherChart matches={matches} season={season} />
+      </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <WeatherScoreRankingCard
           Icon={TrendingUp}
           scores={computeTopWeatherScores(matches)}
@@ -51,7 +54,6 @@ const Dashboard = () => {
           description={seasonLabel}
         />
       </div>
-      <UpcomingMatchesCard />
       <RecentMatches />
     </>
   );

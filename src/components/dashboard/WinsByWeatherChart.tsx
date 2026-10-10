@@ -60,7 +60,7 @@ const WinsByWeatherChart = ({ matches, season }: WinsByWeatherChartProps) => {
   const homeDiff = data[1].home - data[0].home;
 
   return (
-    <Card>
+    <Card className="@container">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
           <Trophy size={18} strokeWidth={2} className="text-primary" />
@@ -71,101 +71,106 @@ const WinsByWeatherChart = ({ matches, season }: WinsByWeatherChartProps) => {
             Wszystkie ligi{season ? `, sezon ${season}` : ""}
           </span>{" "}
           <br />
-          Trudne warunki to: mróz, upał, silny deszcz, śnieg lub
-          silny wiatr.
+          Trudne warunki to: mróz, upał, silny deszcz, śnieg lub silny wiatr.
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-4">
-        <div className="h-36 w-full">
-          <ResponsiveContainer>
-            <BarChart
-              layout="vertical"
-              data={data}
-              margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-            >
-              <XAxis type="number" domain={[0, 100]} hide />
-              <YAxis
-                type="category"
-                dataKey="name"
-                width={70}
-                axisLine={false}
-                tickLine={false}
-                tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
-              />
-              <Tooltip
-                cursor={false}
-                formatter={(value) => `${value}%`}
-                contentStyle={{
-                  background: "var(--popover)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "0.5rem",
-                  fontSize: "0.8rem",
-                }}
-                itemStyle={{ color: "var(--popover-foreground)" }}
-              />
-              {rows.map((row) => (
-                <Bar
-                  key={row.key}
-                  dataKey={row.key}
-                  name={row.name}
-                  stackId="a"
-                  fill={row.fill}
-                  barSize={28}
+      <CardContent className="grid gap-4 @2xl:grid-cols-2 @2xl:gap-8">
+        <div className="flex flex-col gap-4">
+          <div className="h-36 w-full">
+            <ResponsiveContainer>
+              <BarChart
+                layout="vertical"
+                data={data}
+                margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+              >
+                <XAxis type="number" domain={[0, 100]} hide />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  width={70}
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
                 />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
+                <Tooltip
+                  cursor={false}
+                  formatter={(value) => `${value}%`}
+                  contentStyle={{
+                    background: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "0.5rem",
+                    fontSize: "0.8rem",
+                  }}
+                  itemStyle={{ color: "var(--popover-foreground)" }}
+                />
+                {rows.map((row) => (
+                  <Bar
+                    key={row.key}
+                    dataKey={row.key}
+                    name={row.name}
+                    stackId="a"
+                    fill={row.fill}
+                    barSize={28}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <p className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
+            {homeDiff === 0 ? (
+              "Pogoda nie zmienia odsetka wygranych gospodarzy."
+            ) : (
+              <>
+                W trudnych warunkach gospodarze wygrywają{" "}
+                <span className="font-semibold text-foreground">
+                  o {Math.abs(homeDiff)} p.p.{" "}
+                  {homeDiff > 0 ? "częściej" : "rzadziej"}
+                </span>
+                .
+              </>
+            )}
+          </p>
         </div>
 
-        <p className="rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
-          {homeDiff === 0 ? (
-            "Pogoda nie zmienia odsetka wygranych gospodarzy."
-          ) : (
-            <>
-              W trudnych warunkach gospodarze wygrywają{" "}
-              <span className="font-semibold text-foreground">
-                o {Math.abs(homeDiff)} p.p.{" "}
-                {homeDiff > 0 ? "częściej" : "rzadziej"}
-              </span>
-              .
-            </>
-          )}
-        </p>
-
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-xs text-muted-foreground">
-              <th className="pb-1 text-right font-normal text-foreground">Warunki pogodowe: </th>
-              <th className="pb-1 text-right font-normal">Normalne</th>
-              <th className="pb-1 text-right font-normal">Trudne</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <tr key={row.key}>
-                <td className="flex items-center gap-2 py-1 text-muted-foreground">
-                  <span
-                    className="h-2.5 w-2.5 shrink-0 rounded-full"
-                    style={{ background: row.fill }}
-                  />
-                  {row.name}
-                </td>
-                <td className="py-1 text-right font-medium tabular-nums">
-                  {data[0][row.key]}%
-                </td>
-                <td className="py-1 text-right font-medium tabular-nums">
-                  {data[1][row.key]}%
-                </td>
+        <div className="flex flex-col justify-center gap-4">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-xs text-muted-foreground">
+                <th className="pb-1 text-right font-normal text-foreground">
+                  Warunki pogodowe:{" "}
+                </th>
+                <th className="pb-1 text-right font-normal">Normalne</th>
+                <th className="pb-1 text-right font-normal">Trudne</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.key}>
+                  <td className="flex items-center gap-2 py-1 text-muted-foreground">
+                    <span
+                      className="h-2.5 w-2.5 shrink-0 rounded-full"
+                      style={{ background: row.fill }}
+                    />
+                    {row.name}
+                  </td>
+                  <td className="py-1 text-right font-medium tabular-nums">
+                    {data[0][row.key]}%
+                  </td>
+                  <td className="py-1 text-right font-medium tabular-nums">
+                    {data[1][row.key]}%
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-        <p className="text-xs text-muted-foreground">
-          {normal.matches} meczów w normalnych warunkach, {difficult.matches} w
-          trudnych
-        </p>
+          <p className="text-xs text-muted-foreground">
+            {normal.matches} meczów w normalnych warunkach, {difficult.matches}{" "}
+            w trudnych
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
