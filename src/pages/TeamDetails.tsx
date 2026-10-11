@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useOutletContext, useParams } from "react-router";
 import { ChartColumn, History } from "lucide-react";
 
-import type { Team } from "@/data/types";
 import type { FiltersOutletContext } from "@/components/layout/MainLayout";
 
 import {
@@ -11,6 +11,7 @@ import {
   type MatchWithWeather,
 } from "@/services/matchesService";
 import { getTeamById } from "@/services/teamsService";
+import { getTeamWeatherScore } from "@/services/weatherStatsService";
 
 import { computeTeamStats } from "@/lib/teamStats";
 import { hasBandFilters, matchesBands } from "@/lib/matchFilters";
@@ -31,16 +32,43 @@ import TeamStatsCards from "@/components/team-details/TeamStatsCards";
 import WeatherComparisonChart from "@/components/shared/WeatherComparisonChart";
 import ExportReportButton from "@/components/shared/ExportReportButton";
 
+const EMPTY_MATCHES: MatchWithWeather[] = [];
+
 const TeamDetails = () => {
   const { id } = useParams();
   const teamId = Number(id);
   const { filters } = useOutletContext<FiltersOutletContext>();
 
-  const [team, setTeam] = useState<Team>();
-  const [matches, setMatches] = useState<MatchWithWeather[]>([]);
-  const [latestSeason, setLatestSeason] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
+  const matchesQuery = useQuery({
+    queryKey: ["matches", "team", teamId],
+    queryFn: () => getTeamMatches(teamId),
+  });
+
+  const teamQuery = useQuery({
+    queryKey: ["team", teamId],
+    queryFn: () => getTeamById(teamId),
+  });
+
+  const seasonsQuery = useQuery({
+    queryKey: ["seasons"],
+    queryFn: getAvailableSeasons,
+    staleTime: Infinity,
+  });
+
+  const matches = matchesQuery.data ?? EMPTY_MATCHES;
+  const team = teamQuery.data;
+  const latestSeason = seasonsQuery.data?.[0] ?? null;
+
+  const weatherScoreQuery = useQuery({
+    queryKey: ["weather-score", teamId, latestSeason],
+    queryFn: () => getTeamWeatherScore(teamId, latestSeason),
+    enabled: !seasonsQuery.isPending,
+  });
+
+  const isPending =
+    matchesQuery.isPending || teamQuery.isPending || seasonsQuery.isPending;
+  const isError =
+    matchesQuery.isError || teamQuery.isError || seasonsQuery.isError;
 
   const filteredMatches = useMemo(
     () => matches.filter((match) => matchesBands(match, filters)),
@@ -60,28 +88,9 @@ const TeamDetails = () => {
   const { visibleItems, hiddenCount, showMore, reset } =
     useVisibleItems(filteredMatches);
 
-  useEffect(() => {
-    Promise.all([
-      getTeamMatches(teamId),
-      getTeamById(teamId),
-      getAvailableSeasons(),
-    ])
-      .then(([matches, team, seasons]) => {
-        setMatches(matches);
-        setTeam(team);
-        setLatestSeason(seasons[0] ?? null);
-        reset();
-      })
-      .catch((err) => {
-        setError("Nie znaleziono drużyny o danym id.");
-        console.error(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, [teamId, reset]);
-
   useEffect(() => reset(), [filters, reset]);
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Card className="mb-4">
         <CardContent className="py-10 text-center text-muted-foreground">
@@ -91,11 +100,11 @@ const TeamDetails = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <Card className="mb-4">
         <CardContent className="py-10 text-center text-muted-foreground">
-          {error}
+          Nie znaleziono drużyny o danym id.
         </CardContent>
       </Card>
     );
@@ -125,7 +134,12 @@ const TeamDetails = () => {
         </div>
 
         <div className="grid gap-4 xl:grid-cols-3">
-          <WeatherScoreCard teamId={teamId} season={latestSeason} />
+          <WeatherScoreCard
+            weatherScore={weatherScoreQuery.data}
+            season={latestSeason}
+            isPending={weatherScoreQuery.isPending}
+            isError={weatherScoreQuery.isError}
+          />
           <div className="xl:col-span-2">
             <TeamStatsCards
               stats={filteredStats}

@@ -1,46 +1,44 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { History } from "lucide-react";
 
-import {
-  getTeamMatches,
-  type MatchWithWeather,
-} from "@/services/matchesService";
+import { type MatchWithWeather } from "@/services/matchesService";
 
 import TeamMatchesCard from "./TeamMatchesCard";
 
 const MAX_MATCHES_LENGTH = 5;
 
+const beforeThisMatch = (list: MatchWithWeather[], match: MatchWithWeather) =>
+  list
+    .filter((m) => m.id !== match.id && m.datetime < match.datetime)
+    .slice(0, MAX_MATCHES_LENGTH);
+
 interface TeamsRecentMatchesProps {
   match: MatchWithWeather;
+  homeMatches: MatchWithWeather[];
+  awayMatches: MatchWithWeather[];
+  isPending: boolean;
+  isError: boolean;
 }
 
-const TeamsRecentMatches = ({ match }: TeamsRecentMatchesProps) => {
+const TeamsRecentMatches = ({
+  match,
+  homeMatches,
+  awayMatches,
+  isPending,
+  isError,
+}: TeamsRecentMatchesProps) => {
   const home_id = match.home_team_id;
   const away_id = match.away_team_id;
 
-  const [homeMatches, setHomeMatches] = useState<MatchWithWeather[]>([]);
-  const [awayMatches, setAwayMatches] = useState<MatchWithWeather[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const recentHomeMatches = useMemo(
+    () => beforeThisMatch(homeMatches, match),
+    [homeMatches, match],
+  );
 
-  useEffect(() => {
-    const beforeThisMatch = (list: MatchWithWeather[]) =>
-      list
-        .filter((m) => m.id !== match.id && m.datetime < match.datetime)
-        .slice(0, MAX_MATCHES_LENGTH);
-
-    Promise.all([getTeamMatches(home_id), getTeamMatches(away_id)])
-      .then(([home, away]) => {
-        setHomeMatches(beforeThisMatch(home));
-        setAwayMatches(beforeThisMatch(away));
-        setError(null);
-      })
-      .catch((err) => {
-        setError("Nie udało się pobrać wcześniejszych meczów.");
-        console.log(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, [match, home_id, away_id]);
+  const recentAwayMatches = useMemo(
+    () => beforeThisMatch(awayMatches, match),
+    [awayMatches, match],
+  );
 
   return (
     <section className="space-y-3">
@@ -55,18 +53,18 @@ const TeamsRecentMatches = ({ match }: TeamsRecentMatchesProps) => {
         <TeamMatchesCard
           teamId={home_id}
           teamName={match.homeTeam.name}
-          matches={homeMatches}
+          matches={recentHomeMatches}
           maxMatchesLength={MAX_MATCHES_LENGTH}
-          isLoading={isLoading}
-          error={error}
+          isPending={isPending}
+          isError={isError}
         />
         <TeamMatchesCard
           teamId={away_id}
           teamName={match.awayTeam.name}
-          matches={awayMatches}
+          matches={recentAwayMatches}
           maxMatchesLength={MAX_MATCHES_LENGTH}
-          isLoading={isLoading}
-          error={error}
+          isPending={isPending}
+          isError={isError}
         />
       </div>
     </section>

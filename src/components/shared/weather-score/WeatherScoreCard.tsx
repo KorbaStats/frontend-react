@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { type WeatherScore, weatherScoreLabel } from "@/lib/weatherScore";
 import { weatherScoreColor } from "@/lib/weatherStylesConfig";
 import {
@@ -8,29 +7,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getTeamWeatherScore } from "@/services/weatherStatsService";
 import WeatherScoreRing from "@/components/shared/weather-score/WeatherScoreRing";
 
 interface WeatherScoreCardProps {
-  teamId: number;
+  weatherScore: WeatherScore | null | undefined;
   season?: string | null;
+  isPending: boolean;
+  isError: boolean;
 }
 
-const WeatherScoreCard = ({ teamId, season = null }: WeatherScoreCardProps) => {
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [weatherScore, setWeatherScore] = useState<WeatherScore | null>(null);
-
-  useEffect(() => {
-    getTeamWeatherScore(teamId, season)
-      .then(setWeatherScore)
-      .catch((err) => {
-        setError("Nie udało się pobrać weather score.");
-        console.error(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, [teamId, season]);
-
+const WeatherScoreCard = ({
+  weatherScore,
+  season = null,
+  isPending,
+  isError,
+}: WeatherScoreCardProps) => {
   const header = (
     <CardHeader>
       <CardTitle className="flex items-center gap-2 text-base">
@@ -44,11 +35,12 @@ const WeatherScoreCard = ({ teamId, season = null }: WeatherScoreCardProps) => {
     </CardHeader>
   );
 
-  if (isLoading || error || weatherScore === null) {
-    const message = isLoading
+  if (isPending || isError || !weatherScore) {
+    const message = isPending
       ? "Ładowanie..."
-      : (error ??
-        "Za mało meczów w trudnej lub normalnej pogodzie, żeby policzyć wskaźnik.");
+      : isError
+        ? "Nie udało się pobrać weather score."
+        : "Za mało meczów w trudnej lub normalnej pogodzie, żeby policzyć wskaźnik.";
 
     return (
       <Card>

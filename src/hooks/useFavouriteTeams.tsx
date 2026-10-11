@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 import {
   getFavouriteTeamIds,
@@ -17,30 +18,35 @@ type FavouriteTeamsContextValue = {
 const FavouriteTeamsContext =
   createContext<FavouriteTeamsContextValue | null>(null)
 
+const FAVOURITE_TEAMS_KEY = ["favourites", "teams"] as const
+const EMPTY_IDS: number[] = []
+
 export const FavouriteTeamsProvider = ({
   children,
 }: {
   children: React.ReactNode
 }) => {
-  const [favouriteTeamsIds, setFavouriteTeamsIds] = useState<number[]>([])
-  const [isLoadingFavourites, setIsLoadingFavourites] = useState(true)
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    getFavouriteTeamIds()
-      .then(setFavouriteTeamsIds)
-      .finally(() => setIsLoadingFavourites(false))
-  }, [])
+  const { data: favouriteTeamsIds = EMPTY_IDS, isPending: isLoadingFavourites } =
+    useQuery({
+      queryKey: FAVOURITE_TEAMS_KEY,
+      queryFn: getFavouriteTeamIds,
+    })
 
   const isFavourite = (teamId: number) => favouriteTeamsIds.includes(teamId)
 
-  const toggleFavouriteTeam = async (teamId: number) => {
-    if (isFavourite(teamId)) {
-      await removeFavouriteTeam(teamId)
-    } else {
-      await addFavouriteTeam(teamId)
-    }
-    setFavouriteTeamsIds(await getFavouriteTeamIds())
-  }
+  const { mutate: toggleFavouriteTeam } = useMutation({
+    mutationFn: async (teamId: number) => {
+      if (isFavourite(teamId)) {
+        await removeFavouriteTeam(teamId)
+      } else {
+        await addFavouriteTeam(teamId)
+      }
+    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: FAVOURITE_TEAMS_KEY }),
+  })
 
   return (
     <FavouriteTeamsContext.Provider

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useNavigate } from "react-router";
 import { Star, Trophy } from "lucide-react";
 
@@ -14,6 +15,10 @@ import MatchesFilters from "@/components/filters/MatchesFilters";
 import TeamWeatherFilters from "@/components/filters/TeamWeatherFilters";
 import { useFavouriteTeams } from "@/hooks/useFavouriteTeams";
 import FavouriteStar from "../shared/FavouriteStar";
+
+const EMPTY_TEAMS: Team[] = [];
+const EMPTY_LEAGUES: League[] = [];
+const EMPTY_SEASONS: string[] = [];
 
 const FavouriteTeams = ({ teams }: { teams: Team[] }) => (
   <SidebarSection icon={Star} title="Ulubione drużyny">
@@ -88,21 +93,32 @@ const Sidebar = ({
   const { pathname } = useLocation();
   const { favouriteTeamsIds } = useFavouriteTeams();
 
-  const [leagues, setLeagues] = useState<League[]>([]);
-  const [seasons, setSeasons] = useState<string[]>([]);
-  const [teams, setTeams] = useState<Team[]>([]);
+  const teamsQuery = useQuery({
+    queryKey: ["teams"],
+    queryFn: async () => (await getTeams()).data,
+    staleTime: Infinity,
+  });
 
-  const favouriteTeams = teams.filter((t) => favouriteTeamsIds.includes(t.id));
+  const leaguesQuery = useQuery({
+    queryKey: ["leagues"],
+    queryFn: async () => (await getLeagues()).data,
+    staleTime: Infinity,
+  });
 
-  useEffect(() => {
-    getTeams()
-      .then((res) => setTeams(res.data))
-      .catch(console.error);
-    getLeagues()
-      .then((res) => setLeagues(res.data))
-      .catch(console.error);
-    getAvailableSeasons().then(setSeasons).catch(console.error);
-  }, []);
+  const seasonsQuery = useQuery({
+    queryKey: ["seasons"],
+    queryFn: getAvailableSeasons,
+    staleTime: Infinity,
+  });
+
+  const teams = teamsQuery.data ?? EMPTY_TEAMS;
+  const leagues = leaguesQuery.data ?? EMPTY_LEAGUES;
+  const seasons = seasonsQuery.data ?? EMPTY_SEASONS;
+
+  const favouriteTeams = useMemo(
+    () => teams.filter((t) => favouriteTeamsIds.includes(t.id)),
+    [teams, favouriteTeamsIds],
+  );
 
   const showMatchesFilters = pathname === "/matches";
   const showTeamFilters = pathname.startsWith("/team/");

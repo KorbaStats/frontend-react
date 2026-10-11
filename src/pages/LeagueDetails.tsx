@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 
 import { Card, CardContent } from "@/components/ui/card";
 
-import { type League } from "@/data/types";
 import { getLeagueById } from "@/services/leaguesService";
 import {
   getAvailableSeasons,
@@ -23,52 +23,61 @@ import LeagueRecentMatches from "@/components/league-details/LeagueRecentMatches
 import WeatherComparisonChart from "@/components/shared/WeatherComparisonChart";
 import ExportReportButton from "@/components/shared/ExportReportButton";
 
+const EMPTY_MATCHES: MatchWithWeather[] = [];
+const EMPTY_SEASONS: string[] = [];
+
 const LeagueDetails = () => {
   const { id } = useParams();
   const leagueId = Number(id);
 
-  const [league, setLeague] = useState<League | null>(null);
-  const [leagueMatches, setLeagueMatches] = useState<MatchWithWeather[] | []>(
-    [],
+  const [season, setSeason] = useState<string | null>(null);
+
+  const leagueQuery = useQuery({
+    queryKey: ["league", leagueId],
+    queryFn: () => getLeagueById(leagueId),
+  });
+
+  const seasonsQuery = useQuery({
+    queryKey: ["seasons"],
+    queryFn: getAvailableSeasons,
+    staleTime: Infinity,
+  });
+
+  const seasons = seasonsQuery.data ?? EMPTY_SEASONS;
+  const selectedSeason = season ?? seasons[0] ?? null;
+
+  const matchesQuery = useQuery({
+    queryKey: ["matches", "league", leagueId, selectedSeason],
+    queryFn: () => getLeagueMatches(leagueId, selectedSeason ?? undefined),
+    enabled: !!selectedSeason,
+  });
+
+  const league = leagueQuery.data ?? null;
+  const leagueMatches = matchesQuery.data ?? EMPTY_MATCHES;
+
+  const isPending =
+    leagueQuery.isPending || seasonsQuery.isPending || matchesQuery.isPending;
+  const isError =
+    leagueQuery.isError || seasonsQuery.isError || matchesQuery.isError;
+
+  const teamsCount = useMemo(
+    () =>
+      new Set(leagueMatches.flatMap((m) => [m.home_team_id, m.away_team_id]))
+        .size,
+    [leagueMatches],
   );
-  const [seasons, setSeasons] = useState<string[]>([]);
-  const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
 
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const weatherSummary = useMemo(
+    () => computeLeagueWeatherSummary(leagueMatches),
+    [leagueMatches],
+  );
 
-  const teamsCount = new Set(
-    leagueMatches?.flatMap((m) => [m.home_team_id, m.away_team_id]),
-  ).size;
+  const topScores = useMemo(
+    () => computeTopWeatherScores(leagueMatches),
+    [leagueMatches],
+  );
 
-  const weatherSummary = computeLeagueWeatherSummary(leagueMatches ?? []);
-
-  useEffect(() => {
-    Promise.all([getLeagueById(leagueId), getAvailableSeasons()])
-      .then(([league, seasons]) => {
-        setLeague(league);
-        setSeasons(seasons);
-        setSelectedSeason(seasons[0]);
-      })
-      .catch((err) => {
-        setError("Nie udało się pobrać danych ligi.");
-        console.log(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, [leagueId]);
-
-  useEffect(() => {
-    if (!selectedSeason) return;
-    getLeagueMatches(leagueId, selectedSeason)
-      .then(setLeagueMatches)
-      .catch((err) => {
-        setError("Nie udało się pobrać meczów sezonu.");
-        console.log(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, [leagueId, selectedSeason]);
-
-  if (isLoading) {
+  if (isPending) {
     return (
       <Card className="mb-4">
         <CardContent className="py-10 text-center text-muted-foreground">
@@ -78,11 +87,11 @@ const LeagueDetails = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <Card className="mb-4">
         <CardContent className="py-10 text-center text-destructive">
-          {error}
+          Nie udało się pobrać danych ligi.
         </CardContent>
       </Card>
     );
@@ -94,16 +103,16 @@ const LeagueDetails = () => {
         league={league}
         seasons={seasons}
         selectedSeason={selectedSeason}
-        onSeasonChange={setSelectedSeason}
+        onSeasonChange={setSeason}
         teamsCount={teamsCount}
-        matchesCount={leagueMatches?.length ?? 0}
+        matchesCount={leagueMatches.length}
         weatherSummary={weatherSummary}
       />
 
       <div className="grid gap-4 grid-cols-3 print:grid-cols-1">
         <LeagueTable matches={leagueMatches} />
         <WeatherScoreRankingCard
-          scores={computeTopWeatherScores(leagueMatches)}
+          scores={topScores}
           title="Top Weather Score's w lidze"
           description={`Najlepsze drużyny w trudnej pogodzie${
             selectedSeason ? ` — sezon ${selectedSeason}` : ""

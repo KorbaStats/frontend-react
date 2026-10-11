@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-import { type WeatherScore, weatherScoreLabel } from "@/lib/weatherScore";
+import { weatherScoreLabel } from "@/lib/weatherScore";
 import { weatherScoreColor } from "@/lib/weatherStylesConfig";
 import { getTeamWeatherScore } from "@/services/weatherStatsService";
 import WeatherScoreRing from "@/components/shared/weather-score/WeatherScoreRing";
@@ -16,24 +16,17 @@ const WeatherScoreIndicator = ({
   teamName,
   season = null,
 }: WeatherScoreIndicatorProps) => {
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [weatherScore, setWeatherScore] = useState<WeatherScore | null>(null);
+  const { data: weatherScore, isPending, isError } = useQuery({
+    queryKey: ["weather-score", teamId, season],
+    queryFn: () => getTeamWeatherScore(teamId, season),
+  });
 
-  useEffect(() => {
-    getTeamWeatherScore(teamId, season)
-      .then(setWeatherScore)
-      .catch((err) => {
-        setError("Nie udało się pobrać weather score.");
-        console.error(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, [teamId, season]);
-
-  if (isLoading || error || weatherScore === null) {
-    const message = isLoading
+  if (isPending || isError || !weatherScore) {
+    const message = isPending
       ? "Ładowanie..."
-      : (error ?? "Za mało meczów do oceny");
+      : isError
+        ? "Nie udało się pobrać weather score."
+        : "Za mało meczów do oceny";
 
     return (
       <div className="flex flex-col items-center gap-3 text-center">

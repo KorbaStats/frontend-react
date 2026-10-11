@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import {
   Droplets,
   Gauge,
@@ -8,10 +8,9 @@ import {
 } from "lucide-react";
 
 import type { MatchWithWeather } from "@/services/matchesService";
-import {
-  getWeatherPercentiles,
-  type WeatherMetricKey,
-  type WeatherPercentile,
+import type {
+  WeatherMetricKey,
+  WeatherPercentile,
 } from "@/services/weatherStatsService";
 
 import {
@@ -24,6 +23,9 @@ import {
 
 interface WeatherPercentilesProps {
   match: MatchWithWeather;
+  percentiles: WeatherPercentile[];
+  isPending: boolean;
+  isError: boolean;
 }
 
 type MetricConfig = {
@@ -146,34 +148,19 @@ const PercentileRow = ({ item }: { item: WeatherPercentile }) => {
   );
 };
 
-const WeatherPercentiles = ({ match }: WeatherPercentilesProps) => {
-  const [percentiles, setPercentiles] = useState<WeatherPercentile[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const matchId = match.id;
-  const leagueId = match.league_id ?? undefined;
-
-  useEffect(() => {
-    getWeatherPercentiles(matchId, leagueId)
-      .then((data) => {
-        setPercentiles(data);
-        setError(null);
-      })
-      .catch((err) => {
-        setError("Nie udało się pobrać rozkładu warunków.");
-        console.error(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, [matchId, leagueId]);
-
-  const extremity = extremityLabel(percentiles);
+const WeatherPercentiles = ({
+  match,
+  percentiles,
+  isPending,
+  isError,
+}: WeatherPercentilesProps) => {
+  const extremity = useMemo(() => extremityLabel(percentiles), [percentiles]);
   const matchCount = percentiles[0]?.matchCount ?? 0;
 
-  const placeholder = isLoading
+  const placeholder = isPending
     ? "Ładowanie..."
-    : error
-      ? error
+    : isError
+      ? "Nie udało się pobrać rozkładu warunków."
       : percentiles.length === 0
         ? "Brak danych pogodowych dla tego meczu."
         : null;
@@ -191,7 +178,7 @@ const WeatherPercentiles = ({ match }: WeatherPercentilesProps) => {
             {match.league ? ` ${match.league.name}` : ""}.
           </CardDescription>
         </div>
-        {!isLoading && !error && extremity && (
+        {!isPending && !isError && extremity && (
           <span className="shrink-0 rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
             {extremity}
           </span>

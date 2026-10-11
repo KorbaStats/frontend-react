@@ -29,15 +29,15 @@ const TeamMatchesCard = ({
   teamName,
   matches,
   maxMatchesLength,
-  isLoading,
-  error,
+  isPending,
+  isError,
 }: {
   teamId: number;
   teamName: string;
   matches: MatchWithWeather[];
   maxMatchesLength: number;
-  isLoading: boolean;
-  error: string | null;
+  isPending: boolean;
+  isError: boolean;
 }) => {
   const navigate = useNavigate();
 
@@ -62,7 +62,7 @@ const TeamMatchesCard = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading && (
+            {isPending && (
               <TableRow className="hover:bg-transparent">
                 <TableCell
                   colSpan={5}
@@ -73,18 +73,18 @@ const TeamMatchesCard = ({
               </TableRow>
             )}
 
-            {!isLoading && error && (
+            {!isPending && isError && (
               <TableRow className="hover:bg-transparent">
                 <TableCell
                   colSpan={5}
                   className="py-6 text-center text-muted-foreground"
                 >
-                  {error}
+                  Nie udało się pobrać wcześniejszych meczów.
                 </TableCell>
               </TableRow>
             )}
 
-            {!isLoading && !error && matches.length === 0 && (
+            {!isPending && !isError && matches.length === 0 && (
               <TableRow className="hover:bg-transparent">
                 <TableCell
                   colSpan={5}
@@ -95,8 +95,8 @@ const TeamMatchesCard = ({
               </TableRow>
             )}
 
-            {!isLoading &&
-              !error &&
+            {!isPending &&
+              !isError &&
               matches.map((m) => {
                 const perspective = getMatchFromTeamPerspective(m, teamId);
                 const isHome = m.home_team_id === teamId;
