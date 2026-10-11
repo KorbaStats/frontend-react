@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { Calendar, Star } from "lucide-react";
 
@@ -15,8 +14,6 @@ import { useFavouriteTeams } from "@/hooks/useFavouriteTeams";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
 
 import type { ScheduledMatch, Team } from "@/data/types";
-
-import { getUpcomingMatchesForTeams } from "@/services/scheduledMatchesService";
 import { getDayMonth, getLocalTime, getShortWeekday } from "@/lib/date";
 
 const PAGE_SIZE = 5;
@@ -43,38 +40,27 @@ const TeamName = ({ team, favourite, side }: TeamNameProps) => (
   </div>
 );
 
-const UpcomingMatchesCard = () => {
-  const { favouriteTeamsIds, isLoadingFavourites, isFavourite } =
-    useFavouriteTeams();
-  const [matches, setMatches] = useState<ScheduledMatch[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { visibleItems, hiddenCount, showMore } = useVisibleItems(
-    matches,
-    PAGE_SIZE,
-  );
+interface UpcomingMatchesCardProps {
+  matches: ScheduledMatch[];
+  hasFavourites: boolean;
+  isPending: boolean;
+  isError: boolean;
+}
 
-  useEffect(() => {
-    if (isLoadingFavourites) return;
+const UpcomingMatchesCard = ({matches, hasFavourites, isPending, isError }: UpcomingMatchesCardProps) => {
 
-    getUpcomingMatchesForTeams(favouriteTeamsIds)
-      .then(setMatches)
-      .catch((err) => {
-        setError("Nie udało się pobrać nadchodzących meczów.");
-        console.error(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, [favouriteTeamsIds, isLoadingFavourites]);
+  const {isFavourite} = useFavouriteTeams();
+  const {visibleItems, hiddenCount, showMore} = useVisibleItems(matches, PAGE_SIZE);
 
-  const message =
-    isLoadingFavourites || isLoading
-      ? "Ładowanie..."
-      : (error ??
-        (favouriteTeamsIds.length === 0
-          ? "Nie masz jeszcze ulubionych drużyn. Dodaj je gwiazdką przy nazwie drużyny."
-          : matches.length === 0
-            ? "Brak zaplanowanych meczów."
-            : null));
+  const message = isPending
+  ? "Ładowanie..."
+  : isError
+    ? "Nie udało się pobrać nadchodzących meczów."
+    : !hasFavourites
+      ? "Nie masz jeszcze ulubionych drużyn. Dodaj je gwiazdką przy nazwie drużyny."
+      : matches.length === 0
+        ? "Brak zaplanowanych meczów."
+        : null;
 
   return (
     <Card className="@container gap-0">

@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   CalendarDays,
@@ -9,18 +8,20 @@ import {
 } from "lucide-react";
 
 import type { MatchStatsSummary } from "@/data/types";
-import { getMatchStatsSummary } from "@/services/matchStatsService";
 import type {
   DifficultWeatherShare,
   ExtremeMatch,
   WeatherExtremes,
 } from "@/services/weatherStatsService";
-import {
-  getDifficultWeatherShare,
-  getWeatherExtremes,
-} from "@/services/weatherStatsService";
-
 import { weatherDisplay, weatherDisplayFor } from "@/lib/weatherStylesConfig";
+
+interface SummaryCardsProps {
+  summary?: MatchStatsSummary;
+  extremes?: WeatherExtremes;
+  difficultShare?: DifficultWeatherShare;
+  isPending: boolean,
+  isError: boolean,
+}
 
 interface StatCardProps {
   title: string;
@@ -49,33 +50,9 @@ const StatCard = ({ title, Icon, value, hint }: StatCardProps) => (
 const extremeHint = (match: ExtremeMatch | null | undefined) =>
   match ? `${match.city} · ${weatherDisplay[weatherDisplayFor(match.weather)].label}` : "";
 
-const SummaryCards = () => {
-  const [statsSummary, setStatsSummary] = useState<MatchStatsSummary>();
-  const [extremes, setExtremes] = useState<WeatherExtremes>();
-  const [difficultShare, setDifficultShare] = useState<DifficultWeatherShare>();
+const SummaryCards = ({summary, extremes, difficultShare, isPending, isError}: SummaryCardsProps) => {
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    Promise.all([
-      getMatchStatsSummary(),
-      getWeatherExtremes(),
-      getDifficultWeatherShare(),
-    ])
-      .then(([summary, extremes, difficultShare]) => {
-        setStatsSummary(summary);
-        setExtremes(extremes);
-        setDifficultShare(difficultShare);
-      })
-      .catch((err) => {
-        setError("Pobieranie statystyk nie powiodło się.");
-        console.error(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
-
-  if (isLoading) {
+  if (isPending) {
     return (
       <Card className="mb-4">
         <CardContent className="py-10 text-center text-muted-foreground">
@@ -85,11 +62,11 @@ const SummaryCards = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <Card className="mb-4">
         <CardContent className="py-10 text-center text-destructive">
-          {error}
+          Nie udało się pobrać danych
         </CardContent>
       </Card>
     );
@@ -108,7 +85,7 @@ const SummaryCards = () => {
       <StatCard
         title="Śledzone mecze"
         Icon={CalendarDays}
-        value={statsSummary?.total_matches}
+        value={summary?.total_matches}
         hint="łącznie w bazie"
       />
 

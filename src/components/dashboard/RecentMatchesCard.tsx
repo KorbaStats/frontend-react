@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { History } from "lucide-react";
 
 import {
-  getRecentMatches,
   type MatchWithWeather,
 } from "@/services/matchesService";
 
@@ -18,22 +16,14 @@ import {
 
 import MatchesTable from "@/components/shared/MatchesTable";
 
-const RecentMatchesCard = () => {
-  const [recentMatches, setRecentMatches] = useState<MatchWithWeather[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface RecentMatchesCardProps {
+  matches: MatchWithWeather[];
+  isPending: boolean,
+  isError: boolean,
+}
 
-  useEffect(() => {
-    getRecentMatches()
-      .then((data) => setRecentMatches(data))
-      .catch((err) => {
-        setError(`Nie udało sie pobrać meczów.`);
-        console.error(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
-
-  if (isLoading) {
+const RecentMatchesCard = ({matches, isPending, isError}: RecentMatchesCardProps) => {
+  if (isPending) {
     return (
       <Card>
         <CardContent className="py-10 text-center text-muted-foreground">
@@ -43,11 +33,11 @@ const RecentMatchesCard = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <Card>
         <CardContent className="py-10 text-center text-muted-foreground">
-          {error}
+          Nie udało się pobrać meczy.
         </CardContent>
       </Card>
     );
@@ -65,7 +55,7 @@ const RecentMatchesCard = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="px-0">
-        <MatchesTable matches={recentMatches} />
+        <MatchesTable matches={matches} />
       </CardContent>
       <CardFooter className="justify-center">
         <Link

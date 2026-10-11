@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useOutletContext } from "react-router";
 import {
   Card,
@@ -17,32 +18,21 @@ import MatchesTable from "@/components/shared/MatchesTable";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
 import ShowMoreFooter from "@/components/shared/ShowMoreFooter";
 
+const EMPTY: MatchWithWeather[] = [];
 
 const Matches = () => {
-  const [matches, setMatches] = useState<MatchWithWeather[]>([]);
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {data: matches = EMPTY, isPending, isError } = useQuery({
+    queryKey: ["matches"],
+    queryFn: async () => (await getMatches()).data,
+  });
 
   const { filters } = useOutletContext<FiltersOutletContext>();
-
-  useEffect(() => {
-    getMatches()
-      .then((response) => setMatches(response.data))
-      .catch((err) => {
-        setError("Nie udało sie pobrać meczów");
-        console.log(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
-
   const filteredMatches = useMemo(
     () => filterMatches(matches, filters),
     [matches, filters],
   );
 
   const {visibleItems, hiddenCount, showMore, reset} = useVisibleItems(filteredMatches);
-
   useEffect(() => reset(), [filters, reset]);
   
   return (
@@ -57,17 +47,17 @@ const Matches = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="px-0">
-        {isLoading && (
+        {isPending && (
           <p className="py-10 text-center text-muted-foreground">
             Ładowanie...
           </p>
         )}
 
-        {error && (
-          <p className="py-10 text-center text-muted-foreground">{error}</p>
+        {isError && (
+          <p className="py-10 text-center text-muted-foreground">Nie udało się pobrać meczów</p>
         )}
 
-        {!isLoading && !error && (
+        {!isPending && !isError && (
           <div className="overflow-x-auto">
             <MatchesTable matches={visibleItems} />
           </div>

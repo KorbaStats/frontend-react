@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+
 import { Trophy } from "lucide-react";
 
 import type { League } from "@/data/types";
@@ -14,28 +16,37 @@ import { computeLeagueSummaries } from "@/lib/leagueSummaries";
 import { Card, CardContent } from "@/components/ui/card";
 import LeagueCard from "@/components/leagues/LeagueCard";
 
+const EMPTY_LEAGUES: League[] = [];
+const EMPTY_MATCHES: MatchWithWeather[] = [];
+
 const Leagues = () => {
-  const [leagues, setLeagues] = useState<League[]>([]);
-  const [matches, setMatches] = useState<MatchWithWeather[]>([]);
-  const [season, setSeason] = useState<string | null>(null);
+  const leaguesQuery = useQuery({
+    queryKey: ["leagues"],
+    queryFn: async () => (await getLeagues()).data,
+    staleTime: Infinity, //wartosc lig się nie zmienia
+  })
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const matchesQuery = useQuery({
+    queryKey: ["matches"],
+    queryFn: async () => (await getMatches()).data,
+  })
 
-  useEffect(() => {
-    Promise.all([getLeagues(), getMatches(), getAvailableSeasons()])
-      .then(([leaguesRes, matchesRes, seasons]) => {
-        setLeagues(leaguesRes.data);
-        setMatches(matchesRes.data);
-        setSeason(seasons[0] ?? null);
-      })
-      .catch((err) => {
-        setError("Nie udało się pobrać lig.");
-        console.error(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
+  const seasonsQuery = useQuery({
+    queryKey: ["seasons"],
+    queryFn: getAvailableSeasons,
+    staleTime: Infinity,
+  });
 
+  const leagues = leaguesQuery.data ?? EMPTY_LEAGUES;
+  const matches = matchesQuery.data ?? EMPTY_MATCHES;
+  const season = seasonsQuery.data?.[0] ?? null;
+
+  const isPending =
+    leaguesQuery.isPending || matchesQuery.isPending || seasonsQuery.isPending;
+  const isError =
+    leaguesQuery.isError || matchesQuery.isError || seasonsQuery.isError;
+
+  // Podsumowania 
   const summaries = useMemo(
     () =>
       computeLeagueSummaries(
@@ -59,7 +70,7 @@ const Leagues = () => {
         </p>
       </div>
 
-      {isLoading && (
+      {isPending && (
         <Card>
           <CardContent className="py-10 text-center text-muted-foreground">
             Ładowanie...
@@ -67,15 +78,15 @@ const Leagues = () => {
         </Card>
       )}
 
-      {error && (
+      {isError && (
         <Card>
           <CardContent className="py-10 text-center text-destructive">
-            {error}
+            Nie udało się wczytać danych.
           </CardContent>
         </Card>
       )}
 
-      {!isLoading && !error && (
+      {!isPending && !isError && (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {summaries.map((summary) => (
             <LeagueCard key={summary.league.id} {...summary} />
