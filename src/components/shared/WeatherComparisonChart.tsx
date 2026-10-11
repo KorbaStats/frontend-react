@@ -212,8 +212,7 @@ const WeatherComparisonChart = ({
             </div>
 
             <p className="text-xs text-muted-foreground">
-              {split.normalMatches.length} meczy w normalnych warunkach pogodowych. Warunki mogą się
-              nakładać — mecz w mrozie ze śniegiem liczy się do obu.
+              {split.normalMatches.length} meczów w normalnych warunkach pogodowych. Warunki mogą się nakładać — mecz w mrozie ze śniegiem liczy się do obu.
             </p>
           </>
         )}
