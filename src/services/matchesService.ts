@@ -1,4 +1,4 @@
-import { apiGet, apiGetAllPages } from "@/services/api";
+import { apiGet, apiGetAllPages } from "@/services/http";
 import type {
   Match,
   PaginatedResponse,
@@ -22,7 +22,7 @@ export async function getMatches(): Promise<
   PaginatedResponse<MatchWithWeather>
 > {
   if (!allMatchesCache || Date.now() - allMatchesCache.fetchedAt > ALL_MATCHES_TTL_MS) {
-    const promise = apiGetAllPages<MatchWithWeather>("/matches", NEWEST_FIRST);
+    const promise = apiGetAllPages<MatchWithWeather>("/api/matches", NEWEST_FIRST);
     allMatchesCache = { fetchedAt: Date.now(), promise };
 
     promise.catch(() => {
@@ -40,7 +40,7 @@ export async function getRecentMatches(
   limit = DEFAULT_MATCHES_LIMIT,
 ): Promise<MatchWithWeather[]> {
   const { data } = await apiGet<PaginatedResponse<MatchWithWeather>>(
-    "/matches",
+    "/api/matches",
     { ...NEWEST_FIRST, limit },
   );
   return data;
@@ -50,7 +50,7 @@ export async function getRecentMatches(
 export async function getTeamMatches(
   teamId: number,
 ): Promise<MatchWithWeather[]> {
-  const { data } = await apiGetAllPages<MatchWithWeather>("/matches", {
+  const { data } = await apiGetAllPages<MatchWithWeather>("/api/matches", {
     ...NEWEST_FIRST,
     team_id: teamId,
   });
@@ -59,12 +59,12 @@ export async function getTeamMatches(
 
 // GET /api/matches/:id
 export async function getMatchById(id: number): Promise<MatchWithWeather> {
-  return apiGet<MatchWithWeather>(`/matches/${id}`);
+  return apiGet<MatchWithWeather>(`/api/matches/${id}`);
 }
 
 // GET /api/match-stats/seasons - od najnowszego
 export async function getAvailableSeasons(): Promise<string[]> {
-  return apiGet<string[]>("/match-stats/seasons");
+  return apiGet<string[]>("/api/match-stats/seasons");
 }
 
 // GET /api/matches?league_id=X&season=Y&sort=datetime&order=desc
@@ -72,7 +72,7 @@ export async function getLeagueMatches(
   leagueId: number,
   season?: string,
 ): Promise<MatchWithWeather[]> {
-  const { data } = await apiGetAllPages<MatchWithWeather>("/matches", {
+  const { data } = await apiGetAllPages<MatchWithWeather>("/api/matches", {
     ...NEWEST_FIRST,
     league_id: leagueId,
     season,

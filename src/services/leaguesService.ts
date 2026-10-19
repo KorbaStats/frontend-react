@@ -1,9 +1,9 @@
-import { apiGetAllPages } from "@/services/api";
+import { apiGetAllPages } from "@/services/http";
 import type { League, PaginatedResponse } from "@/data/types";
 
 // GET /api/leagues
 export async function getLeagues(): Promise<PaginatedResponse<League>> {
-  return apiGetAllPages<League>("/leagues");
+  return apiGetAllPages<League>("/api/leagues");
 }
 
 // GET /api/leagues/:id wymaga autoryzacji (uprawnienie "leagues"),
