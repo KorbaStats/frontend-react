@@ -256,3 +256,19 @@ export type Weather = {
   cloud_cover_pct: number
 }
 
+export type User = {
+  id: number
+  email: string
+  role: string | null
+  permissions: string[]
+}
+
+export type AuthSession = {
+  accessToken: string
+  user: User
+}
+
+export type Credentials = {
+  email: string
+  password: string
+}

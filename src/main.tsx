@@ -2,6 +2,7 @@ import "./globals.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router";
+import { AuthProvider } from "./hooks/useAuth.tsx";
 import { ThemeProvider } from "./hooks/useTheme.tsx";
 import { FavouriteTeamsProvider } from "./hooks/useFavouriteTeams.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -15,13 +16,16 @@ import MatchDetails from "./pages/MatchDetails.tsx";
 import Leagues from "./pages/Leagues.tsx";
 import LeagueDetails from "./pages/LeagueDetails.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Login from "./pages/Login.tsx";
+import Register from "./pages/Register.tsx";
+import Profile from "./pages/Profile.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, //odswiezanie fetcha co 5 min
-      refetchOnWindowFocus: false, //brak refetcha po ponownym wejsciu na okno
-      retry: 1, //ilosc ponowien nieudanego zapytania
+      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      retry: 1,
     },
   },
 });
@@ -29,37 +33,41 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <FavouriteTeamsProvider>
-          <BrowserRouter>
-            <Routes>
-              {/*TODO: Auth */}
-              <Route path="/login" element={<div>Login page...</div>} />
-              <Route path="/register" element={<div>Register page...</div>} />
+      <AuthProvider>
+        <ThemeProvider>
+          <FavouriteTeamsProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
 
-              <Route path="/" element={<MainLayout />}>
-                <Route index element={<Dashboard />} />
+                <Route path="/" element={<MainLayout />}>
+                  <Route index element={<Dashboard />} />
 
-                <Route path="leagues" element={<Leagues />} />
-                <Route path="league/:id" element={<LeagueDetails />} />
+                  <Route path="leagues" element={<Leagues />} />
+                  <Route path="league/:id" element={<LeagueDetails />} />
 
-                <Route path="team/:id" element={<TeamDetails />} />
-                <Route path="matches" element={<Matches />} />
-                <Route path="match/:id" element={<MatchDetails />} />
+                  <Route path="profile" element={<Profile />} />
 
-                {/*TODO: Predykcje*/}
-                <Route
-                  path="predictions"
-                  element={<div>Predictions page...</div>}
-                />
+                  <Route path="team/:id" element={<TeamDetails />} />
+                  <Route path="matches" element={<Matches />} />
+                  <Route path="match/:id" element={<MatchDetails />} />
 
-                <Route path="*" element={<NotFound />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </FavouriteTeamsProvider>
-      </ThemeProvider>
-      
+                  {/*TODO: Predykcje*/}
+                  <Route
+                    path="predictions"
+                    element={<div>Predictions page...</div>}
+                  />
+
+                  <Route path="*" element={<NotFound />} />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </FavouriteTeamsProvider>
+        </ThemeProvider>
+      </AuthProvider>
+
+
       <ReactQueryDevtools initialIsOpen={true} />
     </QueryClientProvider>
   </StrictMode>,

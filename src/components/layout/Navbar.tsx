@@ -1,6 +1,8 @@
-import { Menu, Moon, Sun } from "lucide-react";
+import { Menu, Moon, Sun, User } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
+import { getUserHandle } from "@/lib/userLabel";
 
 import { Link, useLocation } from "react-router";
 import Searchbar from "./Searchbar";
@@ -24,6 +26,7 @@ interface NavbarProps {
 
 const Navbar = ({ onMenuClick }: NavbarProps) => {
   const { theme, toggleTheme } = useTheme();
+  const { user, isRestoringSession } = useAuth();
   const { pathname } = useLocation();
 
   return (
@@ -84,8 +87,27 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
           >
             {theme === "dark" ? <Sun /> : <Moon />}
           </Button>
-
-          <Button>Zaloguj</Button>
+          
+          {isRestoringSession ? (
+            <div
+              className="h-9 w-24 animate-pulse rounded-md bg-muted"
+              aria-hidden
+            />
+          ) : user ? (
+            <Link
+              to="/profile"
+              className={buttonVariants({ variant: "ghost", size: "sm" })}
+            >
+              <User />
+              <span className="max-w-32 truncate">
+                {getUserHandle(user.email)}
+              </span>
+            </Link>
+          ) : (
+            <Link to="/login">
+              <Button>Zaloguj</Button>
+            </Link>
+          )}
         </div>
       </div>
     </header>
