@@ -77,7 +77,7 @@ function splitPrecipitation(
 export const weather: Weather[] = matches.map((match) => {
   const month = Number(match.datetime.slice(5, 7))
   const [minTemp, maxTemp] = monthTempRange[month] ?? [5, 20]
-  const offset = countryTempOffset[match.homeTeam.country] ?? 0
+  const offset = countryTempOffset[match.homeTeam.country ?? ""] ?? 0
   const temperature_c = randFloat(minTemp + offset, maxTemp + offset)
   const precipitation_mm = rng() < (monthRainChance[month] ?? 0.35) ? randFloat(0.5, 12) : 0
   const { rain_mm, snowfall_cm } = splitPrecipitation(precipitation_mm, temperature_c)

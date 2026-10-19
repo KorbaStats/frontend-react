@@ -12,6 +12,7 @@ import {
 
 import type { Match } from "@/data/types";
 import { computeStandings } from "@/lib/standings";
+import { getTeamShortName } from "@/lib/teamLabel";
 
 import ResultBadge from "@/components/shared/ResultBadge";
 
@@ -69,7 +70,7 @@ const LeagueTable = ({ matches }: LeagueTableProps) => {
                     className="flex items-center gap-3 font-medium text-foreground hover:text-primary"
                   >
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary/20 to-secondary/20 text-[10px] font-extrabold">
-                      {row.team.short_name}
+                      {getTeamShortName(row.team)}
                     </span>
                     {row.team.name}
                   </Link>

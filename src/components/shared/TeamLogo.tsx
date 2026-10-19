@@ -1,6 +1,6 @@
 interface TeamLogoProps {
   name: string | undefined,
-  short_name: string | undefined
+  short_name: string | null | undefined
 }
 
 const TeamLogo = ({name, short_name}: TeamLogoProps) => {
@@ -11,7 +11,7 @@ const TeamLogo = ({name, short_name}: TeamLogoProps) => {
       className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary/20 to-secondary/20"
     >
       <span className="text-xl font-extrabold tracking-wide text-foreground">
-        {short_name}
+        {short_name ?? name?.slice(0, 3).toUpperCase()}
       </span>
     </div>
   )

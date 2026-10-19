@@ -11,8 +11,8 @@ export type PaginatedResponse<T> = {
 export type League = {
   id: number
   name: string
-  country: string
-  slug: string
+  country: string | null
+  slug: string | null
   active: boolean
   created_at: string
   updated_at: string
@@ -33,9 +33,9 @@ export type Stadium = {
 export type Team = {
   id: number
   name: string
-  short_name: string
-  city: string
-  country: string
+  short_name: string | null
+  city: string | null
+  country: string | null
   league_id: number | null
   home_stadium_id: number | null
   created_at: string
@@ -243,7 +243,7 @@ export type ScheduledMatch = {
   league: League | null
 }
 
-//TODO: verify against real API response
+// podzbiór kolumn tabeli match_weather (backend: models/MatchWeather.js), wartości dla okna meczu
 export type Weather = {
   match_id: number
   temperature_c: number

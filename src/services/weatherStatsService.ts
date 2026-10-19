@@ -1,5 +1,3 @@
-//TODO: verify against real API response once the backend has weather
-
 import { getMatches, getTeamMatches } from "@/services/matchesService";
 import type { Weather } from "@/data/types";
 import { type WeatherScore, computeWeatherScore } from "@/lib/weatherScore";

@@ -2,7 +2,9 @@ import type { Team } from "@/data/types";
 import { normalize } from "@/lib/utils";
 
 function rankTeam(team: Team, query: string): number {
-  const fields = [team.name, team.short_name, team.city].map(normalize);
+  const fields = [team.name, team.short_name, team.city].map((field) =>
+    normalize(field ?? ""),
+  );
   if (fields.some((f) => f.startsWith(query))) return 0;
   if (fields.some((f) => f.includes(query))) return 1;
   return -1;

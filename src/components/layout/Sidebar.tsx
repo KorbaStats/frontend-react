@@ -6,6 +6,7 @@ import { Star, Trophy } from "lucide-react";
 import type { Team, League } from "@/data/types";
 import type { MatchFilters } from "@/lib/matchFilters";
 import { getLeagueCountryCode } from "@/lib/leagueLabel";
+import { getTeamShortName } from "@/lib/teamLabel";
 import { getLeagues } from "@/services/leaguesService";
 import { getAvailableSeasons } from "@/services/matchesService";
 import { getTeams } from "@/services/teamsService";
@@ -38,7 +39,7 @@ const FavouriteTeams = ({ teams }: { teams: Team[] }) => (
               className="flex min-w-0 flex-1 items-center gap-3 px-2 py-2 text-sm font-medium group-hover:text-accent-foreground"
             >
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary/20 to-secondary/20 text-[10px] font-extrabold">
-                {team.short_name}
+                {getTeamShortName(team)}
               </span>
               <span className="truncate">{team.name}</span>
             </Link>

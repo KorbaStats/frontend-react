@@ -32,13 +32,18 @@ const TeamInfoCard = ({ matches, team }: TeamInfoProps) => {
               <dt className="sr-only">Stadion</dt>
               <MapPin size={16} />
               <dd>
-                {team?.homeStadium?.name}, {team?.city}
+                {[team?.homeStadium?.name, team?.city]
+                  .filter(Boolean)
+                  .join(", ") || "Brak danych"}
               </dd>
             </div>
             <div className="flex items-center gap-1">
               <dt className="sr-only">Pojemność stadionu</dt>
               <Users size={16} />
-              <dd>{team?.homeStadium?.capacity.toLocaleString("pl-PL")}</dd>
+              <dd>
+                {team?.homeStadium?.capacity?.toLocaleString("pl-PL") ??
+                  "Brak danych"}
+              </dd>
             </div>
           </dl>
         </div>

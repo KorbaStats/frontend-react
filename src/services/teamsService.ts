@@ -1,17 +1,16 @@
-import { teams } from "@/data/teams";
+import { apiGetAllPages } from "@/services/api";
 import type { PaginatedResponse, Team } from "@/data/types";
 
 // GET /api/teams
 export async function getTeams(): Promise<PaginatedResponse<Team>> {
-  return {
-    data: teams,
-    pagination: { total: teams.length, page: 1, limit: teams.length, pages: 1 },
-  };
+  return apiGetAllPages<Team>("/teams");
 }
 
-// GET /api/teams/:id
+// GET /api/teams/:id wymaga autoryzacji (uprawnienie "teams"),
+// więc drużynę wybieramy z publicznej listy GET /api/teams
 export async function getTeamById(id: number): Promise<Team> {
-  const team = teams.find((t) => t.id === id);
+  const { data } = await getTeams();
+  const team = data.find((t) => t.id === id);
   if (!team) throw new Error(`Team id=${id} not found`);
   return team;
 }

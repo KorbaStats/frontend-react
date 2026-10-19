@@ -8,5 +8,6 @@ const countryCodes: Record<string, string> = {
 };
 
 export function getLeagueCountryCode(league: League): string {
+  if (!league.country) return "";
   return countryCodes[league.country] ?? league.country.slice(0, 3).toUpperCase();
 }

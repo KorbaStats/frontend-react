@@ -1,17 +1,16 @@
-import { leagues } from "@/data/leagues";
+import { apiGetAllPages } from "@/services/api";
 import type { League, PaginatedResponse } from "@/data/types";
 
 // GET /api/leagues
 export async function getLeagues(): Promise<PaginatedResponse<League>> {
-  return {
-    data: leagues,
-    pagination: { total: leagues.length, page: 1, limit: leagues.length, pages: 1 },
-  }
+  return apiGetAllPages<League>("/leagues");
 }
 
-// GET /api/league/:id
+// GET /api/leagues/:id wymaga autoryzacji (uprawnienie "leagues"),
+// więc ligę wybieramy z publicznej listy GET /api/leagues
 export async function getLeagueById(leagueId: number): Promise<League> {
-  const league = leagues.find(l => l.id === leagueId);
+  const { data } = await getLeagues();
+  const league = data.find(l => l.id === leagueId);
   if (!league) throw new Error(`League id=${leagueId} not found`);
   return league;
 }

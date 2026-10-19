@@ -12,6 +12,7 @@ import {
 import type { TeamWeatherScore } from "@/lib/leagueWeather";
 import { weatherScoreColor } from "@/lib/weatherStylesConfig";
 import { weatherScoreLabel } from "@/lib/weatherScore";
+import { getTeamShortName } from "@/lib/teamLabel";
 
 interface WeatherScoreRankingCardProps {
   Icon?: LucideIcon;
@@ -51,7 +52,7 @@ const WeatherScoreRankingCard = ({
                 {idx + 1}
               </span>
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary/20 to-secondary/20 text-[10px] font-extrabold">
-                {team.short_name}
+                {getTeamShortName(team)}
               </span>
 
               <div className="flex min-w-0 flex-col leading-tight">

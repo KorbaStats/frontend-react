@@ -2,8 +2,8 @@ import type { ParsedStat } from "@/data/types";
 
 export type ParsedRowProps = {
   label: string;
-  home: ParsedStat | undefined;
-  away: ParsedStat | undefined;
+  home: ParsedStat | null | undefined;
+  away: ParsedStat | null | undefined;
 };
 
 const ParsedStatRow = ({ label, home, away }: ParsedRowProps) => {

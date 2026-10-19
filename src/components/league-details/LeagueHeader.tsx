@@ -63,7 +63,7 @@ const LeagueHeader = ({
           />
           <div>
             <p className="text-md font-bold tracking-widest text-primary">
-              {league?.country.toUpperCase()}
+              {league?.country?.toUpperCase()}
             </p>
             <h1 className="mb-1 text-3xl font-bold">{league?.name}</h1>
             <dl className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">

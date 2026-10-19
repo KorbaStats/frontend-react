@@ -52,7 +52,7 @@ const LeagueCard = ({
           />
           <div className="min-w-0">
             <p className="text-xs font-bold tracking-widest text-primary">
-              {league.country.toUpperCase()}
+              {league.country?.toUpperCase()}
             </p>
             <h2 className="truncate text-xl font-bold">{league.name}</h2>
             <dl className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">

@@ -1,13 +1,13 @@
 export type NumberRowProps = {
   label: string;
-  home: number | undefined;
-  away: number | undefined;
+  home: number | null | undefined;
+  away: number | null | undefined;
   suffix?: string;
   decimals?: number;
 };
 
 const StatRow = ({label, home, away, suffix = "", decimals = 0}: NumberRowProps) => {
-  if (home === undefined || away === undefined) return null;
+  if (home == null || away == null) return null;
 
   const total = home+away;
   const homeShare = total === 0 ? 0 : (home / total) * 100;
