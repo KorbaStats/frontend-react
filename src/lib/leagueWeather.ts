@@ -10,8 +10,6 @@ export type LeagueWeatherSummary = {
   matchesCount: number;
 };
 
-const round1 = (value: number) => Math.round(value * 10) / 10;
-
 export function computeLeagueWeatherSummary(
   matches: MatchWithWeather[],
 ): LeagueWeatherSummary | null {
@@ -34,8 +32,8 @@ export function computeLeagueWeatherSummary(
   if (count === 0) return null;
 
   return {
-    avgTemp: round1(tempSum / count),
-    avgWind: round1(windSum / count),
+    avgTemp: tempSum / count,
+    avgWind: windSum / count,
     precipPct: Math.round((precipCount / count) * 100),
     matchesCount: count,
   };

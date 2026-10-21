@@ -12,6 +12,7 @@ import TeamLogo from "@/components/shared/TeamLogo";
 import { getLeagueCountryCode } from "@/lib/leagueLabel";
 import type { LeagueWeatherSummary } from "@/lib/leagueWeather";
 import { weatherDisplay } from "@/lib/weatherStylesConfig";
+import { formatWeatherValue } from "@/lib/weatherFormat";
 
 interface LeagueHeaderProps {
   league: League | null;
@@ -37,7 +38,7 @@ const LeagueHeader = ({
       icon: Thermometer,
       style: weatherDisplay.clear,
       label: "Śr. temperatura",
-      value: `${weatherSummary.avgTemp}°C`,
+      value: formatWeatherValue("temperature_c", weatherSummary.avgTemp),
     },
     {
       icon: CloudRain,
@@ -49,7 +50,7 @@ const LeagueHeader = ({
       icon: Wind,
       style: weatherDisplay.wind,
       label: "Śr. wiatr",
-      value: `${weatherSummary.avgWind} km/h`,
+      value: formatWeatherValue("wind_speed_kmh", weatherSummary.avgWind),
     },
   ];
 

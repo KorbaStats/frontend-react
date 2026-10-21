@@ -23,6 +23,7 @@ import {
   weatherDisplay,
   weatherDisplayFor,
 } from "@/lib/weatherStylesConfig";
+import { formatWeatherValue } from "@/lib/weatherFormat";
 
 interface MatchHeaderCardProps {
   match: MatchWithWeather;
@@ -178,10 +179,11 @@ const MatchHeaderCard = ({ match }: MatchHeaderCardProps) => {
             </span>
             <div className="leading-tight">
               <p className="text-2xl font-bold tabular-nums text-foreground">
-                {weather.temperature_c}°C
+                {formatWeatherValue("temperature_c", weather.temperature_c)}
               </p>
               <p className="text-xs text-muted-foreground">
-                {config.label} · odczuwalna {weather.feels_like_c}°C
+                {config.label} · odczuwalna{" "}
+                {formatWeatherValue("feels_like_c", weather.feels_like_c)}
               </p>
             </div>
           </div>
@@ -190,22 +192,31 @@ const MatchHeaderCard = ({ match }: MatchHeaderCardProps) => {
             <WeatherTile
               icon={Wind}
               label="Wiatr"
-              value={`${weather.wind_speed_kmh} km/h`}
+              value={formatWeatherValue(
+                "wind_speed_kmh",
+                weather.wind_speed_kmh,
+              )}
             />
             <WeatherTile
               icon={Droplets}
               label="Opady"
-              value={`${weather.precipitation_mm} mm`}
+              value={formatWeatherValue(
+                "precipitation_mm",
+                weather.precipitation_mm,
+              )}
             />
             <WeatherTile
               icon={Gauge}
               label="Wilgotność"
-              value={`${weather.humidity_pct}%`}
+              value={formatWeatherValue("humidity_pct", weather.humidity_pct)}
             />
             <WeatherTile
               icon={Cloud}
               label="Zachmurzenie"
-              value={`${weather.cloud_cover_pct}%`}
+              value={formatWeatherValue(
+                "cloud_cover_pct",
+                weather.cloud_cover_pct,
+              )}
             />
           </dl>
         </div>

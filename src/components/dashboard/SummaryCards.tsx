@@ -14,6 +14,7 @@ import type {
   WeatherExtremes,
 } from "@/services/weatherStatsService";
 import { weatherDisplay, weatherDisplayFor } from "@/lib/weatherStylesConfig";
+import { formatWeatherValue } from "@/lib/weatherFormat";
 
 interface SummaryCardsProps {
   summary?: MatchStatsSummary;
@@ -99,14 +100,20 @@ const SummaryCards = ({summary, extremes, difficultShare, isPending, isError}: S
       <StatCard
         title="Najzimniejszy mecz"
         Icon={ThermometerSnowflake}
-        value={`${coldest?.weather.temperature_c}°C`}
+        value={formatWeatherValue(
+          "temperature_c",
+          coldest?.weather.temperature_c,
+        )}
         hint={extremeHint(coldest)}
       />
 
       <StatCard
         title="Najbardziej wietrzny mecz"
         Icon={Wind}
-        value={`${windiest?.weather.wind_speed_kmh} km/h`}
+        value={formatWeatherValue(
+          "wind_speed_kmh",
+          windiest?.weather.wind_speed_kmh,
+        )}
         hint={extremeHint(windiest)}
       />
     </div>

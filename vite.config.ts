@@ -14,7 +14,6 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  // w trybie dev przekierowujemy /api na backend (w dockerze robi to nginx)
   server: {
     proxy: {
       '/api': {

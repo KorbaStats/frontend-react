@@ -6,6 +6,7 @@ import {
   weatherDisplay,
   weatherDisplayFor,
 } from "@/lib/weatherStylesConfig";
+import { formatWeatherValue } from "@/lib/weatherFormat";
 
 import {
   Table,
@@ -90,7 +91,10 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
                   </span>
                   <div className="flex flex-col leading-tight">
                     <span className="font-medium text-foreground">
-                      {m.weather?.temperature_c}°C
+                      {formatWeatherValue(
+                        "temperature_c",
+                        m.weather?.temperature_c,
+                      )}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {config.label}

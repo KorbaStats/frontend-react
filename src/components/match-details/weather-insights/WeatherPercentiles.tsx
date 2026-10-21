@@ -12,6 +12,7 @@ import type {
   WeatherMetricKey,
   WeatherPercentile,
 } from "@/services/weatherStatsService";
+import { formatWeatherValue } from "@/lib/weatherFormat";
 
 import {
   Card,
@@ -31,8 +32,6 @@ interface WeatherPercentilesProps {
 type MetricConfig = {
   label: string;
   icon: LucideIcon;
-  unit: string;
-  decimals: number;
   higher: string;
   lower: string;
 };
@@ -41,32 +40,24 @@ const metricConfig: Record<WeatherMetricKey, MetricConfig> = {
   temperature_c: {
     label: "Temperatura",
     icon: Thermometer,
-    unit: "°C",
-    decimals: 1,
     higher: "cieplej",
     lower: "chłodniej",
   },
   wind_speed_kmh: {
     label: "Wiatr",
     icon: Wind,
-    unit: " km/h",
-    decimals: 0,
     higher: "więcej wiatru",
     lower: "mniej wiatru",
   },
   precipitation_mm: {
     label: "Opady",
     icon: Droplets,
-    unit: " mm",
-    decimals: 1,
     higher: "więcej opadów",
     lower: "mniej opadów",
   },
   humidity_pct: {
     label: "Wilgotność",
     icon: Gauge,
-    unit: "%",
-    decimals: 0,
     higher: "wilgotniej",
     lower: "mniej wilgotno",
   },
@@ -94,8 +85,7 @@ const PercentileRow = ({ item }: { item: WeatherPercentile }) => {
   const share = isAboveMedian ? item.below : item.above;
   const verb = isAboveMedian ? config.higher : config.lower;
 
-  const format = (value: number) =>
-    `${value.toFixed(config.decimals)}${config.unit}`;
+  const format = (value: number) => formatWeatherValue(item.metric, value);
 
   return (
     <div className="rounded-lg border bg-card px-3 py-2.5">

@@ -6,6 +6,7 @@ import {
   weatherDisplay,
   weatherDisplayFor,
 } from "@/lib/weatherStylesConfig";
+import { formatWeatherValue } from "@/lib/weatherFormat";
 import { getMatchFromTeamPerspective } from "@/lib/teamStats";
 
 import {
@@ -147,7 +148,10 @@ const TeamMatchesCard = ({
                           <Icon className="h-3.5 w-3.5" />
                         </span>
                         <span className="tabular-nums text-muted-foreground">
-                          {m.weather?.temperature_c}°C
+                          {formatWeatherValue(
+                            "temperature_c",
+                            m.weather?.temperature_c,
+                          )}
                         </span>
                       </div>
                     </TableCell>
