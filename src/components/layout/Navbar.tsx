@@ -1,4 +1,4 @@
-import { Menu, Moon, Sun, User } from "lucide-react";
+import { LogOut, Menu, Moon, Sun, User } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
@@ -15,9 +15,21 @@ type NavLink = {
 
 const navLinks: NavLink[] = [
   { label: "Strona główna", to: "/", isActive: (pathname) => pathname === "/" },
-  { label: "Mecze", to: "/matches", isActive: (pathname) => pathname.startsWith("/match")},
-  { label: "Ligi", to: "/leagues", isActive: (pathname) => pathname.startsWith("/league") },
-  {label: "Predykcje", to: "/predictions", isActive: (pathname) => pathname === '/predictions'}
+  {
+    label: "Mecze",
+    to: "/matches",
+    isActive: (pathname) => pathname.startsWith("/match"),
+  },
+  {
+    label: "Ligi",
+    to: "/leagues",
+    isActive: (pathname) => pathname.startsWith("/league"),
+  },
+  {
+    label: "Predykcje",
+    to: "/predictions",
+    isActive: (pathname) => pathname === "/predictions",
+  },
 ];
 
 interface NavbarProps {
@@ -26,7 +38,7 @@ interface NavbarProps {
 
 const Navbar = ({ onMenuClick }: NavbarProps) => {
   const { theme, toggleTheme } = useTheme();
-  const { user, isRestoringSession } = useAuth();
+  const { user, isRestoringSession, logout } = useAuth();
   const { pathname } = useLocation();
 
   return (
@@ -87,22 +99,33 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
           >
             {theme === "dark" ? <Sun /> : <Moon />}
           </Button>
-          
+
           {isRestoringSession ? (
             <div
-              className="h-9 w-24 animate-pulse rounded-md bg-muted"
+              className="h-9 w-24 animate-pulse rounded-md bg-muted gap-2"
               aria-hidden
             />
           ) : user ? (
-            <Link
-              to="/profile"
-              className={buttonVariants({ variant: "ghost", size: "sm" })}
-            >
-              <User />
-              <span className="max-w-32 truncate">
-                {getUserHandle(user.email)}
-              </span>
-            </Link>
+            <>
+              <Link
+                to="/profile"
+                className={buttonVariants({ variant: "ghost", size: "sm" })}
+              >
+                <User />
+                <span className="max-w-32 truncate">
+                  {getUserHandle(user.email)}
+                </span>
+              </Link>
+              <Button
+                onClick={() => logout()}
+                aria-label="wyloguj"
+                size="sm"
+                className="cursor-pointer"
+              >
+                <LogOut size={"icon"} />
+                Wyloguj
+              </Button>
+            </>
           ) : (
             <Link to="/login">
               <Button>Zaloguj</Button>
