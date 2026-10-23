@@ -1,6 +1,10 @@
+import { useState } from "react"
 import { Link } from "react-router"
 
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/hooks/useAuth"
+import { hasFieldErrors, validateRegisterForm } from "@/lib/authValidation"
+import type { AuthFieldErrors } from "@/lib/authValidation"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -13,6 +17,7 @@ import {
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -22,6 +27,23 @@ export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const { register, registerError, isRegistering } = useAuth()
+
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [fieldErrors, setFieldErrors] = useState<AuthFieldErrors>({})
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const errors = validateRegisterForm({ email, password, confirmPassword })
+    setFieldErrors(errors)
+    if (hasFieldErrors(errors)) return
+
+    register({ email: email.trim(), password })
+  }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -32,7 +54,7 @@ export function RegisterForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form noValidate>
+          <form noValidate onSubmit={handleSubmit}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -41,7 +63,11 @@ export function RegisterForm({
                   type="email"
                   autoComplete="email"
                   placeholder="email@example.com"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  aria-invalid={fieldErrors.email !== undefined}
                 />
+                <FieldError>{fieldErrors.email}</FieldError>
               </Field>
               <Field>
                 <FieldLabel htmlFor="password">Hasło</FieldLabel>
@@ -49,8 +75,15 @@ export function RegisterForm({
                   id="password"
                   type="password"
                   autoComplete="new-password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  aria-invalid={fieldErrors.password !== undefined}
                 />
-                <FieldDescription>Minimum 8 znaków</FieldDescription>
+                {fieldErrors.password ? (
+                  <FieldError>{fieldErrors.password}</FieldError>
+                ) : (
+                  <FieldDescription>Minimum 8 znaków</FieldDescription>
+                )}
               </Field>
               <Field>
                 <FieldLabel htmlFor="confirmPassword">Powtórz hasło</FieldLabel>
@@ -58,10 +91,19 @@ export function RegisterForm({
                   id="confirmPassword"
                   type="password"
                   autoComplete="new-password"
+                  value={confirmPassword}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  aria-invalid={fieldErrors.confirmPassword !== undefined}
                 />
+                <FieldError>{fieldErrors.confirmPassword}</FieldError>
               </Field>
               <Field>
-                <Button type="submit">Zarejestruj się</Button>
+                {registerError && !isRegistering && (
+                  <p className="text-sm text-destructive">{registerError}</p>
+                )}
+                <Button type="submit" disabled={isRegistering}>
+                  {isRegistering ? "Rejestracja..." : "Zarejestruj się"}
+                </Button>
                 <FieldDescription className="text-center">
                   Masz już konto?{" "}
                   <Link to="/login" className="underline underline-offset-4">

@@ -8,6 +8,7 @@ import {
   login as loginRequest,
   logout as logoutRequest,
   refreshSession,
+  register as registerRequest,
 } from "@/services/authService";
 
 type AuthContextValue = {
@@ -17,6 +18,9 @@ type AuthContextValue = {
   login: (credentials: Credentials) => void;
   loginError: string | null;
   isLoggingIn: boolean;
+  register: (credentials: Credentials) => void;
+  registerError: string | null;
+  isRegistering: boolean;
   logout: () => void;
 };
 
@@ -49,6 +53,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     onSuccess: (session) => queryClient.setQueryData(SESSION_KEY, session.user),
   });
 
+  const {
+    mutate: register,
+    error: registerErrorRaw,
+    isPending: isRegistering,
+  } = useMutation({
+    mutationFn: async (credentials: Credentials) => {
+      await registerRequest(credentials);
+      return loginRequest(credentials);
+    },
+    onSuccess: (session) => queryClient.setQueryData(SESSION_KEY, session.user),
+  });
+
   const { mutate: logout } = useMutation({
     mutationFn: logoutRequest,
     onSuccess: () => queryClient.setQueryData(SESSION_KEY, null),
@@ -63,6 +79,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login,
         loginError: loginErrorRaw ? toUserMessage(loginErrorRaw) : null,
         isLoggingIn,
+        register,
+        registerError: registerErrorRaw ? toUserMessage(registerErrorRaw) : null,
+        isRegistering,
         logout,
       }}
     >
