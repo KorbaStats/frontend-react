@@ -1,26 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-
-import { weatherScoreLabel } from "@/lib/weatherScore";
+import { type WeatherScore, weatherScoreLabel } from "@/lib/weatherScore";
 import { weatherScoreColor } from "@/lib/weatherStylesConfig";
-import { getTeamWeatherScore } from "@/services/weatherStatsService";
 import WeatherScoreRing from "@/components/shared/weather-score/WeatherScoreRing";
 
 interface WeatherScoreIndicatorProps {
-  teamId: number;
   teamName: string;
-  season?: string | null;
+  weatherScore: WeatherScore | null;
+  isPending: boolean;
+  isError: boolean;
 }
 
 const WeatherScoreIndicator = ({
-  teamId,
   teamName,
-  season = null,
+  weatherScore,
+  isPending,
+  isError,
 }: WeatherScoreIndicatorProps) => {
-  const { data: weatherScore, isPending, isError } = useQuery({
-    queryKey: ["weather-score", teamId, season],
-    queryFn: () => getTeamWeatherScore(teamId, season),
-  });
-
   if (isPending || isError || !weatherScore) {
     const message = isPending
       ? "Ładowanie..."

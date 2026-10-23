@@ -6,16 +6,15 @@ import { ChartColumn, History } from "lucide-react";
 import type { FiltersOutletContext } from "@/components/layout/MainLayout";
 
 import {
-  getAvailableSeasons,
   getTeamMatches,
   type MatchWithWeather,
 } from "@/services/matchesService";
-import { getTeamById } from "@/services/teamsService";
-import { getTeamWeatherScore } from "@/services/weatherStatsService";
 
 import { computeTeamStats } from "@/lib/teamStats";
+import { computeTeamWeatherScore } from "@/lib/weatherScore";
 import { hasBandFilters, matchesBands } from "@/lib/matchFilters";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
+import { seasonsOptions, teamsOptions } from "@/hooks/queries";
 
 import {
   Card,
@@ -45,30 +44,25 @@ const TeamDetails = () => {
   });
 
   const teamQuery = useQuery({
-    queryKey: ["team", teamId],
-    queryFn: () => getTeamById(teamId),
+    ...teamsOptions,
+    select: (teams) => teams.find((t) => t.id === teamId),
   });
 
-  const seasonsQuery = useQuery({
-    queryKey: ["seasons"],
-    queryFn: getAvailableSeasons,
-    staleTime: Infinity,
-  });
+  const seasonsQuery = useQuery(seasonsOptions);
 
   const matches = matchesQuery.data ?? EMPTY_MATCHES;
   const team = teamQuery.data;
   const latestSeason = seasonsQuery.data?.[0] ?? null;
 
-  const weatherScoreQuery = useQuery({
-    queryKey: ["weather-score", teamId, latestSeason],
-    queryFn: () => getTeamWeatherScore(teamId, latestSeason),
-    enabled: !seasonsQuery.isPending,
-  });
+  const weatherScore = useMemo(
+    () => computeTeamWeatherScore(matches, teamId, latestSeason),
+    [matches, teamId, latestSeason],
+  );
 
   const isPending =
     matchesQuery.isPending || teamQuery.isPending || seasonsQuery.isPending;
   const isError =
-    matchesQuery.isError || teamQuery.isError || seasonsQuery.isError;
+    matchesQuery.isError || teamQuery.isError || seasonsQuery.isError || !team;
 
   const filteredMatches = useMemo(
     () => matches.filter((match) => matchesBands(match, filters)),
@@ -135,10 +129,8 @@ const TeamDetails = () => {
 
         <div className="grid gap-4 xl:grid-cols-3">
           <WeatherScoreCard
-            weatherScore={weatherScoreQuery.data}
+            weatherScore={weatherScore}
             season={latestSeason}
-            isPending={weatherScoreQuery.isPending}
-            isError={weatherScoreQuery.isError}
           />
           <div className="xl:col-span-2">
             <TeamStatsCards

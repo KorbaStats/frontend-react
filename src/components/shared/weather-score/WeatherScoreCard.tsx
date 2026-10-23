@@ -12,15 +12,11 @@ import WeatherScoreRing from "@/components/shared/weather-score/WeatherScoreRing
 interface WeatherScoreCardProps {
   weatherScore: WeatherScore | null | undefined;
   season?: string | null;
-  isPending: boolean;
-  isError: boolean;
 }
 
 const WeatherScoreCard = ({
   weatherScore,
   season = null,
-  isPending,
-  isError,
 }: WeatherScoreCardProps) => {
   const header = (
     <CardHeader>
@@ -35,18 +31,12 @@ const WeatherScoreCard = ({
     </CardHeader>
   );
 
-  if (isPending || isError || !weatherScore) {
-    const message = isPending
-      ? "Ładowanie..."
-      : isError
-        ? "Nie udało się pobrać weather score."
-        : "Za mało meczów w trudnej lub normalnej pogodzie, żeby policzyć wskaźnik.";
-
+  if (!weatherScore) {
     return (
       <Card>
         {header}
         <CardContent className="flex flex-1 items-center justify-center py-6 text-center text-sm text-muted-foreground">
-          {message}
+          Za mało meczów w trudnej lub normalnej pogodzie, żeby policzyć wskaźnik.
         </CardContent>
       </Card>
     );

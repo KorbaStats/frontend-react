@@ -1,5 +1,5 @@
 import type { MatchWithWeather } from "@/services/matchesService";
-import type { WeatherPercentile } from "@/services/weatherStatsService";
+import type { WeatherPercentile } from "@/lib/weatherStats";
 
 import WeatherPercentiles from "./weather-insights/WeatherPercentiles";
 import TeamsRecentMatches from "./weather-insights/TeamsRecentMatches";
@@ -28,7 +28,13 @@ const MatchWeatherInsights = ({
 }: MatchWeatherInsightsProps) => {
   return (
     <div className="flex flex-col gap-6">
-      <TeamsWeatherScoreSection match={match} />
+      <TeamsWeatherScoreSection
+        match={match}
+        homeMatches={homeMatches}
+        awayMatches={awayMatches}
+        isPending={isTeamMatchesPending}
+        isError={isTeamMatchesError}
+      />
       <WeatherPercentiles
         match={match}
         percentiles={percentiles}

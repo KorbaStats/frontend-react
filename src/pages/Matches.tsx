@@ -10,7 +10,8 @@ import {
 } from "@/components/ui/card";
 import { CalendarDays } from "lucide-react";
 
-import { getMatches, type MatchWithWeather } from "@/services/matchesService";
+import type { MatchWithWeather } from "@/services/matchesService";
+import { matchesOptions } from "@/hooks/queries";
 import { filterMatches } from "@/lib/matchFilters";
 import type { FiltersOutletContext } from "@/components/layout/MainLayout";
 
@@ -21,10 +22,7 @@ import ShowMoreFooter from "@/components/shared/ShowMoreFooter";
 const EMPTY: MatchWithWeather[] = [];
 
 const Matches = () => {
-  const {data: matches = EMPTY, isPending, isError } = useQuery({
-    queryKey: ["matches"],
-    queryFn: async () => (await getMatches()).data,
-  });
+  const {data: matches = EMPTY, isPending, isError } = useQuery(matchesOptions);
 
   const { filters } = useOutletContext<FiltersOutletContext>();
   const filteredMatches = useMemo(

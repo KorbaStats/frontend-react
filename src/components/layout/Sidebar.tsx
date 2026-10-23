@@ -7,9 +7,7 @@ import type { Team, League } from "@/data/types";
 import type { MatchFilters } from "@/lib/matchFilters";
 import { getLeagueCountryCode } from "@/lib/leagueLabel";
 import { getTeamShortName } from "@/lib/teamLabel";
-import { getLeagues } from "@/services/leaguesService";
-import { getAvailableSeasons } from "@/services/matchesService";
-import { getTeams } from "@/services/teamsService";
+import { leaguesOptions, seasonsOptions, teamsOptions } from "@/hooks/queries";
 
 import SidebarSection from "@/components/layout/SidebarSection";
 import MatchesFilters from "@/components/filters/MatchesFilters";
@@ -94,23 +92,9 @@ const Sidebar = ({
   const { pathname } = useLocation();
   const { favouriteTeamsIds } = useFavouriteTeams();
 
-  const teamsQuery = useQuery({
-    queryKey: ["teams"],
-    queryFn: async () => (await getTeams()).data,
-    staleTime: Infinity,
-  });
-
-  const leaguesQuery = useQuery({
-    queryKey: ["leagues"],
-    queryFn: async () => (await getLeagues()).data,
-    staleTime: Infinity,
-  });
-
-  const seasonsQuery = useQuery({
-    queryKey: ["seasons"],
-    queryFn: getAvailableSeasons,
-    staleTime: Infinity,
-  });
+  const teamsQuery = useQuery(teamsOptions);
+  const leaguesQuery = useQuery(leaguesOptions);
+  const seasonsQuery = useQuery(seasonsOptions);
 
   const teams = teamsQuery.data ?? EMPTY_TEAMS;
   const leagues = leaguesQuery.data ?? EMPTY_LEAGUES;

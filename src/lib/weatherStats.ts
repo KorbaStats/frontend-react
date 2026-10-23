@@ -1,7 +1,6 @@
-import { getMatches, getTeamMatches } from "@/services/matchesService";
 import type { Weather } from "@/data/types";
-import { type WeatherScore, computeWeatherScore } from "@/lib/weatherScore";
-import { isDifficultWeather } from "@/lib/weatherProfile";
+import type { MatchWithWeather } from "@/services/matchesService";
+import { isDifficultWeather } from "./weatherProfile";
 
 export type ExtremeMatch = {
   city: string | undefined;
@@ -13,11 +12,10 @@ export type WeatherExtremes = {
   windiest: ExtremeMatch | null;
 };
 
-// GET /api/weather-stats/extremes
-export async function getWeatherExtremes(): Promise<WeatherExtremes> {
-  const { data } = await getMatches();
-
-  const withWeather = data
+export function computeWeatherExtremes(
+  matches: MatchWithWeather[],
+): WeatherExtremes {
+  const withWeather = matches
     .filter((match) => match.weather !== null)
     .map((match) => ({
       city: match.stadium?.city,
@@ -45,10 +43,10 @@ export type DifficultWeatherShare = {
   withWeather: number;
 };
 
-// GET /api/weather-stats/difficult-share
-export async function getDifficultWeatherShare(): Promise<DifficultWeatherShare> {
-  const { data } = await getMatches();
-  const withWeather = data.filter((match) => match.weather !== null);
+export function computeDifficultWeatherShare(
+  matches: MatchWithWeather[],
+): DifficultWeatherShare {
+  const withWeather = matches.filter((match) => match.weather !== null);
 
   return {
     difficult: withWeather.filter((match) => isDifficultWeather(match.weather!))
@@ -102,17 +100,15 @@ function median(values: number[]): number {
     : sorted[middle];
 }
 
-// GET /api/weather-stats/percentiles?match_id=X&league_id=Y
-export async function getWeatherPercentiles(
+export function computeWeatherPercentiles(
+  matches: MatchWithWeather[],
   matchId: number,
   leagueId?: number,
-): Promise<WeatherPercentile[]> {
-  const { data } = await getMatches();
-
-  const match = data.find((m) => m.id === matchId);
+): WeatherPercentile[] {
+  const match = matches.find((m) => m.id === matchId);
   if (!match?.weather) return [];
 
-  const population = data.filter(
+  const population = matches.filter(
     (m) =>
       m.weather !== null &&
       (leagueId === undefined || m.league_id === leagueId),
@@ -134,17 +130,4 @@ export async function getWeatherPercentiles(
       matchCount: values.length,
     };
   });
-}
-
-// GET /api/teams/:id/weather-score?season=2025/2026
-export async function getTeamWeatherScore(
-  teamId: number,
-  season?: string | null,
-): Promise<WeatherScore | null> {
-  const teamMatches = await getTeamMatches(teamId);
-  const scoped = season
-    ? teamMatches.filter((match) => match.season === season)
-    : teamMatches;
-
-  return computeWeatherScore(scoped, teamId);
 }

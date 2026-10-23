@@ -12,7 +12,7 @@ import type {
   DifficultWeatherShare,
   ExtremeMatch,
   WeatherExtremes,
-} from "@/services/weatherStatsService";
+} from "@/lib/weatherStats";
 import { weatherDisplay, weatherDisplayFor } from "@/lib/weatherStylesConfig";
 import { formatWeatherValue } from "@/lib/weatherFormat";
 

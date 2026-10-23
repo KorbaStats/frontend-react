@@ -4,12 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Trophy } from "lucide-react";
 
 import type { League } from "@/data/types";
-import { getLeagues } from "@/services/leaguesService";
-import {
-  getAvailableSeasons,
-  getMatches,
-  type MatchWithWeather,
-} from "@/services/matchesService";
+import type { MatchWithWeather } from "@/services/matchesService";
+import { leaguesOptions, matchesOptions, seasonsOptions } from "@/hooks/queries";
 
 import { computeLeagueSummaries } from "@/lib/leagueSummaries";
 
@@ -20,22 +16,9 @@ const EMPTY_LEAGUES: League[] = [];
 const EMPTY_MATCHES: MatchWithWeather[] = [];
 
 const Leagues = () => {
-  const leaguesQuery = useQuery({
-    queryKey: ["leagues"],
-    queryFn: async () => (await getLeagues()).data,
-    staleTime: Infinity, //wartosc lig się nie zmienia
-  })
-
-  const matchesQuery = useQuery({
-    queryKey: ["matches"],
-    queryFn: async () => (await getMatches()).data,
-  })
-
-  const seasonsQuery = useQuery({
-    queryKey: ["seasons"],
-    queryFn: getAvailableSeasons,
-    staleTime: Infinity,
-  });
+  const leaguesQuery = useQuery(leaguesOptions);
+  const matchesQuery = useQuery(matchesOptions);
+  const seasonsQuery = useQuery(seasonsOptions);
 
   const leagues = leaguesQuery.data ?? EMPTY_LEAGUES;
   const matches = matchesQuery.data ?? EMPTY_MATCHES;

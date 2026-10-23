@@ -4,12 +4,11 @@ import { useParams } from "react-router";
 
 import { Card, CardContent } from "@/components/ui/card";
 
-import { getLeagueById } from "@/services/leaguesService";
 import {
-  getAvailableSeasons,
   getLeagueMatches,
   type MatchWithWeather,
 } from "@/services/matchesService";
+import { leaguesOptions, seasonsOptions } from "@/hooks/queries";
 
 import {
   computeLeagueWeatherSummary,
@@ -33,15 +32,11 @@ const LeagueDetails = () => {
   const [season, setSeason] = useState<string | null>(null);
 
   const leagueQuery = useQuery({
-    queryKey: ["league", leagueId],
-    queryFn: () => getLeagueById(leagueId),
+    ...leaguesOptions,
+    select: (leagues) => leagues.find((l) => l.id === leagueId),
   });
 
-  const seasonsQuery = useQuery({
-    queryKey: ["seasons"],
-    queryFn: getAvailableSeasons,
-    staleTime: Infinity,
-  });
+  const seasonsQuery = useQuery(seasonsOptions);
 
   const seasons = seasonsQuery.data ?? EMPTY_SEASONS;
   const selectedSeason = season ?? seasons[0] ?? null;
@@ -58,7 +53,10 @@ const LeagueDetails = () => {
   const isPending =
     leagueQuery.isPending || seasonsQuery.isPending || matchesQuery.isPending;
   const isError =
-    leagueQuery.isError || seasonsQuery.isError || matchesQuery.isError;
+    leagueQuery.isError ||
+    seasonsQuery.isError ||
+    matchesQuery.isError ||
+    !league;
 
   const teamsCount = useMemo(
     () =>

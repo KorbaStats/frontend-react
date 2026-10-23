@@ -11,7 +11,7 @@ import type { MatchWithWeather } from "@/services/matchesService";
 import type {
   WeatherMetricKey,
   WeatherPercentile,
-} from "@/services/weatherStatsService";
+} from "@/lib/weatherStats";
 import { formatWeatherValue } from "@/lib/weatherFormat";
 
 import {

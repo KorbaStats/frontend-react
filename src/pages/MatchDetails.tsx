@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 
@@ -10,10 +10,8 @@ import {
   getTeamMatches,
   type MatchWithWeather,
 } from "@/services/matchesService";
-import {
-  getWeatherPercentiles,
-  type WeatherPercentile,
-} from "@/services/weatherStatsService";
+import { computeWeatherPercentiles } from "@/lib/weatherStats";
+import { matchesOptions } from "@/hooks/queries";
 
 import MatchHeaderCard from "@/components/match-details/MatchHeaderCard";
 import MatchStats from "@/components/match-details/MatchStats";
@@ -21,7 +19,6 @@ import MatchWeatherInsights from "@/components/match-details/MatchWeatherInsight
 import ExportReportButton from "@/components/shared/ExportReportButton";
 
 const EMPTY_MATCHES: MatchWithWeather[] = [];
-const EMPTY_PERCENTILES: WeatherPercentile[] = [];
 
 const MatchDetails = () => {
   const { id } = useParams();
@@ -51,11 +48,17 @@ const MatchDetails = () => {
     enabled: !!match,
   });
 
-  const percentilesQuery = useQuery({
-    queryKey: ["weather-stats", "percentiles", matchId, leagueId],
-    queryFn: () => getWeatherPercentiles(matchId, leagueId ?? undefined),
-    enabled: !!match,
-  });
+  const allMatchesQuery = useQuery({ ...matchesOptions, enabled: !!match });
+
+  const percentiles = useMemo(
+    () =>
+      computeWeatherPercentiles(
+        allMatchesQuery.data ?? EMPTY_MATCHES,
+        matchId,
+        leagueId ?? undefined,
+      ),
+    [allMatchesQuery.data, matchId, leagueId],
+  );
 
   if (matchQuery.isPending) {
     return (
@@ -102,9 +105,9 @@ const MatchDetails = () => {
       ) : (
         <MatchWeatherInsights
           match={match}
-          percentiles={percentilesQuery.data ?? EMPTY_PERCENTILES}
-          isPercentilesPending={percentilesQuery.isPending}
-          isPercentilesError={percentilesQuery.isError}
+          percentiles={percentiles}
+          isPercentilesPending={allMatchesQuery.isPending}
+          isPercentilesError={allMatchesQuery.isError}
           homeMatches={homeMatchesQuery.data ?? EMPTY_MATCHES}
           awayMatches={awayMatchesQuery.data ?? EMPTY_MATCHES}
           isTeamMatchesPending={

@@ -9,28 +9,11 @@ export type MatchWithWeather = Match & { weather: Weather | null };
 
 const NEWEST_FIRST = { sort: "datetime", order: "desc" } as const;
 
-// pełna lista to kilkanaście stron po 100 meczów, a getMatches jest wołane naraz
-// z kilku miejsc (strony + weatherStatsService) - współdzielimy wynik przez krótki czas
-const ALL_MATCHES_TTL_MS = 60 * 1000;
-let allMatchesCache: {
-  fetchedAt: number;
-  promise: Promise<PaginatedResponse<MatchWithWeather>>;
-} | null = null;
-
 // GET /api/matches?sort=datetime&order=desc
 export async function getMatches(): Promise<
   PaginatedResponse<MatchWithWeather>
 > {
-  if (!allMatchesCache || Date.now() - allMatchesCache.fetchedAt > ALL_MATCHES_TTL_MS) {
-    const promise = apiGetAllPages<MatchWithWeather>("/api/matches", NEWEST_FIRST);
-    allMatchesCache = { fetchedAt: Date.now(), promise };
-
-    promise.catch(() => {
-      if (allMatchesCache?.promise === promise) allMatchesCache = null;
-    });
-  }
-
-  return allMatchesCache.promise;
+  return apiGetAllPages<MatchWithWeather>("/api/matches", NEWEST_FIRST);
 }
 
 // GET /api/matches?sort=datetime&order=desc&limit=N
