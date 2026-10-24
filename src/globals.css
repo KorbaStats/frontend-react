@@ -82,9 +82,8 @@
   --weather-extreme-heat: oklch(0.6 0.22 25);
   --weather-extreme-cold: oklch(0.55 0.18 275);
 
-  --outcome-home: oklch(0.52 0.15 150);
-  --outcome-away: oklch(0.68 0.12 210);
-  --outcome-draw: oklch(0.70 0.16 65);
+  --weather-normal: oklch(0.55 0.13 150);
+  --weather-difficult: oklch(0.55 0.14 255);
 
   --sidebar: oklch(0.98 0.005 150);
   --sidebar-foreground: oklch(0.2 0.03 150);
@@ -136,9 +135,8 @@
   --weather-extreme-heat: oklch(0.68 0.21 25);
   --weather-extreme-cold: oklch(0.68 0.17 275);
 
-  --outcome-home: oklch(0.50 0.15 150);
-  --outcome-away: oklch(0.64 0.13 215);
-  --outcome-draw: oklch(0.66 0.17 65);
+  --weather-normal: oklch(0.66 0.14 150);
+  --weather-difficult: oklch(0.66 0.13 255);
 
   --sidebar: oklch(0.18 0.02 150);
   --sidebar-foreground: oklch(0.96 0.01 150);
