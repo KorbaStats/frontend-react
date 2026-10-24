@@ -52,15 +52,15 @@ const Dashboard = () => {
     [allMatches],
   );
   const topScores = useMemo(
-    () => computeTopWeatherScores(seasonMatches),
-    [seasonMatches],
+    () => computeTopWeatherScores(allMatches),
+    [allMatches],
   );
   const bottomScores = useMemo(
-    () => computeBottomWeatherScores(seasonMatches),
-    [seasonMatches],
+    () => computeBottomWeatherScores(allMatches),
+    [allMatches],
   );
 
-  const seasonLabel = `Wszystkie ligi${season ? `, sezon ${season}` : ""}`;
+  const scoresLabel = "Wszystkie ligi i sezony";
 
 return (
     <>
@@ -79,14 +79,14 @@ return (
           Icon={TrendingUp}
           scores={topScores}
           title="Najlepsze Weather Score's"
-          description={seasonLabel}
+          description={scoresLabel}
         />
         <WeatherScoreRankingCard
           Icon={TrendingDown}
           iconColor="text-destructive"
           scores={bottomScores}
           title="Najsłabsze Weather Score's"
-          description={seasonLabel}
+          description={scoresLabel}
         />
       </div>
 

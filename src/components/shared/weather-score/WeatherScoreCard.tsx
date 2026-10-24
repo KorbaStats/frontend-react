@@ -11,13 +11,9 @@ import WeatherScoreRing from "@/components/shared/weather-score/WeatherScoreRing
 
 interface WeatherScoreCardProps {
   weatherScore: WeatherScore | null | undefined;
-  season?: string | null;
 }
 
-const WeatherScoreCard = ({
-  weatherScore,
-  season = null,
-}: WeatherScoreCardProps) => {
+const WeatherScoreCard = ({ weatherScore }: WeatherScoreCardProps) => {
   const header = (
     <CardHeader>
       <CardTitle className="flex items-center gap-2 text-base">
@@ -26,7 +22,7 @@ const WeatherScoreCard = ({
         </h1>
       </CardTitle>
       <CardDescription>
-        {season ? `Sezon ${season}` : "Wszystkie sezony"}
+        Wszystkie sezony
       </CardDescription>
     </CardHeader>
   );

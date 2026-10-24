@@ -146,6 +146,7 @@ export const bandIcons: Record<string, LucideIcon> = {
 
 export const conditionIcons: Record<DifficultConditionKey, LucideIcon> = {
   freezing: bandIcons.freezing,
+  cold: bandIcons.cold,
   hot: bandIcons.hot,
   heavyPrecip: bandIcons.heavy,
   snow: bandIcons.snow,

@@ -3,7 +3,7 @@ import { CloudSun } from "lucide-react";
 
 import type { MatchWithWeather } from "@/services/matchesService";
 import { Card, CardContent } from "@/components/ui/card";
-import { computeTeamWeatherScore } from "@/lib/weatherScore";
+import { computeWeatherScore } from "@/lib/weatherScore";
 import WeatherScoreIndicator from "@/components/shared/weather-score/WeatherScoreIndicator";
 
 interface TeamsWeatherScoreSectionProps {
@@ -22,12 +22,12 @@ const TeamsWeatherScoreSection = ({
   isError,
 }: TeamsWeatherScoreSectionProps) => {
   const homeScore = useMemo(
-    () => computeTeamWeatherScore(homeMatches, match.home_team_id, match.season),
-    [homeMatches, match.home_team_id, match.season],
+    () => computeWeatherScore(homeMatches, match.home_team_id),
+    [homeMatches, match.home_team_id],
   );
   const awayScore = useMemo(
-    () => computeTeamWeatherScore(awayMatches, match.away_team_id, match.season),
-    [awayMatches, match.away_team_id, match.season],
+    () => computeWeatherScore(awayMatches, match.away_team_id),
+    [awayMatches, match.away_team_id],
   );
 
   return (
@@ -36,8 +36,7 @@ const TeamsWeatherScoreSection = ({
         <CloudSun size={16} className="text-primary" />
         <h3 className="font-semibold text-foreground">Weather Score drużyn</h3>
         <span className="text-sm text-muted-foreground">
-          (trudna pogoda na tle normalnej
-          {match.season ? `, sezon ${match.season}` : ""})
+          (trudna pogoda na tle normalnej, wszystkie sezony)
         </span>
       </div>
 

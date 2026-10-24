@@ -75,18 +75,6 @@ export function computeWeatherScore(
   };
 }
 
-export function computeTeamWeatherScore(
-  teamMatches: MatchWithWeather[],
-  teamId: number,
-  season: string | null,
-): WeatherScore | null {
-  const scoped = season
-    ? teamMatches.filter((match) => match.season === season)
-    : teamMatches;
-
-  return computeWeatherScore(scoped, teamId);
-}
-
 export function weatherScoreLabel(score: number): string {
   if (score <= 34) return "Wyraźnie gorzej w trudnej pogodzie";
   else if (score >= 35 && score <= 44) return "Gorzej w trudnej pogodzie";

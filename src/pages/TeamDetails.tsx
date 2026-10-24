@@ -11,10 +11,10 @@ import {
 } from "@/services/matchesService";
 
 import { computeTeamStats } from "@/lib/teamStats";
-import { computeTeamWeatherScore } from "@/lib/weatherScore";
+import { computeWeatherScore } from "@/lib/weatherScore";
 import { hasBandFilters, matchesBands } from "@/lib/matchFilters";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
-import { seasonsOptions, teamsOptions } from "@/hooks/queries";
+import { teamsOptions } from "@/hooks/queries";
 
 import {
   Card,
@@ -48,21 +48,16 @@ const TeamDetails = () => {
     select: (teams) => teams.find((t) => t.id === teamId),
   });
 
-  const seasonsQuery = useQuery(seasonsOptions);
-
   const matches = matchesQuery.data ?? EMPTY_MATCHES;
   const team = teamQuery.data;
-  const latestSeason = seasonsQuery.data?.[0] ?? null;
 
   const weatherScore = useMemo(
-    () => computeTeamWeatherScore(matches, teamId, latestSeason),
-    [matches, teamId, latestSeason],
+    () => computeWeatherScore(matches, teamId),
+    [matches, teamId],
   );
 
-  const isPending =
-    matchesQuery.isPending || teamQuery.isPending || seasonsQuery.isPending;
-  const isError =
-    matchesQuery.isError || teamQuery.isError || seasonsQuery.isError || !team;
+  const isPending = matchesQuery.isPending || teamQuery.isPending;
+  const isError = matchesQuery.isError || teamQuery.isError || !team;
 
   const filteredMatches = useMemo(
     () => matches.filter((match) => matchesBands(match, filters)),
@@ -115,9 +110,8 @@ const TeamDetails = () => {
               Statystyki drużyny
             </h2>
             <p className="text-sm text-muted-foreground">
-              Statystyki drużyny - weather score z sezonu
-              {latestSeason ? ` ${latestSeason}` : ""} i średnie statystyki po
-              filtrach pogodowych.
+              Statystyki drużyny - weather score ze wszystkich sezonów i
+              średnie statystyki po filtrach pogodowych.
             </p>
           </div>
           <span className="rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground">
@@ -128,10 +122,7 @@ const TeamDetails = () => {
         </div>
 
         <div className="grid gap-4 xl:grid-cols-3">
-          <WeatherScoreCard
-            weatherScore={weatherScore}
-            season={latestSeason}
-          />
+          <WeatherScoreCard weatherScore={weatherScore} />
           <div className="xl:col-span-2">
             <TeamStatsCards
               stats={filteredStats}

@@ -107,7 +107,7 @@ export const weatherAxes = [
   },
 ]
 
-export type DifficultConditionKey = "freezing" | "hot" | "heavyPrecip" | "snow" | "strongWind"
+export type DifficultConditionKey = "freezing" | "cold" | "hot" | "heavyPrecip" | "snow" | "strongWind"
 
 export type DifficultCondition = {
   key: DifficultConditionKey
@@ -117,6 +117,7 @@ export type DifficultCondition = {
 
 export const difficultConditions: DifficultCondition[] = [
   { key: "freezing", label: "Mróz", isMet: (p) => p.temp === "freezing" },
+  { key: "cold", label: "Zimno", isMet: (p) => p.temp === "cold" },
   { key: "hot", label: "Upał", isMet: (p) => p.temp === "hot" },
   { key: "heavyPrecip", label: "Silne opady", isMet: (p) => p.precip === "heavy" },
   { key: "snow", label: "Śnieg", isMet: (p) => p.precipType === "snow" || p.precipType === "sleet" },

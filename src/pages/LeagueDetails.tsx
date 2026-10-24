@@ -8,7 +8,11 @@ import {
   getLeagueMatches,
   type MatchWithWeather,
 } from "@/services/matchesService";
-import { leaguesOptions, seasonsOptions } from "@/hooks/queries";
+import {
+  leaguesOptions,
+  matchesOptions,
+  seasonsOptions,
+} from "@/hooks/queries";
 
 import {
   computeLeagueWeatherSummary,
@@ -47,15 +51,22 @@ const LeagueDetails = () => {
     enabled: !!selectedSeason,
   });
 
+  const allMatchesQuery = useQuery(matchesOptions);
+
   const league = leagueQuery.data ?? null;
   const leagueMatches = matchesQuery.data ?? EMPTY_MATCHES;
+  const allMatches = allMatchesQuery.data ?? EMPTY_MATCHES;
 
   const isPending =
-    leagueQuery.isPending || seasonsQuery.isPending || matchesQuery.isPending;
+    leagueQuery.isPending ||
+    seasonsQuery.isPending ||
+    matchesQuery.isPending ||
+    allMatchesQuery.isPending;
   const isError =
     leagueQuery.isError ||
     seasonsQuery.isError ||
     matchesQuery.isError ||
+    allMatchesQuery.isError ||
     !league;
 
   const teamsCount = useMemo(
@@ -71,8 +82,11 @@ const LeagueDetails = () => {
   );
 
   const topScores = useMemo(
-    () => computeTopWeatherScores(leagueMatches),
-    [leagueMatches],
+    () =>
+      computeTopWeatherScores(
+        allMatches.filter((m) => m.league_id === leagueId),
+      ),
+    [allMatches, leagueId],
   );
 
   if (isPending) {
@@ -112,9 +126,7 @@ const LeagueDetails = () => {
         <WeatherScoreRankingCard
           scores={topScores}
           title="Top Weather Score's w lidze"
-          description={`Najlepsze drużyny w trudnej pogodzie${
-            selectedSeason ? ` — sezon ${selectedSeason}` : ""
-          }`}
+          description="Najlepsze drużyny w trudnej pogodzie — wszystkie sezony"
         />
       </div>
 
