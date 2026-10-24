@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router";
+import { useEffect, useMemo, useState } from "react";
+import { Outlet, useLocation, useSearchParams } from "react-router";
 
 import type { MatchFilters } from "@/lib/matchFilters";
-import { emptyFilters } from "@/lib/matchFilters";
+import { filtersFromParams, filtersToParams } from "@/lib/matchFilters";
 
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
@@ -14,15 +14,15 @@ export type FiltersOutletContext = {
 
 const MainLayout = () => {
   const { pathname } = useLocation();
-  const [stored, setStored] = useState({ pathname, filters: emptyFilters });
+  const [searchParams, setSearchParams] = useSearchParams();
   const [openedOn, setOpenedOn] = useState<string | null>(null);
   const isSidebarOpen = openedOn === pathname;
   const setIsSidebarOpen = (open: boolean) =>
     setOpenedOn(open ? pathname : null);
 
-  const filters = stored.pathname === pathname ? stored.filters : emptyFilters;
+  const filters = useMemo(() => filtersFromParams(searchParams), [searchParams]);
   const setFilters = (next: MatchFilters) =>
-    setStored({ pathname, filters: next });
+    setSearchParams(filtersToParams(next), { replace: true });
 
   useEffect(() => {
     if (!isSidebarOpen) return;

@@ -5,6 +5,8 @@ import {
   type PrecipTypeBand,
   type TempBand,
   type WindBand,
+  type WeatherAxisKey,
+  weatherAxes,
 } from "./weatherProfile"
 import { normalize } from "@/lib/utils.ts";
 export type WeatherBandFilters = {
@@ -97,6 +99,45 @@ function teamHaystack(match: MatchWithWeather): string {
       awayTeam.city,
     ].join(" ")
   )
+}
+
+function bandsFromParams<K extends WeatherAxisKey>(
+  params: URLSearchParams,
+  key: K
+): WeatherBandFilters[K] {
+  const allowed: string[] =
+    weatherAxes.find((axis) => axis.key === key)?.bands.map((band) => band.value) ?? []
+  return params.getAll(key).filter((value) => allowed.includes(value)) as WeatherBandFilters[K]
+}
+
+// zamiana parametrow URL na filtry
+export function filtersFromParams(params: URLSearchParams): MatchFilters {
+  const leagueId = Number(params.get("league"))
+  return {
+    temp: bandsFromParams(params, "temp"),
+    precip: bandsFromParams(params, "precip"),
+    precipType: bandsFromParams(params, "precipType"),
+    wind: bandsFromParams(params, "wind"),
+    query: params.get("q") ?? "",
+    season: params.get("season") ?? "all",
+    leagueId: Number.isInteger(leagueId) && leagueId > 0 ? leagueId : "all",
+    dateFrom: params.get("from") ?? "",
+    dateTo: params.get("to") ?? "",
+  }
+}
+
+// zamiana filtrów na parametry URL
+export function filtersToParams(filters: MatchFilters): URLSearchParams {
+  const params = new URLSearchParams()
+  for (const { key } of weatherAxes) {
+    for (const band of filters[key]) params.append(key, band)
+  }
+  if (filters.query.trim() !== "") params.set("q", filters.query)
+  if (filters.season !== "all") params.set("season", filters.season)
+  if (filters.leagueId !== "all") params.set("league", String(filters.leagueId))
+  if (filters.dateFrom !== "") params.set("from", filters.dateFrom)
+  if (filters.dateTo !== "") params.set("to", filters.dateTo)
+  return params
 }
 
 export function hasActiveFilters(filters: MatchFilters): boolean {
