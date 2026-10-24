@@ -60,30 +60,26 @@ const WeatherComparisonChart = ({
 }: WeatherComparisonChartProps) => {
   const [selectedKey, setSelectedKey] = useState<DifficultConditionKey | null>(null);
 
-  const chips = difficultConditions.map((condition) => ({
-    condition,
-    count: splitByCondition(matches, condition).conditionMatches.length,
-  }));
+  const available = difficultConditions
+    .map((condition) => ({ condition, split: splitByCondition(matches, condition) }))
+    .filter(({ split }) => split.conditionMatches.length >= MIN_MATCHES);
 
-  const available = chips.filter((chip) => chip.count >= MIN_MATCHES);
   const selected =
-    available.find((chip) => chip.condition.key === selectedKey) ?? available[0];
-
-  const split = selected ? splitByCondition(matches, selected.condition) : null;
-  const hasNormal = split !== null && split.normalMatches.length >= MIN_MATCHES;
+    available.find(({ condition }) => condition.key === selectedKey) ?? available[0];
+  const hasNormal =
+    selected !== undefined && selected.split.normalMatches.length >= MIN_MATCHES;
 
   let rows: ComparisonRow[] = [];
-  if (split && hasNormal) {
+  if (selected && hasNormal) {
+    const { conditionMatches, normalMatches } = selected.split;
     rows =
       teamId === undefined
-        ? leagueComparisonRows(split.conditionMatches, split.normalMatches)
-        : teamComparisonRows(split.conditionMatches, split.normalMatches, teamId);
+        ? leagueComparisonRows(conditionMatches, normalMatches)
+        : teamComparisonRows(conditionMatches, normalMatches, teamId);
   }
 
   const data = rows.map((row) => ({ ...row, value: row.changePct ?? 0 }));
-  // maksymalna wartosc danych 
   const biggestChange = Math.max(...data.map((d) => Math.abs(d.value)), 10);
-  // skala: -scale-10...+scale+10 - skala musi sie zmiescic na wykresie łącznie z labelem +-x%
   const scale = biggestChange + 10;
 
   const placeholder = !selected
@@ -102,7 +98,7 @@ const WeatherComparisonChart = ({
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {chips.map(({ condition, count }) => {
+          {available.map(({ condition, split }) => {
             const Icon = conditionIcons[condition.key];
             const active = selected?.condition.key === condition.key;
 
@@ -113,13 +109,12 @@ const WeatherComparisonChart = ({
                 size="sm"
                 className="rounded-full"
                 aria-pressed={active}
-                disabled={count < MIN_MATCHES}
                 onClick={() => setSelectedKey(condition.key)}
               >
                 <Icon />
                 {condition.label}
                 <span className="tabular-nums text-muted-foreground">
-                  · {count}
+                  · {split.conditionMatches.length}
                 </span>
               </Button>
             );
@@ -128,7 +123,7 @@ const WeatherComparisonChart = ({
       </CardHeader>
 
       <CardContent className="flex flex-col gap-3">
-        {!selected || !split || !hasNormal ? (
+        {!selected || !hasNormal ? (
           <p className="py-10 text-center text-sm text-muted-foreground">
             {placeholder}
           </p>
@@ -212,7 +207,7 @@ const WeatherComparisonChart = ({
             </div>
 
             <p className="text-xs text-muted-foreground">
-              {split.normalMatches.length} meczów w normalnych warunkach pogodowych. Warunki mogą się nakładać — mecz w mrozie ze śniegiem liczy się do obu.
+              {selected.split.normalMatches.length} meczów w normalnych warunkach pogodowych. Warunki mogą się nakładać — mecz w mrozie ze śniegiem liczy się do obu.
             </p>
           </>
         )}
