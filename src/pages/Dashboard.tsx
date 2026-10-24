@@ -3,11 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { TrendingDown, TrendingUp } from "lucide-react";
 
 import type { MatchWithWeather } from "@/services/matchesService";
-import type { ScheduledMatch } from "@/data/types";
 import { getMatchStatsSummary } from "@/services/matchStatsService";
-import { getUpcomingMatchesForTeams } from "@/services/scheduledMatchesService";
 
-import { useFavouriteTeams } from "@/hooks/useFavouriteTeams";
 import { matchesOptions, seasonsOptions } from "@/hooks/queries";
 import {
   computeTopWeatherScores,
@@ -19,30 +16,20 @@ import {
 } from "@/lib/weatherStats";
 
 import SummaryCards from "@/components/dashboard/SummaryCards";
-import UpcomingMatchesCard from "@/components/dashboard/UpcomingMatchesCard";
 import WinsByWeatherChart from "@/components/dashboard/WinsByWeatherChart";
 import RecentMatchesCard from "@/components/dashboard/RecentMatchesCard";
 import WeatherScoreRankingCard from "@/components/shared/weather-score/WeatherScoreRankingCard";
 
 const EMPTY_MATCHES: MatchWithWeather[] = [];
-const EMPTY_SCHEDULED: ScheduledMatch[] = [];
 const RECENT_LIMIT = 10;
 
 const Dashboard = () => {
-  const { favouriteTeamsIds, isLoadingFavourites } = useFavouriteTeams();
-
   const matchesQuery = useQuery(matchesOptions);
   const seasonsQuery = useQuery(seasonsOptions);
 
   const summaryQuery = useQuery({
     queryKey: ["match-stats", "summary"],
     queryFn: getMatchStatsSummary,
-  });
-
-  const upcomingMatchesQuery = useQuery({
-    queryKey: ["scheduled-matches", [...favouriteTeamsIds].sort((a, b) => a - b)],
-    queryFn: () => getUpcomingMatchesForTeams(favouriteTeamsIds),
-    enabled: !isLoadingFavourites,
   });
 
   const allMatches = matchesQuery.data ?? EMPTY_MATCHES;
@@ -85,15 +72,7 @@ return (
         isError={summaryQuery.isError || matchesQuery.isError}
       />
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[3fr_2fr] xl:grid-cols-[2fr_1fr]">
-        <UpcomingMatchesCard
-          matches={upcomingMatchesQuery.data ?? EMPTY_SCHEDULED}
-          isPending={isLoadingFavourites || upcomingMatchesQuery.isPending}
-          isError={upcomingMatchesQuery.isError}
-          hasFavourites={favouriteTeamsIds.length > 0}
-        />
-        <WinsByWeatherChart matches={seasonMatches} season={season} />
-      </div>
+      <WinsByWeatherChart matches={seasonMatches} season={season} />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <WeatherScoreRankingCard
