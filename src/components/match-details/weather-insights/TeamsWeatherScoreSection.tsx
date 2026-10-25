@@ -2,7 +2,13 @@ import { useMemo } from "react";
 import { CloudSun } from "lucide-react";
 
 import type { MatchWithWeather } from "@/services/matchesService";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { computeWeatherScore } from "@/lib/weatherScore";
 import WeatherScoreIndicator from "@/components/shared/weather-score/WeatherScoreIndicator";
 
@@ -31,33 +37,32 @@ const TeamsWeatherScoreSection = ({
   );
 
   return (
-    <section className="space-y-3">
-      <div className="flex items-center gap-2">
-        <CloudSun size={16} className="text-primary" />
-        <h3 className="font-semibold text-foreground">Weather Score drużyn</h3>
-        <span className="text-sm text-muted-foreground">
-          (trudna pogoda na tle normalnej, wszystkie sezony)
-        </span>
-      </div>
-
-      <Card className="break-inside-avoid">
-        <CardContent className="grid grid-cols-[1fr_auto_1fr] items-center gap-6">
-          <WeatherScoreIndicator
-            teamName={match.homeTeam.name}
-            weatherScore={homeScore}
-            isPending={isPending}
-            isError={isError}
-          />
-          <div className="h-24 w-px bg-border" />
-          <WeatherScoreIndicator
-            teamName={match.awayTeam.name}
-            weatherScore={awayScore}
-            isPending={isPending}
-            isError={isError}
-          />
-        </CardContent>
-      </Card>
-    </section>
+    <Card className="break-inside-avoid">
+      <CardHeader className="border-b pb-4">
+        <CardTitle className="flex items-center gap-2 text-base">
+          <CloudSun className="h-4 w-4 text-primary" />
+          Weather Score drużyn
+        </CardTitle>
+        <CardDescription>
+          Trudna pogoda na tle normalnej, wszystkie sezony.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="grid flex-1 grid-cols-[1fr_auto_1fr] items-center gap-6">
+        <WeatherScoreIndicator
+          teamName={match.homeTeam.name}
+          weatherScore={homeScore}
+          isPending={isPending}
+          isError={isError}
+        />
+        <div className="h-24 w-px bg-border" />
+        <WeatherScoreIndicator
+          teamName={match.awayTeam.name}
+          weatherScore={awayScore}
+          isPending={isPending}
+          isError={isError}
+        />
+      </CardContent>
+    </Card>
   );
 };
 

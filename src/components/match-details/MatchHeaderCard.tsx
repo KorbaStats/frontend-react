@@ -72,7 +72,7 @@ const MatchHeaderCard = ({ match }: MatchHeaderCardProps) => {
 
   return (
     <Card className="gap-0 overflow-hidden py-0">
-      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b px-4 py-3 text-xs text-muted-foreground lg:px-6">
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b px-4 py-3 text-xs text-muted-foreground lg:px-4">
         <div className="flex items-center gap-2">
           {match.league && (
             <>
@@ -120,7 +120,7 @@ const MatchHeaderCard = ({ match }: MatchHeaderCardProps) => {
         </dl>
       </div>
 
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-6 lg:gap-6 lg:px-6">
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-4 lg:gap-6 lg:px-4">
         <Link
           to={`/team/${match.home_team_id}`}
           className="group flex flex-col items-center gap-3 lg:flex-row lg:justify-end"
@@ -170,7 +170,7 @@ const MatchHeaderCard = ({ match }: MatchHeaderCardProps) => {
       </div>
 
       {weather && config && WeatherIcon ? (
-        <div className="flex flex-col gap-4 border-t bg-muted/40 px-4 py-4 lg:flex-row lg:items-center lg:px-6">
+        <div className="flex flex-col gap-4 border-t bg-muted/40 px-4 py-4 lg:flex-row lg:items-center lg:px-4">
           <div className="flex items-center gap-3 lg:w-60 lg:shrink-0">
             <span
               className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${config.bg} ${config.text}`}
@@ -188,7 +188,7 @@ const MatchHeaderCard = ({ match }: MatchHeaderCardProps) => {
             </div>
           </div>
 
-          <dl className="grid flex-1 grid-cols-2 gap-2 min-[1120px]:grid-cols-4">
+          <dl className="grid flex-1 grid-cols-4 gap-2">
             <WeatherTile
               icon={Wind}
               label="Wiatr"
@@ -221,7 +221,7 @@ const MatchHeaderCard = ({ match }: MatchHeaderCardProps) => {
           </dl>
         </div>
       ) : (
-        <div className="flex items-center gap-2 border-t bg-muted/40 px-4 py-4 text-sm text-muted-foreground lg:px-6">
+        <div className="flex items-center gap-2 border-t bg-muted/40 px-4 py-4 text-sm text-muted-foreground lg:px-4">
           <Thermometer size={16} />
           Brak danych pogodowych dla tego meczu.
         </div>

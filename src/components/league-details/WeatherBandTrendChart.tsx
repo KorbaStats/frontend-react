@@ -70,7 +70,7 @@ const WeatherBandTrendChart = ({
 
   return (
     <Card className="break-inside-avoid">
-      <CardHeader className="flex flex-col gap-3 border-b pb-6">
+      <CardHeader className="flex flex-col gap-3 border-b pb-4">
         <div>
           <CardTitle className="flex items-center gap-2 text-base">
             <ChartLine className="h-4 w-4 text-primary" />
@@ -129,7 +129,7 @@ const WeatherBandTrendChart = ({
           </p>
         ) : (
           <>
-            <div className="h-64 w-full">
+            <div className="h-56 w-full">
               <ResponsiveContainer>
                 <LineChart
                   data={rows}

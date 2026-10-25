@@ -19,7 +19,6 @@ import SummaryCards from "@/components/dashboard/SummaryCards";
 import WinsByWeatherChart from "@/components/dashboard/WinsByWeatherChart";
 import RecentMatchesCard from "@/components/dashboard/RecentMatchesCard";
 import WeatherScoreRankingCard from "@/components/shared/weather-score/WeatherScoreRankingCard";
-
 const EMPTY_MATCHES: MatchWithWeather[] = [];
 const RECENT_LIMIT = 10;
 
@@ -72,9 +71,8 @@ return (
         isError={summaryQuery.isError || matchesQuery.isError}
       />
 
-      <WinsByWeatherChart matches={seasonMatches} season={season} />
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-3 gap-4">
+        <WinsByWeatherChart matches={seasonMatches} season={season} />
         <WeatherScoreRankingCard
           Icon={TrendingUp}
           scores={topScores}

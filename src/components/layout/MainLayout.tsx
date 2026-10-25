@@ -35,14 +35,14 @@ const MainLayout = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
-      <div className="mx-auto flex w-full max-w-400">
+      <div className="mx-auto flex w-full max-w-450">
         <Sidebar
           filters={filters}
           onFiltersChange={setFilters}
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
         />
-        <main className="flex min-w-0 flex-1 flex-col gap-4 px-6 py-4 2xl:pl-3">
+        <main className="flex min-w-0 flex-1 flex-col gap-4 px-4 py-4 xl:pl-2">
           <Outlet
             context={
               { filters, setFilters } satisfies FiltersOutletContext

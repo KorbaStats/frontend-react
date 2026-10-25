@@ -54,7 +54,7 @@ const WeatherScoreCard = ({ weatherScore }: WeatherScoreCardProps) => {
   return (
     <Card className="break-inside-avoid">
       {header}
-      <CardContent className="flex flex-1 flex-col items-center justify-between gap-6 lg:flex-row lg:justify-center lg:gap-12 xl:flex-col xl:justify-between xl:gap-6">
+      <CardContent className="flex flex-1 flex-col items-center justify-center gap-6">
         <div className="flex flex-col items-center gap-4">
           <WeatherScoreRing score={score} size="lg" />
 
@@ -63,7 +63,7 @@ const WeatherScoreCard = ({ weatherScore }: WeatherScoreCardProps) => {
           </p>
         </div>
 
-        <dl className="flex w-full max-w-sm flex-col gap-3 pt-4 text-sm lg:border-l lg:pt-0 lg:pl-12 xl:gap-4 xl:border-l-0 xl:pt-6 xl:pl-0">
+        <dl className="flex w-full max-w-sm flex-col gap-3 border-t pt-4 text-sm">
           <div className="flex items-start justify-between gap-2">
             <div>
               <dt className="font-medium">Trudne warunki</dt>

@@ -34,7 +34,7 @@ const FavouriteTeams = ({ teams }: { teams: Team[] }) => (
           >
             <Link
               to={`/team/${team.id}`}
-              className="flex min-w-0 flex-1 items-center gap-3 px-2 py-2 text-sm font-medium group-hover:text-accent-foreground"
+              className="flex min-w-0 flex-1 items-center gap-3 px-2 py-1.5 text-sm font-medium group-hover:text-accent-foreground"
             >
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-primary/20 to-secondary/20 text-[10px] font-extrabold">
                 {getTeamShortName(team)}
@@ -61,7 +61,7 @@ const Leagues = ({ leagues }: { leagues: League[] }) => {
         {leagues.map((league) => (
           <li key={league.id}>
             <button
-              className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-sm font-medium transition-colors hover:cursor-pointer hover:bg-accent hover:text-accent-foreground"
+              className="flex w-full items-center gap-3 rounded-xl px-2 py-1.5 text-sm font-medium transition-colors hover:cursor-pointer hover:bg-accent hover:text-accent-foreground"
               onClick={() => navigate(`/league/${league.id}`)}
             >
               <span className="flex h-6 w-9 shrink-0 items-center justify-center rounded-md bg-accent/50 text-[10px] font-semibold tracking-wide text-muted-foreground">
@@ -133,12 +133,12 @@ const Sidebar = ({
 
   return (
     <>
-      <aside className="no-scrollbar sticky top-16 hidden h-[calc(100vh-4rem)] w-80 shrink-0 flex-col gap-4 overflow-y-auto py-4 pr-3 pl-6 2xl:flex print:hidden">
+      <aside className="no-scrollbar sticky top-14 hidden h-[calc(100vh-3.5rem)] w-76 shrink-0 flex-col gap-4 overflow-y-auto py-4 pr-2 pl-4 xl:flex print:hidden">
         {sections}
       </aside>
 
       <div
-        className={`fixed inset-0 top-16 z-40 2xl:hidden print:hidden ${
+        className={`fixed inset-0 top-14 z-40 xl:hidden print:hidden ${
           isOpen ? "" : "pointer-events-none"
         }`}
         aria-hidden={!isOpen}

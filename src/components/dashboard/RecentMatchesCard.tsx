@@ -45,7 +45,7 @@ const RecentMatchesCard = ({matches, isPending, isError}: RecentMatchesCardProps
 
   return (
     <Card>
-      <CardHeader className="border-b pb-6">
+      <CardHeader className="border-b pb-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <History className="h-4 w-4 text-primary" />
           Ostatnie mecze

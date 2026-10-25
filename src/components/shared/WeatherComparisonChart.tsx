@@ -41,7 +41,7 @@ interface WeatherComparisonChartProps {
   description: string;
 }
 
-const ROW_HEIGHT = 36;
+const ROW_HEIGHT = 30;
 
 const formatValue = (row: ComparisonRow, value: number) =>
   `${value.toFixed(row.decimals)}${row.unit}`;
@@ -88,7 +88,7 @@ const WeatherComparisonChart = ({
 
   return (
     <Card className="break-inside-avoid">
-      <CardHeader className="flex flex-col gap-3 border-b pb-6">
+      <CardHeader className="flex flex-col gap-3 border-b pb-4">
         <div>
           <CardTitle className="flex items-center gap-2 text-base">
             <ChartBar className="h-4 w-4 text-primary" />
@@ -175,7 +175,7 @@ const WeatherComparisonChart = ({
                     dataKey="value"
                     fill="var(--primary)"
                     radius={3}
-                    barSize={16}
+                    barSize={14}
                     isAnimationActive={false}
                   >
                     <LabelList

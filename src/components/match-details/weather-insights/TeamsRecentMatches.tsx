@@ -49,7 +49,7 @@ const TeamsRecentMatches = ({
         </h3>
       </div>
 
-      <div className="grid grid-cols-1 gap-2 min-[1120px]:grid-cols-2">
+      <div className="grid grid-cols-2 gap-4">
         <TeamMatchesCard
           teamId={home_id}
           teamName={match.homeTeam.name}

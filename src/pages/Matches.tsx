@@ -35,7 +35,7 @@ const Matches = () => {
   
   return (
     <Card>
-      <CardHeader className="border-b pb-6">
+      <CardHeader className="border-b pb-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <CalendarDays className="h-4 w-4 text-primary" />
           Wszystkie mecze

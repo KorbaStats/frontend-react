@@ -131,20 +131,22 @@ const LeagueDetails = () => {
         />
       </div>
 
-      <WeatherComparisonChart
-        matches={leagueMatches}
-        title="Wpływ warunków pogodowych"
-        description={`${league?.name ?? "Liga"}${
-          selectedSeason ? `, sezon ${selectedSeason}` : ""
-        } — statystyki względem meczów w sprzyjających warunkach pogodowych.`}
-      />
+      <div className="grid grid-cols-2 gap-4 print:grid-cols-1">
+        <WeatherComparisonChart
+          matches={leagueMatches}
+          title="Wpływ warunków pogodowych"
+          description={`${league?.name ?? "Liga"}${
+            selectedSeason ? `, sezon ${selectedSeason}` : ""
+          } — statystyki względem meczów w sprzyjających warunkach pogodowych.`}
+        />
 
-      <WeatherBandTrendChart
-        matches={leagueMatches}
-        description={`${league?.name ?? "Liga"}${
-          selectedSeason ? `, sezon ${selectedSeason}` : ""
-        } — jak zmienia się wybrana statystyka z pogodą.`}
-      />
+        <WeatherBandTrendChart
+          matches={leagueMatches}
+          description={`${league?.name ?? "Liga"}${
+            selectedSeason ? `, sezon ${selectedSeason}` : ""
+          } — jak zmienia się wybrana statystyka z pogodą.`}
+        />
+      </div>
 
       <LeagueRecentMatches
         key={selectedSeason}

@@ -14,7 +14,7 @@ const ParsedStatRow = ({ label, home, away }: ParsedRowProps) => {
   const awayShare = total === 0 ? 0 : 100 - homeShare;
 
   return (
-    <div className="space-y-1 my-1">
+    <div className="my-1 break-inside-avoid space-y-1">
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-sm">
         <div className="text-left leading-tight">
           <span className="font-semibold tabular-nums">{home.pct}%</span>

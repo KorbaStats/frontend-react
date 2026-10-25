@@ -157,7 +157,7 @@ const WeatherPercentiles = ({
 
   return (
     <Card className="break-inside-avoid"> 
-      <CardHeader className="flex flex-wrap items-start justify-between gap-2 border-b pb-6">
+      <CardHeader className="flex flex-wrap items-start justify-between gap-2 border-b pb-4">
         <div className="min-w-0">
           <CardTitle className="flex items-center gap-2 text-base">
             <Thermometer className="h-4 w-4 text-primary" />
@@ -181,7 +181,7 @@ const WeatherPercentiles = ({
             {placeholder}
           </p>
         ) : (
-          <div className="grid grid-cols-1 gap-2 min-[1120px]:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2">
             {percentiles.map((item) => (
               <PercentileRow key={item.metric} item={item} />
             ))}

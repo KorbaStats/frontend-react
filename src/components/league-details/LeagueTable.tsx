@@ -25,7 +25,7 @@ const LeagueTable = ({ matches }: LeagueTableProps) => {
 
   return (
     <Card className="col-span-2 print:col-span-1">
-      <CardHeader className="border-b pb-6">
+      <CardHeader className="border-b pb-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <Trophy className="h-4 w-4 text-primary" />
           Tabela ligowa
@@ -35,7 +35,7 @@ const LeagueTable = ({ matches }: LeagueTableProps) => {
         <Table containerClassName="max-h-[calc(11*2.5rem)] overflow-y-auto print:max-h-none">
           <TableHeader className="sticky top-0 z-10 bg-card print:static [&_th]:shadow-[inset_0_-1px_0_var(--border)] [&_tr]:border-0">
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-10 pl-6 text-center">#</TableHead>
+              <TableHead className="w-10 pl-4 text-center">#</TableHead>
               <TableHead>Drużyna</TableHead>
               <TableHead className="text-center">M</TableHead>
               <TableHead className="text-center">W</TableHead>
@@ -43,7 +43,7 @@ const LeagueTable = ({ matches }: LeagueTableProps) => {
               <TableHead className="text-center">P</TableHead>
               <TableHead className="text-center">RB</TableHead>
               <TableHead className="text-center">Pkt</TableHead>
-              <TableHead className="pr-6">Forma</TableHead>
+              <TableHead className="pr-4">Forma</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -61,7 +61,7 @@ const LeagueTable = ({ matches }: LeagueTableProps) => {
 
             {standingRows.map((row, idx) => (
               <TableRow key={row.team.id}>
-                <TableCell className="pl-6 text-center tabular-nums text-muted-foreground">
+                <TableCell className="pl-4 text-center tabular-nums text-muted-foreground">
                   {idx + 1}
                 </TableCell>
                 <TableCell>
@@ -101,7 +101,7 @@ const LeagueTable = ({ matches }: LeagueTableProps) => {
                 <TableCell className="text-center font-bold tabular-nums text-foreground">
                   {row.points}
                 </TableCell>
-                <TableCell className="pr-6">
+                <TableCell className="pr-4">
                   <div className="flex gap-1">
                     {row.form.map((result, i) => (
                       <ResultBadge key={i} result={result} size="sm" />

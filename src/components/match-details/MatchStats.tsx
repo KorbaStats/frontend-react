@@ -22,7 +22,7 @@ interface MatchStatsProps {
 
 const StatSection = ({ group }: { group: StatGroup }) => (
   <section className="space-y-3">
-    <h3 className="border-t pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+    <h3 className="break-after-avoid border-t pt-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
       {group.title}
     </h3>
     {group.rows.map((row) =>
@@ -57,7 +57,7 @@ const MatchStats = ({ match }: MatchStatsProps) => {
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent className="gap-x-10 space-y-3 lg:columns-2">
         <StatSection group={topGroup} />
 
         {showAll &&
@@ -66,7 +66,7 @@ const MatchStats = ({ match }: MatchStatsProps) => {
           ))}
       </CardContent>
 
-      <CardFooter className="justify-center border-t pt-6 print:hidden">
+      <CardFooter className="justify-center border-t pt-4 print:hidden">
         <Button variant="outline" onClick={() => setShowAll(!showAll)}>
           {showAll ? "Pokaż mniej" : "Pokaż więcej"}
         </Button>

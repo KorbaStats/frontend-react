@@ -43,14 +43,14 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
 
   return (
     <header className="sticky top-0 z-50 bg-card dark:bg-background/70 backdrop-blur-md border-b print:hidden">
-      <div className="mx-auto flex h-16 w-full max-w-400 items-center justify-between gap-4 px-6">
+      <div className="mx-auto flex h-14 w-full max-w-450 items-center justify-between gap-4 px-4">
         <div className="flex shrink-0 items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
             onClick={onMenuClick}
             aria-label="Menu boczne"
-            className="2xl:hidden"
+            className="xl:hidden"
           >
             <Menu />
           </Button>
@@ -61,7 +61,7 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
                 <img
                   src="/ks_logo.png"
                   alt="KorbaStats logo"
-                  className="h-8 w-8"
+                  className="h-7 w-7"
                 />
               </div>
               <span className="text-lg font-semibold">KorbaStats</span>
@@ -123,7 +123,7 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
                 className="cursor-pointer"
               >
                 <LogOut size={"icon"} />
-                Wyloguj
+                <span className="hidden xl:inline">Wyloguj</span>
               </Button>
             </>
           ) : (

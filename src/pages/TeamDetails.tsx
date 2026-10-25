@@ -121,26 +121,29 @@ const TeamDetails = () => {
           </span>
         </div>
 
-        <div className="grid gap-4 xl:grid-cols-3">
-          <WeatherScoreCard weatherScore={weatherScore} />
-          <div className="xl:col-span-2">
+        <div className="grid grid-cols-3 gap-4 print:grid-cols-1">
+          <div className="row-span-2 grid">
+            <WeatherScoreCard weatherScore={weatherScore} />
+          </div>
+          <div className="col-span-2 print:col-span-1">
             <TeamStatsCards
               stats={filteredStats}
               baseline={hasBandFilters(filters) ? baselineStats : null}
             />
           </div>
+          <div className="col-span-2 print:col-span-1">
+            <WeatherComparisonChart
+              matches={matches}
+              teamId={teamId}
+              title="Wpływ warunków pogodowych"
+              description="Wszystkie sezony — statystyki drużyny względem jej meczów w sprzyjających warunkach pogodowych."
+            />
+          </div>
         </div>
       </section>
 
-      <WeatherComparisonChart
-        matches={matches}
-        teamId={teamId}
-        title="Wpływ warunków pogodowych"
-        description="Wszystkie sezony — statystyki drużyny względem jej meczów w sprzyjających warunkach pogodowych."
-      />
-
       <Card>
-        <CardHeader className="border-b pb-6">
+        <CardHeader className="border-b pb-4">
           <CardTitle className="flex items-center gap-2 text-base">
             <History className="h-4 w-4 text-primary" />
             Mecze drużyny

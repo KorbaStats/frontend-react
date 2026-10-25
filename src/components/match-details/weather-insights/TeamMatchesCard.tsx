@@ -44,7 +44,7 @@ const TeamMatchesCard = ({
 
   return (
     <Card className="break-inside-avoid">
-      <CardHeader className="border-b pb-6">
+      <CardHeader className="border-b pb-4">
         <CardTitle className="text-base">{teamName}</CardTitle>
         <CardDescription>
           Ostatnie {maxMatchesLength} meczów przed tym spotkaniem
@@ -55,11 +55,11 @@ const TeamMatchesCard = ({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="pl-6">Wynik</TableHead>
+              <TableHead className="pl-4">Wynik</TableHead>
               <TableHead>Z kim</TableHead>
               <TableHead>Gdzie</TableHead>
               <TableHead>Pogoda</TableHead>
-              <TableHead className="pr-6">Data</TableHead>
+              <TableHead className="pr-4">Data</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -114,7 +114,7 @@ const TeamMatchesCard = ({
                     onClick={() => navigate(`/match/${m.id}`)}
                     className="cursor-pointer"
                   >
-                    <TableCell className="pl-6">
+                    <TableCell className="pl-4">
                       <div className="flex items-center gap-2">
                         <ResultBadge
                           goalsFor={perspective.goalsFor}
@@ -156,7 +156,7 @@ const TeamMatchesCard = ({
                       </div>
                     </TableCell>
 
-                    <TableCell className="pr-6 text-muted-foreground">
+                    <TableCell className="pr-4 text-muted-foreground">
                       {getFormatedDate(m.datetime)}
                     </TableCell>
                   </TableRow>

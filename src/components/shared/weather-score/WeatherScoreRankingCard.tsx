@@ -30,7 +30,7 @@ const WeatherScoreRankingCard = ({
   description,
 }: WeatherScoreRankingCardProps) => (
   <Card className="@container break-inside-avoid">
-    <CardHeader className="border-b pb-6">
+    <CardHeader className="border-b pb-4">
       <CardTitle className="flex items-center gap-2 text-base">
         <Icon className={`h-4 w-4 ${iconColor}`} />
         {title}
@@ -40,14 +40,14 @@ const WeatherScoreRankingCard = ({
 
     <CardContent className="px-0">
       {scores.length === 0 ? (
-        <p className="px-6 py-4 text-center text-sm text-muted-foreground">
+        <p className="px-4 py-4 text-center text-sm text-muted-foreground">
           Za mało meczów w trudnej lub normalnej pogodzie, żeby policzyć
           wskaźnik.
         </p>
       ) : (
         <ol className="divide-y">
           {scores.map(({ team, score }, idx) => (
-            <li key={team.id} className="flex items-center gap-3 px-6 py-3">
+            <li key={team.id} className="flex items-center gap-3 px-4 py-2">
               <span className="w-4 shrink-0 text-center text-sm tabular-nums text-muted-foreground">
                 {idx + 1}
               </span>

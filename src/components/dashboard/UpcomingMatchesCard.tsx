@@ -64,7 +64,7 @@ const UpcomingMatchesCard = ({matches, hasFavourites, isPending, isError }: Upco
 
   return (
     <Card className="@container gap-0">
-      <CardHeader className="border-b pb-6">
+      <CardHeader className="border-b pb-4">
         <CardTitle className="flex items-center gap-2 text-base">
           <Calendar className="h-4 w-4 text-primary" />
           Nadchodzące mecze
@@ -73,13 +73,13 @@ const UpcomingMatchesCard = ({matches, hasFavourites, isPending, isError }: Upco
       </CardHeader>
       <CardContent className="flex-1 px-0">
         {message ? (
-          <p className="px-6 py-6 text-center text-muted-foreground">
+          <p className="px-4 py-6 text-center text-muted-foreground">
             {message}
           </p>
         ) : (
           <ul className="divide-y divide-border">
             {visibleItems.map((m) => (
-              <li key={m.id} className="flex items-center gap-3 px-6 py-2">
+              <li key={m.id} className="flex items-center gap-3 px-4 py-2">
                 <div className="flex w-20 shrink-0 flex-col items-center rounded-md bg-muted py-1 leading-tight">
                   <span className="text-sm font-semibold tabular-nums text-foreground">
                     <span className="mr-1 text-xs font-normal uppercase text-muted-foreground">

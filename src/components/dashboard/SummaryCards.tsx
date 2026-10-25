@@ -82,7 +82,7 @@ const SummaryCards = ({summary, extremes, difficultShare, isPending, isError}: S
       : 0;
 
   return (
-    <div className="grid grid-cols-2 items-stretch gap-4 xl:grid-cols-4">
+    <div className="grid grid-cols-4 items-stretch gap-4">
       <StatCard
         title="Śledzone mecze"
         Icon={CalendarDays}

@@ -60,7 +60,7 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
               onClick={() => navigate(`/match/${m.id}`)}
               className="cursor-pointer"
             >
-              <TableCell className="pl-6 font-medium text-foreground hover:text-primary">
+              <TableCell className="pl-4 font-medium text-foreground hover:text-primary">
                 <Link
                   to={`/team/${m.home_team_id}`}
                   onClick={(e) => e.stopPropagation()}
@@ -114,7 +114,7 @@ const MatchesTable = ({ matches }: MatchesTableProps) => {
                 </div>
               </TableCell>
 
-              <TableCell className="pr-6">
+              <TableCell className="pr-4">
                 <div className="flex flex-col leading-tight">
                   <span className="font-medium text-foreground">
                     {m.stadium?.name ?? "Brak stadionu"}

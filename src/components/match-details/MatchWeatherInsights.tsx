@@ -27,20 +27,22 @@ const MatchWeatherInsights = ({
   isTeamMatchesError,
 }: MatchWeatherInsightsProps) => {
   return (
-    <div className="flex flex-col gap-6">
-      <TeamsWeatherScoreSection
-        match={match}
-        homeMatches={homeMatches}
-        awayMatches={awayMatches}
-        isPending={isTeamMatchesPending}
-        isError={isTeamMatchesError}
-      />
-      <WeatherPercentiles
-        match={match}
-        percentiles={percentiles}
-        isPending={isPercentilesPending}
-        isError={isPercentilesError}
-      />
+    <div className="flex flex-col gap-4">
+      <div className="grid grid-cols-2 gap-4 print:grid-cols-1">
+        <TeamsWeatherScoreSection
+          match={match}
+          homeMatches={homeMatches}
+          awayMatches={awayMatches}
+          isPending={isTeamMatchesPending}
+          isError={isTeamMatchesError}
+        />
+        <WeatherPercentiles
+          match={match}
+          percentiles={percentiles}
+          isPending={isPercentilesPending}
+          isError={isPercentilesError}
+        />
+      </div>
       <TeamsRecentMatches
         match={match}
         homeMatches={homeMatches}
