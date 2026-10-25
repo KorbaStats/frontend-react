@@ -2,13 +2,17 @@ import type { MatchWithWeather } from "@/services/matchesService";
 import {
   averageCombinedStats,
   getCombinedMatchStats,
+  type CombinedStatKey,
 } from "./combinedMatchStats";
 import { computeTeamStats } from "./teamStats";
 import {
   isDifficultWeather,
   profileFor,
+  weatherAxes,
   type DifficultCondition,
+  type WeatherAxisKey,
 } from "./weatherProfile";
+import { MIN_MATCHES } from "./weatherScore";
 
 export type ComparisonRow = {
   label: string;
@@ -58,6 +62,23 @@ function toRow(
   };
 }
 
+export type LeagueStat = {
+  key: CombinedStatKey;
+  label: string;
+  decimals: number;
+  unit: string;
+};
+
+export const leagueStats: LeagueStat[] = [
+  { key: "goals", label: "Gole", decimals: 2, unit: "" },
+  { key: "xg", label: "xG", decimals: 2, unit: "" },
+  { key: "shots_on_target", label: "Strzały celne", decimals: 1, unit: "" },
+  { key: "corner_kicks", label: "Rzuty rożne", decimals: 1, unit: "" },
+  { key: "fouls", label: "Faule", decimals: 1, unit: "" },
+  { key: "yellow_cards", label: "Żółte kartki", decimals: 1, unit: "" },
+  { key: "pass_accuracy_pct", label: "Celność podań", decimals: 1, unit: "%" },
+];
+
 export function leagueComparisonRows(
   conditionMatches: MatchWithWeather[],
   normalMatches: MatchWithWeather[],
@@ -65,17 +86,44 @@ export function leagueComparisonRows(
   const c = averageCombinedStats(conditionMatches.map(getCombinedMatchStats));
   const n = averageCombinedStats(normalMatches.map(getCombinedMatchStats));
 
-  const rows = [
-    toRow("Gole", n.goals, c.goals, 2),
-    toRow("xG", n.xg, c.xg, 2),
-    toRow("Strzały celne", n.shots_on_target, c.shots_on_target, 1),
-    toRow("Rzuty rożne", n.corner_kicks, c.corner_kicks, 1),
-    toRow("Faule", n.fouls, c.fouls, 1),
-    toRow("Żółte kartki", n.yellow_cards, c.yellow_cards, 1),
-    toRow("Celność podań", n.pass_accuracy_pct, c.pass_accuracy_pct, 1, "%"),
-  ];
+  const rows = leagueStats.map((stat) =>
+    toRow(stat.label, n[stat.key], c[stat.key], stat.decimals, stat.unit),
+  );
 
   return rows.filter((row) => row !== null);
+}
+
+export type BandAverage = {
+  label: string;
+  matches: number;
+  value: number | null;
+};
+
+export function bandAverages(
+  matches: MatchWithWeather[],
+  axisKey: WeatherAxisKey,
+  stat: CombinedStatKey,
+) {
+  const withWeather = matches.filter((match) => match.weather !== null);
+  const axis = weatherAxes.find((a) => a.key === axisKey);
+  const bands: { value: string; label: string }[] = axis?.bands ?? [];
+
+  const rows: BandAverage[] = bands.map((band) => {
+    const inBand = withWeather.filter(
+      (match) => match.weather && profileFor(match.weather)[axisKey] === band.value,
+    );
+    const average = averageCombinedStats(inBand.map(getCombinedMatchStats))[stat];
+
+    return {
+      label: band.label,
+      matches: inBand.length,
+      value: inBand.length >= MIN_MATCHES ? average : null,
+    };
+  });
+
+  const overall = averageCombinedStats(withWeather.map(getCombinedMatchStats))[stat];
+
+  return { rows, overall };
 }
 
 export function teamComparisonRows(

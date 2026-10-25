@@ -24,6 +24,7 @@ import LeagueTable from "@/components/league-details/LeagueTable";
 import WeatherScoreRankingCard from "@/components/shared/weather-score/WeatherScoreRankingCard";
 import LeagueRecentMatches from "@/components/league-details/LeagueRecentMatches";
 import WeatherComparisonChart from "@/components/shared/WeatherComparisonChart";
+import WeatherBandTrendChart from "@/components/league-details/WeatherBandTrendChart";
 import ExportReportButton from "@/components/shared/ExportReportButton";
 
 const EMPTY_MATCHES: MatchWithWeather[] = [];
@@ -136,6 +137,13 @@ const LeagueDetails = () => {
         description={`${league?.name ?? "Liga"}${
           selectedSeason ? `, sezon ${selectedSeason}` : ""
         } — statystyki względem meczów w sprzyjających warunkach pogodowych.`}
+      />
+
+      <WeatherBandTrendChart
+        matches={leagueMatches}
+        description={`${league?.name ?? "Liga"}${
+          selectedSeason ? `, sezon ${selectedSeason}` : ""
+        } — jak zmienia się wybrana statystyka z pogodą.`}
       />
 
       <LeagueRecentMatches
