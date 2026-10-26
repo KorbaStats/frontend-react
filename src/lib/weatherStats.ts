@@ -18,7 +18,7 @@ export function computeWeatherExtremes(
   const withWeather = matches
     .filter((match) => match.weather !== null)
     .map((match) => ({
-      city: match.stadium?.city,
+      city: match.stadium?.city ?? undefined,
       weather: match.weather!,
     }));
 

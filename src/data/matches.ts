@@ -165,7 +165,7 @@ function buildMatch(id: number, home: Team, away: Team, season: string, datetime
   const awayShotsOnTarget = randInt(2, Math.min(9, awayShots))
   const homePossession = randInt(38, 62)
   const stadium = home.homeStadium
-  const attendance = stadium ? Math.round(stadium.capacity * randFloat(0.55, 0.97)) : null
+  const attendance = stadium?.capacity ? Math.round(stadium.capacity * randFloat(0.55, 0.97)) : null
 
   return {
     id,

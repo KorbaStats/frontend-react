@@ -1,4 +1,4 @@
-import type { Team } from "@/data/types";
+import type { Team, UserAccount } from "@/data/types";
 import { normalize } from "@/lib/utils";
 
 function rankTeam(team: Team, query: string): number {
@@ -22,4 +22,10 @@ export function searchTeams(teams: Team[], query: string, limit = 8): Team[] {
     )
     .slice(0, limit)
     .map((entry) => entry.team);
+}
+
+export function filterUsersByEmail(users: UserAccount[], query: string): UserAccount[] {
+  const normalizedQuery = normalize(query).trim();
+  if (!normalizedQuery) return users;
+  return users.filter((user) => normalize(user.email).includes(normalizedQuery));
 }

@@ -19,6 +19,14 @@ import NotFound from "./pages/NotFound.tsx";
 import Login from "./pages/Login.tsx";
 import Register from "./pages/Register.tsx";
 import Profile from "./pages/Profile.tsx";
+import AdminLayout from "./components/admin/AdminLayout.tsx";
+import AdminUsersRoles from "./pages/admin/AdminUsersRoles.tsx";
+import AdminDataLayout from "./components/admin/AdminDataLayout.tsx";
+import AdminLeagues from "./pages/admin/AdminLeagues.tsx";
+import AdminTeams from "./pages/admin/AdminTeams.tsx";
+import AdminStadiums from "./pages/admin/AdminStadiums.tsx";
+import AdminMatches from "./pages/admin/AdminMatches.tsx";
+import AdminWeather from "./pages/admin/AdminWeather.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,6 +56,17 @@ createRoot(document.getElementById("root")!).render(
                   <Route path="league/:id" element={<LeagueDetails />} />
 
                   <Route path="profile" element={<Profile />} />
+
+                  <Route path="admin" element={<AdminLayout />}>
+                    <Route index element={<AdminUsersRoles />} />
+                    <Route path="data" element={<AdminDataLayout />}>
+                      <Route path="leagues" element={<AdminLeagues />} />
+                      <Route path="teams" element={<AdminTeams />} />
+                      <Route path="stadiums" element={<AdminStadiums />} />
+                      <Route path="matches" element={<AdminMatches />} />
+                    </Route>
+                    <Route path="weather" element={<AdminWeather />} />
+                  </Route>
 
                   <Route path="team/:id" element={<TeamDetails />} />
                   <Route path="matches" element={<Matches />} />

@@ -21,11 +21,11 @@ export type League = {
 export type Stadium = {
   id: number
   name: string
-  city: string
-  capacity: number
-  longitude: number
-  latitude: number
-  address: string
+  city: string | null
+  capacity: number | null
+  longitude: number | null
+  latitude: number | null
+  address: string | null
   created_at: string
   updated_at: string
 }
@@ -271,4 +271,73 @@ export type AuthSession = {
 export type Credentials = {
   email: string
   password: string
+}
+
+export type Permission = {
+  id: number
+  name: string
+}
+
+export type Role = {
+  id: number
+  name: string
+  permissions: Permission[]
+}
+
+export type UserAccount = {
+  id: number
+  email: string
+  role_id: number | null
+  created_at: string
+  role: Pick<Role, "id" | "name"> | null
+}
+
+export type UserAccountInput = {
+  email?: string
+  password?: string
+  role_id?: number | null
+}
+
+export type RoleInput = {
+  name?: string
+  permission_ids?: number[]
+}
+
+export type LeagueInput = Partial<Pick<League, "name" | "country" | "slug" | "active">>
+
+export type TeamInput = Partial<
+  Pick<Team, "name" | "short_name" | "city" | "country" | "league_id" | "home_stadium_id">
+>
+
+export type StadiumInput = Partial<
+  Pick<Stadium, "name" | "city" | "capacity" | "address" | "latitude" | "longitude">
+>
+
+export type MatchInput = Partial<
+  Pick<
+    Match,
+    "home_goals" | "away_goals" | "datetime" | "stadium_id" | "referee" | "attendance" | "season"
+  >
+>
+
+export type GeocodingStatus = {
+  running: boolean
+  lastRun: string | null
+  total: number
+  succeeded: number
+  failed: number
+  failedStadiums: { id: number; name: string; reason: string }[]
+}
+
+export type WeatherFetchingStatus = {
+  running: boolean
+  lastRun: string | null
+  finishedAt: string | null
+  total: number
+  processed: number
+  succeeded: number
+  failed: number
+  skipped: number
+  error: string | null
+  failedMatches: { id: number; datetime: string; reason: string }[]
 }

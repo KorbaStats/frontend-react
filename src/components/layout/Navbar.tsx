@@ -1,8 +1,9 @@
-import { LogOut, Menu, Moon, Sun, User } from "lucide-react";
+import { LogOut, Menu, Moon, Shield, Sun, User } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/useTheme";
 import { getUserHandle } from "@/lib/userLabel";
+import { canAccessAdmin } from "@/lib/adminAccess";
 
 import { Link, useLocation } from "react-router";
 import Searchbar from "./Searchbar";
@@ -107,6 +108,18 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
             />
           ) : user ? (
             <>
+              {canAccessAdmin(user) && (
+                <Link
+                  to="/admin"
+                  className={buttonVariants({
+                    variant: pathname.startsWith("/admin") ? "secondary" : "ghost",
+                    size: "sm",
+                  })}
+                >
+                  <Shield />
+                  <span className="hidden xl:inline">Panel admina</span>
+                </Link>
+              )}
               <Link
                 to="/profile"
                 className={buttonVariants({ variant: "ghost", size: "sm" })}

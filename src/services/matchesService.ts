@@ -1,6 +1,7 @@
-import { apiGet, apiGetAllPages } from "@/services/http";
+import { apiGet, apiGetAllPages, apiRequest } from "@/services/http";
 import type {
   Match,
+  MatchInput,
   PaginatedResponse,
   Weather,
 } from "@/data/types";
@@ -61,4 +62,14 @@ export async function getLeagueMatches(
     season,
   });
   return data;
+}
+
+// PATCH /api/matches/:id
+export async function updateMatch(id: number, input: MatchInput): Promise<void> {
+  await apiRequest(`/api/matches/${id}`, { method: "PATCH", body: input });
+}
+
+// DELETE /api/matches/:id
+export async function deleteMatch(id: number): Promise<void> {
+  await apiRequest<void>(`/api/matches/${id}`, { method: "DELETE" });
 }
