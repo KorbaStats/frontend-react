@@ -16,7 +16,7 @@ export class ApiError extends Error {
   }
 }
 
-const CONTRACTED_STATUSES = [400, 401, 409];
+const CONTRACTED_STATUSES = [400, 401, 403, 404, 409];
 const GENERIC_ERROR = "Coś poszło nie tak. Spróbuj ponownie później.";
 
 export function toUserMessage(error: unknown): string {
@@ -31,22 +31,56 @@ type RequestOptions = {
   body?: unknown;
 };
 
-export async function apiRequest<T>(
-  path: string,
-  options: RequestOptions = {},
-): Promise<T> {
-  const { method = "GET", body } = options;
-
+function send(path: string, { method = "GET", body }: RequestOptions) {
   const headers: Record<string, string> = {};
   if (body !== undefined) headers["Content-Type"] = "application/json";
   if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
 
-  const response = await fetch(path, {
+  return fetch(path, {
     method,
     headers,
     credentials: "include",
     body: body === undefined ? undefined : JSON.stringify(body),
   });
+}
+
+let pendingRefresh: Promise<boolean> | null = null;
+
+function refreshAccessToken(): Promise<boolean> {
+  pendingRefresh ??= fetch("/api/auth/refresh", {
+    method: "POST",
+    credentials: "include",
+  })
+    .then(async (response) => {
+      if (!response.ok) throw new Error();
+      const session: { accessToken: string } = await response.json();
+      setAccessToken(session.accessToken);
+      return true;
+    })
+    .catch(() => {
+      setAccessToken(null);
+      return false;
+    })
+    .finally(() => {
+      pendingRefresh = null;
+    });
+  return pendingRefresh;
+}
+
+export async function apiRequest<T>(
+  path: string,
+  options: RequestOptions = {},
+): Promise<T> {
+  let response = await send(path, options);
+
+  if (
+    response.status === 401 &&
+    accessToken &&
+    !path.startsWith("/api/auth/") &&
+    (await refreshAccessToken())
+  ) {
+    response = await send(path, options);
+  }
 
   if (!response.ok) {
     throw new ApiError(response.status, await readErrorMessage(response));
