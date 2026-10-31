@@ -6,9 +6,10 @@ import type { MatchWithWeather } from "@/services/matchesService";
 import { getWeatherFetchingStatus } from "@/services/matchWeatherService";
 import { toUserMessage } from "@/services/http";
 import { useAuth } from "@/hooks/useAuth";
-import { matchesOptions } from "@/hooks/queries";
+import { matchesOptions, weatherScoresOptions } from "@/hooks/queries";
 import {
   useInvalidateMatches,
+  useRecalculateWeatherScores,
   useRunWeatherFetching,
   WEATHER_STATUS_KEY,
 } from "@/hooks/useAdminMutations";
@@ -18,6 +19,7 @@ import { computeWeatherCoverage, isAwaitingWeather } from "@/lib/weatherCoverage
 import WeatherCoverageCard from "@/components/admin/weather/WeatherCoverageCard";
 import WeatherFailuresCard from "@/components/admin/weather/WeatherFailuresCard";
 import WeatherFetchingCard from "@/components/admin/weather/WeatherFetchingCard";
+import WeatherScoresCard from "@/components/admin/weather/WeatherScoresCard";
 
 const EMPTY_MATCHES: MatchWithWeather[] = [];
 const NOT_LOADED = Symbol();
@@ -34,7 +36,13 @@ const AdminWeather = () => {
     enabled: canFetchWeather,
     refetchInterval: (query) => (query.state.data?.running ? 1000 : false),
   });
+  const computedAtQuery = useQuery({
+    ...weatherScoresOptions,
+    select: (scores) => scores[0]?.computed_at,
+    enabled: canFetchWeather,
+  });
   const fetching = useRunWeatherFetching();
+  const recalculation = useRecalculateWeatherScores();
   const invalidateMatches = useInvalidateMatches();
 
   const matches = matchesQuery.data ?? EMPTY_MATCHES;
@@ -76,6 +84,16 @@ const AdminWeather = () => {
         rows={coverage}
         isPending={matchesQuery.isPending}
         isError={matchesQuery.isError}
+      />
+
+      <WeatherScoresCard
+        computedAt={computedAtQuery.data}
+        isPending={computedAtQuery.isPending}
+        isError={computedAtQuery.isError}
+        isRecalculating={recalculation.isPending}
+        result={recalculation.data}
+        recalculateError={recalculation.error ? toUserMessage(recalculation.error) : null}
+        onRecalculate={() => recalculation.mutate()}
       />
 
       {failures.length > 0 && (

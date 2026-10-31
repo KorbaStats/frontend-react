@@ -19,7 +19,7 @@ import {
 import type { MatchWithWeather } from "@/services/matchesService";
 import type { CombinedStatKey } from "@/lib/combinedMatchStats";
 import { weatherAxes } from "@/lib/weatherProfile";
-import { MIN_MATCHES } from "@/lib/weatherScore";
+import { MIN_MATCHES } from "@/lib/weatherComparison";
 import {
   bandAverages,
   leagueStats,

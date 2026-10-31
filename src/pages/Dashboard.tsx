@@ -1,15 +1,23 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { TrendingDown, TrendingUp } from "lucide-react";
 
 import type { MatchWithWeather } from "@/services/matchesService";
+import type { Team, TeamWeatherScores, WeatherCategoryKey } from "@/data/types";
 import { getMatchStatsSummary } from "@/services/matchStatsService";
 
-import { matchesOptions, seasonsOptions } from "@/hooks/queries";
 import {
-  computeTopWeatherScores,
-  computeBottomWeatherScores,
-} from "@/lib/leagueWeather";
+  matchesOptions,
+  seasonsOptions,
+  teamsOptions,
+  weatherScoreCategoriesOptions,
+  weatherScoresOptions,
+} from "@/hooks/queries";
+import {
+  DEFAULT_RANKING_CATEGORY,
+  categoryLabel,
+  rankWeatherScores,
+} from "@/lib/weatherScore";
 import {
   computeDifficultWeatherShare,
   computeWeatherExtremes,
@@ -20,6 +28,8 @@ import WinsByWeatherChart from "@/components/dashboard/WinsByWeatherChart";
 import RecentMatchesCard from "@/components/dashboard/RecentMatchesCard";
 import WeatherScoreRankingCard from "@/components/shared/weather-score/WeatherScoreRankingCard";
 const EMPTY_MATCHES: MatchWithWeather[] = [];
+const EMPTY_SCORES: TeamWeatherScores[] = [];
+const EMPTY_TEAMS: Team[] = [];
 const RECENT_LIMIT = 10;
 
 const Dashboard = () => {
@@ -30,6 +40,16 @@ const Dashboard = () => {
     queryKey: ["match-stats", "summary"],
     queryFn: getMatchStatsSummary,
   });
+  const weatherScoresQuery = useQuery(weatherScoresOptions);
+  const teamsQuery = useQuery(teamsOptions);
+  const categoriesQuery = useQuery(weatherScoreCategoriesOptions);
+
+  const [topCategory, setTopCategory] = useState<WeatherCategoryKey>(
+    DEFAULT_RANKING_CATEGORY,
+  );
+  const [bottomCategory, setBottomCategory] = useState<WeatherCategoryKey>(
+    DEFAULT_RANKING_CATEGORY,
+  );
 
   const allMatches = matchesQuery.data ?? EMPTY_MATCHES;
   const season = seasonsQuery.data?.[0] ?? null;
@@ -50,16 +70,23 @@ const Dashboard = () => {
     () => allMatches.slice(0, RECENT_LIMIT),
     [allMatches],
   );
+  const weatherScores = weatherScoresQuery.data ?? EMPTY_SCORES;
+  const teams = teamsQuery.data ?? EMPTY_TEAMS;
   const topScores = useMemo(
-    () => computeTopWeatherScores(allMatches),
-    [allMatches],
+    () => rankWeatherScores(weatherScores, teams, topCategory, "best"),
+    [weatherScores, teams, topCategory],
   );
   const bottomScores = useMemo(
-    () => computeBottomWeatherScores(allMatches),
-    [allMatches],
+    () => rankWeatherScores(weatherScores, teams, bottomCategory, "worst"),
+    [weatherScores, teams, bottomCategory],
   );
 
-  const scoresLabel = "Wszystkie ligi i sezony";
+  const scoresPending =
+    weatherScoresQuery.isPending || teamsQuery.isPending || categoriesQuery.isPending;
+  const scoresError =
+    weatherScoresQuery.isError || teamsQuery.isError || categoriesQuery.isError;
+  const scoresLabel = (category: WeatherCategoryKey) =>
+    `Wszystkie ligi i sezony · ${categoryLabel(categoriesQuery.data, category)}`;
 
 return (
     <>
@@ -75,16 +102,24 @@ return (
         <WinsByWeatherChart matches={seasonMatches} season={season} />
         <WeatherScoreRankingCard
           Icon={TrendingUp}
-          scores={topScores}
+          rows={topScores}
           title="Najlepsze Weather Score's"
-          description={scoresLabel}
+          description={scoresLabel(topCategory)}
+          category={topCategory}
+          onCategoryChange={setTopCategory}
+          isPending={scoresPending}
+          isError={scoresError}
         />
         <WeatherScoreRankingCard
           Icon={TrendingDown}
           iconColor="text-destructive"
-          scores={bottomScores}
+          rows={bottomScores}
           title="Najsłabsze Weather Score's"
-          description={scoresLabel}
+          description={scoresLabel(bottomCategory)}
+          category={bottomCategory}
+          onCategoryChange={setBottomCategory}
+          isPending={scoresPending}
+          isError={scoresError}
         />
       </div>
 

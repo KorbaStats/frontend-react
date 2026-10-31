@@ -10,8 +10,13 @@ import {
   getTeamMatches,
   type MatchWithWeather,
 } from "@/services/matchesService";
+import { getMatchWeatherScores } from "@/services/weatherScoresService";
+import { toUserMessage } from "@/services/http";
 import { computeWeatherPercentiles } from "@/lib/weatherStats";
-import { matchesOptions } from "@/hooks/queries";
+import {
+  matchesOptions,
+  weatherScoreCategoriesOptions,
+} from "@/hooks/queries";
 
 import MatchHeaderCard from "@/components/match-details/MatchHeaderCard";
 import MatchStats from "@/components/match-details/MatchStats";
@@ -49,6 +54,13 @@ const MatchDetails = () => {
   });
 
   const allMatchesQuery = useQuery({ ...matchesOptions, enabled: !!match });
+
+  const weatherScoresQuery = useQuery({
+    queryKey: ["weather-scores", "match", matchId],
+    queryFn: () => getMatchWeatherScores(matchId),
+    enabled: !!match,
+  });
+  const weatherScoreCategoriesQuery = useQuery(weatherScoreCategoriesOptions);
 
   const percentiles = useMemo(
     () =>
@@ -115,6 +127,18 @@ const MatchDetails = () => {
           }
           isTeamMatchesError={
             homeMatchesQuery.isError || awayMatchesQuery.isError
+          }
+          weatherScores={weatherScoresQuery.data}
+          weatherScoreCategories={weatherScoreCategoriesQuery.data}
+          isWeatherScoresPending={
+            weatherScoresQuery.isPending || weatherScoreCategoriesQuery.isPending
+          }
+          weatherScoresError={
+            weatherScoresQuery.error
+              ? toUserMessage(weatherScoresQuery.error)
+              : weatherScoreCategoriesQuery.error
+                ? toUserMessage(weatherScoreCategoriesQuery.error)
+                : null
           }
         />
       )}

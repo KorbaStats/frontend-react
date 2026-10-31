@@ -1,85 +1,120 @@
-import { type MatchWithWeather } from "@/services/matchesService";
-import {
-  computeTeamStats,
-  type TeamStats,
-} from "./teamStats";
-import { isDifficultWeather } from "./weatherProfile";
+import type {
+  MatchWeatherScores,
+  Team,
+  TeamWeatherScores,
+  WeatherCategoryDefinition,
+  WeatherCategoryKey,
+  WeatherCategoryScore,
+  WeatherFactor,
+  WeatherFactorDefinitions,
+} from "@/data/types";
 
-export const MIN_MATCHES = 5;
-const MULTIPLIER = 100 / 3;
-const SHRINKAGE_K = 10;
+export const WEATHER_FACTORS: WeatherFactor[] = ["precipitation", "temperature", "wind"];
 
-
-type MatchResults = Pick<TeamStats, "wins" | "draws" | "losses">;
-
-export type WeatherScore = {
-  score: number;
-  difference: number;
-  difficultAvg: number;
-  normalAvg: number;
-  difficultMatches: number;
-  normalMatches: number;
-  difficultResults: MatchResults;
-  normalResults: MatchResults;
-  reliability: number;
+export const WEATHER_FACTOR_LABELS: Record<WeatherFactor, string> = {
+  precipitation: "Opady",
+  temperature: "Temperatura",
+  wind: "Wiatr",
 };
 
-export function computeWeatherScore(
-  matches: MatchWithWeather[],
-  teamId: number,
-): WeatherScore | null {
-  const difficult = matches.filter(
-    (match) => match.weather !== null && isDifficultWeather(match.weather),
-  );
-  const normal = matches.filter(
-    (match) => match.weather !== null && !isDifficultWeather(match.weather),
-  );
+export const RANKING_MIN_MATCHES = 3;
 
-  if (normal.length < MIN_MATCHES || difficult.length < MIN_MATCHES)
-    return null;
+export const RANKING_CATEGORIES: { key: WeatherCategoryKey; label: string }[] = [
+  { key: { factor: "precipitation", category: "heavy" }, label: "Deszcz" },
+  { key: { factor: "temperature", category: "low" }, label: "Zimno" },
+  { key: { factor: "temperature", category: "high" }, label: "Ciepło" },
+  { key: { factor: "wind", category: "strong" }, label: "Wiatr" },
+];
 
-  const difficultStats = computeTeamStats(difficult, teamId);
-  const difficultResults = {
-    wins: difficultStats.wins,
-    draws: difficultStats.draws,
-    losses: difficultStats.losses,
-  };
-  const normalStats = computeTeamStats(normal, teamId);
-  const normalResults = {
-    wins: normalStats.wins,
-    draws: normalStats.draws,
-    losses: normalStats.losses,
-  };
+export const DEFAULT_RANKING_CATEGORY = RANKING_CATEGORIES[1].key;
 
-  const difficultAvgPoints = difficultStats.avg_points ?? 0;
-  const normalAvgPoints = normalStats.avg_points ?? 0;
-  const difference = difficultAvgPoints - normalAvgPoints;
+export type RankedWeatherScore = {
+  team: Team;
+  score: WeatherCategoryScore;
+};
 
-  const sampleSize = Math.min(difficult.length, normal.length);
-  const reliability = sampleSize / (sampleSize + SHRINKAGE_K);
+export function getCategoryScore(
+  teamScores: TeamWeatherScores,
+  { factor, category }: WeatherCategoryKey,
+): WeatherCategoryScore | null {
+  const scores: Record<string, WeatherCategoryScore | null> = teamScores.scores[factor];
+  return scores[category] ?? null;
+}
 
-  const weatherScore = Math.round(
-    Math.min(Math.max(50 + difference * MULTIPLIER * reliability, 0), 100),
-  );
+export function getCategoryDefinition(
+  definitions: WeatherFactorDefinitions,
+  factor: WeatherFactor,
+  category: string,
+): WeatherCategoryDefinition | undefined {
+  return definitions[factor].categories.find((c) => c.name === category);
+}
 
-  return {
-    score: weatherScore,
-    difference: difference,
-    difficultAvg: difficultAvgPoints,
-    normalAvg: normalAvgPoints,
-    difficultMatches: difficult.length,
-    normalMatches: normal.length,
-    difficultResults,
-    normalResults,
-    reliability,
-  };
+export function categoryLabel(
+  definitions: WeatherFactorDefinitions | undefined,
+  { factor, category }: WeatherCategoryKey,
+): string {
+  const definition = definitions && getCategoryDefinition(definitions, factor, category);
+  if (!definition) return WEATHER_FACTOR_LABELS[factor];
+  return `${definition.label} (${formatCategoryRange(definition, definitions[factor].unit)})`;
+}
+
+export function formatCategoryRange(
+  { min, max }: WeatherCategoryDefinition,
+  unit: string,
+): string {
+  const format = (value: number) => value.toLocaleString("pl-PL");
+  if (min !== null && max !== null) return `${format(min)}–${format(max)} ${unit}`;
+  if (max !== null) return `< ${format(max)} ${unit}`;
+  return `≥ ${format(min ?? 0)} ${unit}`;
+}
+
+export function toCategoryValue({ factor, category }: WeatherCategoryKey): string {
+  return `${factor}:${category}`;
+}
+
+export function formatConditions(
+  definitions: WeatherFactorDefinitions,
+  conditions: MatchWeatherScores["conditions"],
+): string {
+  return WEATHER_FACTORS.flatMap((factor) => {
+    const category = conditions[factor];
+    if (!category) return [];
+    return getCategoryDefinition(definitions, factor, category)?.label ?? category;
+  }).join(" · ");
+}
+
+export function rankWeatherScores(
+  scores: TeamWeatherScores[],
+  teams: Team[],
+  key: WeatherCategoryKey,
+  order: "best" | "worst",
+  limit: number = 5,
+): RankedWeatherScore[] {
+  const teamsById = new Map(teams.map((team) => [team.id, team]));
+  const ranked: RankedWeatherScore[] = [];
+
+  for (const teamScores of scores) {
+    const team = teamsById.get(teamScores.team_id);
+    const score = getCategoryScore(teamScores, key);
+    if (team && score && score.matches_count >= RANKING_MIN_MATCHES) {
+      ranked.push({ team, score });
+    }
+  }
+
+  const direction = order === "best" ? -1 : 1;
+  return ranked
+    .sort(
+      (a, b) =>
+        direction * (a.score.score - b.score.score) ||
+        b.score.matches_count - a.score.matches_count,
+    )
+    .slice(0, limit);
 }
 
 export function weatherScoreLabel(score: number): string {
-  if (score <= 34) return "Wyraźnie gorzej w trudnej pogodzie";
-  else if (score >= 35 && score <= 44) return "Gorzej w trudnej pogodzie";
-  else if (score >= 45 && score <= 54) return "Pogoda nie robi różnicy";
-  else if (score >= 55 && score <= 64) return "Lepiej w trudnej pogodzie";
-  else if (score >= 65) return "Wyraźnie lepiej w trudnej pogodzie";
-  else return "Brak danych";
+  if (score <= 34) return "Wyraźnie gorzej niż zwykle";
+  if (score <= 44) return "Gorzej niż zwykle";
+  if (score <= 54) return "Pogoda nie robi różnicy";
+  if (score <= 64) return "Lepiej niż zwykle";
+  return "Wyraźnie lepiej niż zwykle";
 }

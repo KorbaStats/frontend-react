@@ -12,7 +12,8 @@ import {
   type DifficultCondition,
   type WeatherAxisKey,
 } from "./weatherProfile";
-import { MIN_MATCHES } from "./weatherScore";
+
+export const MIN_MATCHES = 5;
 
 export type ComparisonRow = {
   label: string;

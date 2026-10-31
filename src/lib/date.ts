@@ -52,3 +52,7 @@ export function getLongDate(rawDate: string): string {
     timeZone: "Europe/Warsaw",
   }).format(new Date(rawDate));
 }
+
+export function formatDateTime(rawDate: string): string {
+  return `${getFormatedDate(rawDate)} ${getLocalTime(rawDate)}`;
+}

@@ -1,6 +1,4 @@
 import type { MatchWithWeather } from "@/services/matchesService";
-import type { Team } from "@/data/types";
-import { computeWeatherScore, type WeatherScore } from "./weatherScore";
 import { precipBandFor } from "./weatherProfile";
 
 export type LeagueWeatherSummary = {
@@ -37,60 +35,4 @@ export function computeLeagueWeatherSummary(
     precipPct: Math.round((precipCount / count) * 100),
     matchesCount: count,
   };
-}
-
-export type TeamWeatherScore = {
-  team: Team;
-  score: WeatherScore;
-};
-
-type TeamMatches = { team: Team; matches: MatchWithWeather[] };
-
-function addMatch(
-  map: Map<number, TeamMatches>,
-  team: Team,
-  match: MatchWithWeather,
-) {
-  const entry = map.get(team.id);
-  if (entry) entry.matches.push(match);
-  else map.set(team.id, { team, matches: [match] });
-}
-
-function computeAllWeatherScores(
-  matches: MatchWithWeather[],
-): TeamWeatherScore[] {
-  const teamsMap = new Map<number, TeamMatches>();
-
-  for (const match of matches) {
-    addMatch(teamsMap, match.homeTeam, match);
-    addMatch(teamsMap, match.awayTeam, match);
-  }
-
-  const weatherScores: TeamWeatherScore[] = [];
-  for (const { team, matches: teamMatches } of teamsMap.values()) {
-    const score = computeWeatherScore(teamMatches, team.id);
-    if (score === null) continue;
-
-    weatherScores.push({ team, score });
-  }
-
-  return weatherScores;
-}
-
-export function computeTopWeatherScores(
-  matches: MatchWithWeather[],
-  limit: number = 5,
-): TeamWeatherScore[] {
-  return computeAllWeatherScores(matches)
-    .sort((a, b) => b.score.score - a.score.score)
-    .slice(0, limit);
-}
-
-export function computeBottomWeatherScores(
-  matches: MatchWithWeather[],
-  limit: number = 5,
-): TeamWeatherScore[] {
-  return computeAllWeatherScores(matches)
-    .sort((a, b) => a.score.score - b.score.score)
-    .slice(0, limit);
 }

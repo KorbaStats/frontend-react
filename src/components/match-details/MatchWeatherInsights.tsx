@@ -1,4 +1,5 @@
 import type { MatchWithWeather } from "@/services/matchesService";
+import type { MatchWeatherScores, WeatherFactorDefinitions } from "@/data/types";
 import type { WeatherPercentile } from "@/lib/weatherStats";
 
 import WeatherPercentiles from "./weather-insights/WeatherPercentiles";
@@ -14,6 +15,10 @@ interface MatchWeatherInsightsProps {
   awayMatches: MatchWithWeather[];
   isTeamMatchesPending: boolean;
   isTeamMatchesError: boolean;
+  weatherScores: MatchWeatherScores | undefined;
+  weatherScoreCategories: WeatherFactorDefinitions | undefined;
+  isWeatherScoresPending: boolean;
+  weatherScoresError: string | null;
 }
 
 const MatchWeatherInsights = ({
@@ -25,24 +30,26 @@ const MatchWeatherInsights = ({
   awayMatches,
   isTeamMatchesPending,
   isTeamMatchesError,
+  weatherScores,
+  weatherScoreCategories,
+  isWeatherScoresPending,
+  weatherScoresError,
 }: MatchWeatherInsightsProps) => {
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-4 print:grid-cols-1">
-        <TeamsWeatherScoreSection
+      <TeamsWeatherScoreSection
           match={match}
-          homeMatches={homeMatches}
-          awayMatches={awayMatches}
-          isPending={isTeamMatchesPending}
-          isError={isTeamMatchesError}
+          weatherScores={weatherScores}
+          categories={weatherScoreCategories}
+          isPending={isWeatherScoresPending}
+          errorMessage={weatherScoresError}
         />
-        <WeatherPercentiles
-          match={match}
-          percentiles={percentiles}
-          isPending={isPercentilesPending}
-          isError={isPercentilesError}
-        />
-      </div>
+      <WeatherPercentiles
+        match={match}
+        percentiles={percentiles}
+        isPending={isPercentilesPending}
+        isError={isPercentilesError}
+      />
       <TeamsRecentMatches
         match={match}
         homeMatches={homeMatches}

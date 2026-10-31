@@ -4,20 +4,26 @@ import { useParams } from "react-router";
 
 import { Card, CardContent } from "@/components/ui/card";
 
+import type { Team, TeamWeatherScores, WeatherCategoryKey } from "@/data/types";
+
 import {
   getLeagueMatches,
   type MatchWithWeather,
 } from "@/services/matchesService";
 import {
+  leagueWeatherScoresOptions,
   leaguesOptions,
-  matchesOptions,
   seasonsOptions,
+  teamsOptions,
+  weatherScoreCategoriesOptions,
 } from "@/hooks/queries";
 
+import { computeLeagueWeatherSummary } from "@/lib/leagueWeather";
 import {
-  computeLeagueWeatherSummary,
-  computeTopWeatherScores,
-} from "@/lib/leagueWeather";
+  DEFAULT_RANKING_CATEGORY,
+  categoryLabel,
+  rankWeatherScores,
+} from "@/lib/weatherScore";
 
 import LeagueHeader from "@/components/league-details/LeagueHeader";
 import LeagueTable from "@/components/league-details/LeagueTable";
@@ -29,6 +35,8 @@ import ExportReportButton from "@/components/shared/ExportReportButton";
 
 const EMPTY_MATCHES: MatchWithWeather[] = [];
 const EMPTY_SEASONS: string[] = [];
+const EMPTY_SCORES: TeamWeatherScores[] = [];
+const EMPTY_TEAMS: Team[] = [];
 
 const LeagueDetails = () => {
   const { id } = useParams();
@@ -52,22 +60,26 @@ const LeagueDetails = () => {
     enabled: !!selectedSeason,
   });
 
-  const allMatchesQuery = useQuery(matchesOptions);
+  const weatherScoresQuery = useQuery(leagueWeatherScoresOptions(leagueId));
+  const teamsQuery = useQuery(teamsOptions);
+  const categoriesQuery = useQuery(weatherScoreCategoriesOptions);
+  const [scoreCategory, setScoreCategory] = useState<WeatherCategoryKey>(
+    DEFAULT_RANKING_CATEGORY,
+  );
 
   const league = leagueQuery.data ?? null;
   const leagueMatches = matchesQuery.data ?? EMPTY_MATCHES;
-  const allMatches = allMatchesQuery.data ?? EMPTY_MATCHES;
+  const weatherScores = weatherScoresQuery.data ?? EMPTY_SCORES;
+  const teams = teamsQuery.data ?? EMPTY_TEAMS;
 
   const isPending =
     leagueQuery.isPending ||
     seasonsQuery.isPending ||
-    matchesQuery.isPending ||
-    allMatchesQuery.isPending;
+    matchesQuery.isPending;
   const isError =
     leagueQuery.isError ||
     seasonsQuery.isError ||
     matchesQuery.isError ||
-    allMatchesQuery.isError ||
     !league;
 
   const teamsCount = useMemo(
@@ -83,11 +95,8 @@ const LeagueDetails = () => {
   );
 
   const topScores = useMemo(
-    () =>
-      computeTopWeatherScores(
-        allMatches.filter((m) => m.league_id === leagueId),
-      ),
-    [allMatches, leagueId],
+    () => rankWeatherScores(weatherScores, teams, scoreCategory, "best"),
+    [weatherScores, teams, scoreCategory],
   );
 
   if (isPending) {
@@ -125,9 +134,21 @@ const LeagueDetails = () => {
       <div className="grid gap-4 grid-cols-3 print:grid-cols-1">
         <LeagueTable matches={leagueMatches} />
         <WeatherScoreRankingCard
-          scores={topScores}
+          rows={topScores}
           title="Top Weather Score's w lidze"
-          description="Najlepsze drużyny w trudnej pogodzie — wszystkie sezony"
+          description={`Wszystkie sezony · ${categoryLabel(categoriesQuery.data, scoreCategory)}`}
+          category={scoreCategory}
+          onCategoryChange={setScoreCategory}
+          isPending={
+            weatherScoresQuery.isPending ||
+            teamsQuery.isPending ||
+            categoriesQuery.isPending
+          }
+          isError={
+            weatherScoresQuery.isError ||
+            teamsQuery.isError ||
+            categoriesQuery.isError
+          }
         />
       </div>
 

@@ -21,6 +21,7 @@ import {
 } from "@/services/stadiumsService";
 import { deleteMatch, updateMatch } from "@/services/matchesService";
 import { runWeatherFetching } from "@/services/matchWeatherService";
+import { recalculateWeatherScores } from "@/services/weatherScoresService";
 
 type QueryKey = readonly string[];
 
@@ -93,6 +94,11 @@ export const WEATHER_STATUS_KEY = ["match-weather", "status"] as const;
 export function useRunWeatherFetching() {
   const onSuccess = useInvalidate([WEATHER_STATUS_KEY]);
   return useMutation({ mutationFn: runWeatherFetching, onSuccess });
+}
+
+export function useRecalculateWeatherScores() {
+  const onSuccess = useInvalidate([["weather-scores"]]);
+  return useMutation({ mutationFn: recalculateWeatherScores, onSuccess });
 }
 
 export const useInvalidateMatches = () => useInvalidate(MATCH_KEYS);

@@ -1,5 +1,20 @@
-import { type WeatherScore, weatherScoreLabel } from "@/lib/weatherScore";
-import { weatherScoreColor } from "@/lib/weatherStylesConfig";
+import { useState } from "react";
+import type {
+  TeamWeatherScores,
+  WeatherCategoryKey,
+  WeatherFactor,
+  WeatherFactorDefinitions,
+} from "@/data/types";
+import {
+  WEATHER_FACTORS,
+  WEATHER_FACTOR_LABELS,
+  formatCategoryRange,
+  getCategoryScore,
+  weatherScoreLabel,
+} from "@/lib/weatherScore";
+import { weatherFactorIcons, weatherScoreColor } from "@/lib/weatherStylesConfig";
+import { getLongDate } from "@/lib/date";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,116 +22,125 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import WeatherScoreRing from "@/components/shared/weather-score/WeatherScoreRing";
 
 interface WeatherScoreCardProps {
-  weatherScore: WeatherScore | null | undefined;
+  scores: TeamWeatherScores | undefined;
+  categories: WeatherFactorDefinitions | undefined;
+  isPending: boolean;
+  isError: boolean;
 }
 
-const WeatherScoreCard = ({ weatherScore }: WeatherScoreCardProps) => {
-  const header = (
-    <CardHeader>
-      <CardTitle className="flex items-center gap-2 text-base">
-        <h1 className="text-center text-md tracking-wider font-bold">
-          WEATHER SCORE
-        </h1>
-      </CardTitle>
-      <CardDescription>
-        Wszystkie sezony
-      </CardDescription>
-    </CardHeader>
-  );
+const WeatherScoreCard = ({
+  scores,
+  categories,
+  isPending,
+  isError,
+}: WeatherScoreCardProps) => {
+  const [factor, setFactor] = useState<WeatherFactor>("precipitation");
 
-  if (!weatherScore) {
-    return (
-      <Card>
-        {header}
-        <CardContent className="flex flex-1 items-center justify-center py-6 text-center text-sm text-muted-foreground">
-          Za mało meczów w trudnej lub normalnej pogodzie, żeby policzyć wskaźnik.
-        </CardContent>
-      </Card>
-    );
-  }
-
-  const {
-    score,
-    difference,
-    difficultAvg,
-    normalAvg,
-    difficultMatches,
-    difficultResults,
-    normalMatches,
-    normalResults,
-  } = weatherScore;
-
-  const color = weatherScoreColor(score);
+  const status = isPending
+    ? "Ładowanie..."
+    : isError
+      ? "Nie udało się pobrać weather score."
+      : !scores || !categories
+        ? "Weather score tej drużyny nie został jeszcze przeliczony."
+        : null;
 
   return (
     <Card className="break-inside-avoid">
-      {header}
-      <CardContent className="flex flex-1 flex-col items-center justify-center gap-6">
-        <div className="flex flex-col items-center gap-4">
-          <WeatherScoreRing score={score} size="lg" />
-
-          <p className={`text-center text-sm font-medium ${color}`}>
-            {weatherScoreLabel(score)}
-          </p>
+      <CardHeader className="border-b pb-4">
+        <CardTitle className="flex items-center gap-2 text-base">
+          <h1 className="text-center text-md tracking-wider font-bold">
+            WEATHER SCORE
+          </h1>
+        </CardTitle>
+        <CardDescription>
+          Wszystkie sezony, 50 = gra jak zwykle
+        </CardDescription>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {WEATHER_FACTORS.map((f) => {
+            const Icon = weatherFactorIcons[f];
+            const active = f === factor;
+            return (
+              <Button
+                key={f}
+                variant={active ? "secondary" : "outline"}
+                size="sm"
+                className="rounded-full"
+                aria-pressed={active}
+                onClick={() => setFactor(f)}
+              >
+                <Icon />
+                {WEATHER_FACTOR_LABELS[f]}
+              </Button>
+            );
+          })}
         </div>
+      </CardHeader>
 
-        <dl className="flex w-full max-w-sm flex-col gap-3 border-t pt-4 text-sm">
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <dt className="font-medium">Trudne warunki</dt>
-              <dd className="text-xs text-muted-foreground">
-                na podstawie {difficultMatches} meczów |{" "}
-                <span>
-                  {difficultResults.wins}W · {difficultResults.draws}R ·{" "}
-                  {difficultResults.losses}P
-                </span>
-              </dd>
+      <CardContent className="flex flex-1 flex-col gap-4">
+        {status || !scores || !categories ? (
+          <p className="flex flex-1 items-center justify-center py-6 text-center text-sm text-muted-foreground">
+            {status}
+          </p>
+        ) : (
+          <>
+            <ul className="flex flex-1 flex-col justify-around gap-6">
+              {categories[factor].categories.map((category) => {
+                const value = getCategoryScore(scores, {
+                  factor,
+                  category: category.name,
+                } as WeatherCategoryKey);
+                const color = value
+                  ? weatherScoreColor(value.score)
+                  : "text-muted-foreground";
+
+                return (
+                  <li key={category.name} className="flex flex-col gap-2">
+                    <div className="flex items-end justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="font-medium first-letter:uppercase">
+                          {category.label}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatCategoryRange(category, categories[factor].unit)}
+                        </p>
+                      </div>
+                      <span
+                        className={`text-3xl leading-none font-bold tabular-nums ${color}`}
+                      >
+                        {value?.score ?? "—"}
+                      </span>
+                    </div>
+
+                    <div className={`relative h-2.5 rounded-full bg-current/15 ${color}`}>
+                      <div
+                        className="h-full rounded-full bg-current transition-[width] duration-500"
+                        style={{ width: `${value?.score ?? 0}%` }}
+                      />
+                      <div className="absolute -top-1 left-1/2 h-4.5 w-0.5 -translate-x-1/2 rounded-full bg-foreground/50" />
+                    </div>
+
+                    <div className="flex justify-between gap-2 text-xs text-muted-foreground">
+                      <span>{value ? weatherScoreLabel(value.score) : "Brak danych"}</span>
+                      <span className="shrink-0 tabular-nums">
+                        meczów: {value?.matches_count ?? 0}
+                      </span>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <div className="flex items-center justify-between gap-2 border-t pt-3 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <span className="h-3 w-0.5 rounded-full bg-foreground/50" />
+                50 = jak zwykle
+              </span>
+              <span>Przeliczono {getLongDate(scores.computed_at)}</span>
             </div>
-            <dd className="text-right">
-              <span className="font-semibold tabular-nums">
-                {difficultAvg.toFixed(2)}
-              </span>
-              <span className="ml-1 text-xs text-muted-foreground">
-                pkt/mecz
-              </span>
-            </dd>
-          </div>
-
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <dt className="font-medium">Normalne warunki</dt>
-              <dd className="text-xs text-muted-foreground">
-                na podstawie {normalMatches} meczów |{" "}
-                <span>
-                  {normalResults.wins}W · {normalResults.draws}R ·{" "}
-                  {normalResults.losses}P
-                </span>
-              </dd>
-            </div>
-            <dd className="text-right">
-              <span className="font-semibold tabular-nums">
-                {normalAvg.toFixed(2)}
-              </span>
-              <span className="ml-1 text-xs text-muted-foreground">
-                pkt/mecz
-              </span>
-            </dd>
-          </div>
-
-          <div className="flex items-center justify-between gap-2 border-t pt-3">
-            <dt className="text-muted-foreground">Różnica</dt>
-            <dd className={`font-semibold tabular-nums ${color}`}>
-              {difference > 0 ? "+" : ""}
-              {difference.toFixed(2)}
-              <span className="ml-1 text-xs font-normal text-muted-foreground">
-                pkt/mecz
-              </span>
-            </dd>
-          </div>
-        </dl>
+          </>
+        )}
       </CardContent>
     </Card>
   );

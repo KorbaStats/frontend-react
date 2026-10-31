@@ -16,8 +16,8 @@ import {
   difficultConditions,
   type DifficultConditionKey,
 } from "@/lib/weatherProfile";
-import { MIN_MATCHES } from "@/lib/weatherScore";
 import {
+  MIN_MATCHES,
   leagueComparisonRows,
   splitByCondition,
   teamComparisonRows,

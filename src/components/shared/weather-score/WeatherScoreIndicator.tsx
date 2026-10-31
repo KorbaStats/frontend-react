@@ -1,38 +1,31 @@
-import { type WeatherScore, weatherScoreLabel } from "@/lib/weatherScore";
+import type { MatchWeatherScoreSide } from "@/data/types";
+import { weatherScoreLabel } from "@/lib/weatherScore";
 import { weatherScoreColor } from "@/lib/weatherStylesConfig";
 import WeatherScoreRing from "@/components/shared/weather-score/WeatherScoreRing";
 
 interface WeatherScoreIndicatorProps {
   teamName: string;
-  weatherScore: WeatherScore | null;
-  isPending: boolean;
-  isError: boolean;
+  side: MatchWeatherScoreSide | undefined;
+  message: string | null;
 }
 
 const WeatherScoreIndicator = ({
   teamName,
-  weatherScore,
-  isPending,
-  isError,
+  side,
+  message,
 }: WeatherScoreIndicatorProps) => {
-  if (isPending || isError || !weatherScore) {
-    const message = isPending
-      ? "Ładowanie..."
-      : isError
-        ? "Nie udało się pobrać weather score."
-        : "Za mało meczów do oceny";
-
+  if (message || !side || side.weather_score === null) {
     return (
       <div className="flex flex-col items-center gap-3 text-center">
         <p className="font-semibold">{teamName}</p>
         <div className="flex size-32 items-center justify-center text-sm text-muted-foreground">
-          {message}
+          {message ?? "Brak danych pogodowych meczu"}
         </div>
       </div>
     );
   }
 
-  const { score, difference } = weatherScore;
+  const score = Math.round(side.weather_score);
   const color = weatherScoreColor(score);
 
   return (
@@ -40,20 +33,9 @@ const WeatherScoreIndicator = ({
       <p className="font-semibold">{teamName}</p>
 
       <WeatherScoreRing score={score} />
-      <div className="flex flex-col gap-1">
-        <p
-          className={`text-xs font-semibold tracking-wider uppercase ${color}`}
-        >
-          {weatherScoreLabel(score)}
-        </p>
-        <p className="text-sm text-muted-foreground">
-          <span className={`font-semibold tabular-nums ${color}`}>
-            {difference > 0 ? "+" : ""}
-            {difference.toFixed(2)}
-          </span>{" "}
-          pkt/mecz w trudnej pogodzie
-        </p>
-      </div>
+      <p className={`text-xs font-semibold tracking-wider uppercase ${color}`}>
+        {weatherScoreLabel(score)}
+      </p>
     </div>
   );
 };

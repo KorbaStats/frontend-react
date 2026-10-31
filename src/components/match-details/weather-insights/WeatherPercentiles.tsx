@@ -181,7 +181,7 @@ const WeatherPercentiles = ({
             {placeholder}
           </p>
         ) : (
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-4 gap-2 print:grid-cols-2">
             {percentiles.map((item) => (
               <PercentileRow key={item.metric} item={item} />
             ))}

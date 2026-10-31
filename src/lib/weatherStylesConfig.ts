@@ -1,4 +1,4 @@
-import type { Weather } from "@/data/types";
+import type { Weather, WeatherFactor } from "@/data/types";
 import { profileFor, type DifficultConditionKey } from "./weatherProfile";
 import {
   Sun,
@@ -120,6 +120,12 @@ export function weatherDisplayFor(weather: Weather): WeatherDisplay {
 
   return weather.cloud_cover_pct > CLOUDY_PCT ? "clouds" : "clear";
 }
+
+export const weatherFactorIcons: Record<WeatherFactor, LucideIcon> = {
+  precipitation: CloudRain,
+  temperature: Thermometer,
+  wind: Wind,
+};
 
 export function weatherScoreColor(score: number): string {
   if (score >= 55) return "text-green-600 dark:text-green-500/90";

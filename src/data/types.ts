@@ -341,3 +341,78 @@ export type WeatherFetchingStatus = {
   error: string | null
   failedMatches: { id: number; datetime: string; reason: string }[]
 }
+
+export type WeatherScoreCategory = {
+  precipitation: "none" | "light" | "heavy"
+  temperature: "low" | "normal" | "high"
+  wind: "calm" | "light" | "strong"
+}
+
+export type WeatherFactor = keyof WeatherScoreCategory
+
+export type WeatherCategoryKey = {
+  [F in WeatherFactor]: { factor: F; category: WeatherScoreCategory[F] }
+}[WeatherFactor]
+
+export type WeatherCategoryDefinition = {
+  name: string
+  label: string
+  min: number | null
+  max: number | null
+}
+
+export type WeatherFactorDefinitions = Record<
+  WeatherFactor,
+  {
+    column: "precipitation_mm" | "temperature_c" | "wind_speed_kmh"
+    unit: string
+    categories: WeatherCategoryDefinition[]
+  }
+>
+
+export type WeatherCategoryScore = {
+  score: number
+  matches_count: number
+}
+
+export type TeamWeatherScores = {
+  team_id: number
+  team_name: string
+  computed_at: string
+  scores: {
+    [F in WeatherFactor]: Record<WeatherScoreCategory[F], WeatherCategoryScore | null>
+  }
+}
+
+export type MatchWeatherScoreSide = {
+  team_id: number
+  team_name: string
+  scores: Partial<Record<WeatherFactor, number>>
+  weather_score: number | null
+}
+
+export type MatchWeatherScores = {
+  match_id: number
+  datetime: string
+  source: "historical" | "forecast"
+  weather: Record<"temperature_c" | "precipitation_mm" | "wind_speed_kmh", number | null>
+  conditions: { [F in WeatherFactor]: WeatherScoreCategory[F] | null }
+  home: MatchWeatherScoreSide
+  away: MatchWeatherScoreSide
+  difference: number | null
+  favored_team_id: number | null
+}
+
+export type WeatherScoresRecalculation = {
+  computed_at: string
+  teams: number
+  scores: number
+  matches_used: number
+  matches_without_odds: number
+  parameters: { prior_matches: number; score_scale: number }
+  model: {
+    xg_regression: { a: number; b: number }
+    points_residual_sd: number
+    xg_residual_sd: number
+  }
+}

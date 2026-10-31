@@ -7,6 +7,10 @@ import { getUsers } from "@/services/usersService";
 import { getRoles } from "@/services/rolesService";
 import { getPermissions } from "@/services/permissionsService";
 import { getStadiums } from "@/services/stadiumsService";
+import {
+  getWeatherScoreCategories,
+  getWeatherScores,
+} from "@/services/weatherScoresService";
 
 export const matchesOptions = queryOptions({
   queryKey: ["matches"],
@@ -50,4 +54,21 @@ export const permissionsOptions = queryOptions({
 export const stadiumsOptions = queryOptions({
   queryKey: ["stadiums"],
   queryFn: async () => (await getStadiums()).data,
+});
+
+export const weatherScoresOptions = queryOptions({
+  queryKey: ["weather-scores"],
+  queryFn: () => getWeatherScores(),
+});
+
+export const leagueWeatherScoresOptions = (leagueId: number) =>
+  queryOptions({
+    queryKey: ["weather-scores", "league", leagueId],
+    queryFn: () => getWeatherScores(leagueId),
+  });
+
+export const weatherScoreCategoriesOptions = queryOptions({
+  queryKey: ["weather-scores", "categories"],
+  queryFn: getWeatherScoreCategories,
+  staleTime: Infinity,
 });

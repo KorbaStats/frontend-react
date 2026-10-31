@@ -11,10 +11,13 @@ import {
 } from "@/services/matchesService";
 
 import { computeTeamStats } from "@/lib/teamStats";
-import { computeWeatherScore } from "@/lib/weatherScore";
 import { hasBandFilters, matchesBands } from "@/lib/matchFilters";
 import { useVisibleItems } from "@/hooks/useVisibleItems";
-import { teamsOptions } from "@/hooks/queries";
+import {
+  teamsOptions,
+  weatherScoreCategoriesOptions,
+  weatherScoresOptions,
+} from "@/hooks/queries";
 
 import {
   Card,
@@ -51,10 +54,11 @@ const TeamDetails = () => {
   const matches = matchesQuery.data ?? EMPTY_MATCHES;
   const team = teamQuery.data;
 
-  const weatherScore = useMemo(
-    () => computeWeatherScore(matches, teamId),
-    [matches, teamId],
-  );
+  const weatherScoresQuery = useQuery({
+    ...weatherScoresOptions,
+    select: (scores) => scores.find((s) => s.team_id === teamId),
+  });
+  const categoriesQuery = useQuery(weatherScoreCategoriesOptions);
 
   const isPending = matchesQuery.isPending || teamQuery.isPending;
   const isError = matchesQuery.isError || teamQuery.isError || !team;
@@ -110,8 +114,8 @@ const TeamDetails = () => {
               Statystyki drużyny
             </h2>
             <p className="text-sm text-muted-foreground">
-              Statystyki drużyny - weather score ze wszystkich sezonów i
-              średnie statystyki po filtrach pogodowych.
+              Statystyki drużyny - weather score ze wszystkich sezonów (bez
+              filtrów) i średnie statystyki po filtrach pogodowych.
             </p>
           </div>
           <span className="rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground">
@@ -123,7 +127,12 @@ const TeamDetails = () => {
 
         <div className="grid grid-cols-3 gap-4 print:grid-cols-1">
           <div className="row-span-2 grid">
-            <WeatherScoreCard weatherScore={weatherScore} />
+            <WeatherScoreCard
+              scores={weatherScoresQuery.data}
+              categories={categoriesQuery.data}
+              isPending={weatherScoresQuery.isPending || categoriesQuery.isPending}
+              isError={weatherScoresQuery.isError || categoriesQuery.isError}
+            />
           </div>
           <div className="col-span-2 print:col-span-1">
             <TeamStatsCards

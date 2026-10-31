@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { CloudDownload } from "lucide-react";
 
 import type { WeatherFetchingStatus } from "@/data/types";
-import { getFormatedDate, getLocalTime } from "@/lib/date";
+import { formatDateTime } from "@/lib/date";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,10 +14,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { TextField } from "@/components/admin/FormField";
-
-function formatDateTime(rawDate: string): string {
-  return `${getFormatedDate(rawDate)} ${getLocalTime(rawDate)}`;
-}
 
 interface WeatherFetchingCardProps {
   awaitingCount: number;
