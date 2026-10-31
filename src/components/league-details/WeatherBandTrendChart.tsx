@@ -155,7 +155,7 @@ const WeatherBandTrendChart = ({
                             fontSize={12}
                             fill="var(--foreground)"
                           >
-                            {row.label}
+                            {axisKey === 'temp' ? `${row.label}°C` : row.label}
                           </text>
                           <text
                             dy={30}
@@ -165,8 +165,8 @@ const WeatherBandTrendChart = ({
                             className="tabular-nums"
                           >
                             {row.value === null
-                              ? `${row.matches > 1 ? `${row.matches} meczów` : `${row.matches} mecz`}· za mało`
-                              : `${row.matches} meczów`}
+                              ? `${row.matches} mecz · za mało`
+                              : `${row.matches} meczy`}
                           </text>
                         </g>
                       );
