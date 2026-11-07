@@ -26,11 +26,11 @@ const navLinks: NavLink[] = [
     to: "/leagues",
     isActive: (pathname) => pathname.startsWith("/league"),
   },
-  {
-    label: "Predykcje",
-    to: "/predictions",
-    isActive: (pathname) => pathname === "/predictions",
-  },
+  // {
+  //   label: "Predykcje",
+  //   to: "/predictions",
+  //   isActive: (pathname) => pathname === "/predictions",
+  // },
 ];
 
 interface NavbarProps {

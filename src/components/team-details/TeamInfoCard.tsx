@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 
 import { Card } from "@/components/ui/card";
-import { MapPin, Users } from "lucide-react";
+// import { MapPin, Users } from "lucide-react";
 
 import type { Team } from "@/data/types";
 import type { MatchWithWeather } from "@/services/matchesService";
@@ -27,7 +27,7 @@ const TeamInfoCard = ({ matches, team }: TeamInfoProps) => {
             {team?.league?.name.toUpperCase()}
           </Link>
           <h1 className="mb-1 text-3xl font-bold">{team?.name}</h1>
-          <dl className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+          {/* <dl className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
             <div className="flex items-center gap-1">
               <dt className="sr-only">Stadion</dt>
               <MapPin size={16} />
@@ -45,7 +45,7 @@ const TeamInfoCard = ({ matches, team }: TeamInfoProps) => {
                   "Brak danych"}
               </dd>
             </div>
-          </dl>
+          </dl> */}
         </div>
       </div>
 
