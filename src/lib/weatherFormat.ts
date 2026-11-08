@@ -13,6 +13,13 @@ const metricFormat: Record<WeatherMetric, { decimals: number; unit: string }> = 
   cloud_cover_pct: { decimals: 0, unit: "%" },
 };
 
+export function formatNumber(value: number, decimals: number): string {
+  return value.toLocaleString("pl-PL", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+}
+
 export function formatWeatherValue(
   metric: WeatherMetric,
   value: number | null | undefined,

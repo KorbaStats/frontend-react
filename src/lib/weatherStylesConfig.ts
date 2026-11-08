@@ -105,6 +105,16 @@ export const weatherDisplay: Record<
   },
 };
 
+export type WeatherConditionKind = "normal" | "difficult";
+
+export const weatherConditionStyles: Record<
+  WeatherConditionKind,
+  { label: string; color: string }
+> = {
+  normal: { label: "Normalna", color: "var(--weather-normal)" },
+  difficult: { label: "Trudna", color: "var(--weather-difficult)" },
+};
+
 const CLOUDY_PCT = 60;
 
 export function weatherDisplayFor(weather: Weather): WeatherDisplay {

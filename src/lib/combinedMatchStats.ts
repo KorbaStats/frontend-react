@@ -2,12 +2,12 @@ import type { ParsedStat } from "@/data/types";
 import type { MatchWithWeather } from "@/services/matchesService";
 
 export type CombinedMatchStats = {
-  goals: number;
-  xg: number;
-  shots_on_target: number;
-  corner_kicks: number;
-  yellow_cards: number;
-  fouls: number;
+  goals: number | null;
+  xg: number | null;
+  shots_on_target: number | null;
+  corner_kicks: number | null;
+  yellow_cards: number | null;
+  fouls: number | null;
   goalkeeper_saves: number | null;
   pass_accuracy_pct: number | null;
 };
@@ -15,16 +15,16 @@ export type CombinedMatchStats = {
 export type CombinedStatKey = keyof CombinedMatchStats;
 
 function sumOptional(
-  home: number | undefined,
-  away: number | undefined,
+  home: number | null | undefined,
+  away: number | null | undefined,
 ): number | null {
-  if (home === undefined && away === undefined) return null;
+  if (home == null && away == null) return null;
   return (home ?? 0) + (away ?? 0);
 }
 
 function combinedAccuracy(
-  home: ParsedStat | undefined,
-  away: ParsedStat | undefined,
+  home: ParsedStat | null | undefined,
+  away: ParsedStat | null | undefined,
 ): number | null {
   const completed = (home?.completed ?? 0) + (away?.completed ?? 0);
   const total = (home?.total ?? 0) + (away?.total ?? 0);
@@ -38,11 +38,14 @@ export function getCombinedMatchStats(
 ): CombinedMatchStats {
   return {
     goals: match.home_goals + match.away_goals,
-    xg: match.home_expected_goals_xg + match.away_expected_goals_xg,
-    shots_on_target: match.home_shots_on_target + match.away_shots_on_target,
-    corner_kicks: match.home_corner_kicks + match.away_corner_kicks,
-    yellow_cards: match.home_yellow_cards + match.away_yellow_cards,
-    fouls: match.home_fouls + match.away_fouls,
+    xg: sumOptional(match.home_expected_goals_xg, match.away_expected_goals_xg),
+    shots_on_target: sumOptional(
+      match.home_shots_on_target,
+      match.away_shots_on_target,
+    ),
+    corner_kicks: sumOptional(match.home_corner_kicks, match.away_corner_kicks),
+    yellow_cards: sumOptional(match.home_yellow_cards, match.away_yellow_cards),
+    fouls: sumOptional(match.home_fouls, match.away_fouls),
     goalkeeper_saves: sumOptional(
       match.home_goalkeeper_saves,
       match.away_goalkeeper_saves,
@@ -64,12 +67,12 @@ export function averageCombinedStats(
   };
 
   return {
-    goals: average("goals") ?? 0,
-    xg: average("xg") ?? 0,
-    shots_on_target: average("shots_on_target") ?? 0,
-    corner_kicks: average("corner_kicks") ?? 0,
-    yellow_cards: average("yellow_cards") ?? 0,
-    fouls: average("fouls") ?? 0,
+    goals: average("goals"),
+    xg: average("xg"),
+    shots_on_target: average("shots_on_target"),
+    corner_kicks: average("corner_kicks"),
+    yellow_cards: average("yellow_cards"),
+    fouls: average("fouls"),
     goalkeeper_saves: average("goalkeeper_saves"),
     pass_accuracy_pct: average("pass_accuracy_pct"),
   };

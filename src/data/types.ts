@@ -77,9 +77,9 @@ export type Match = {
   away_xg_on_target_xgot: number
   home_expected_assists_xa: number
   away_expected_assists_xa: number
-  home_win_odds: number
-  draw_odds: number
-  away_win_odds: number
+  home_win_odds: number | null
+  draw_odds: number | null
+  away_win_odds: number | null
 
   season: string | null
   league_id: number | null

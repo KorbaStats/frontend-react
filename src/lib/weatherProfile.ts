@@ -124,6 +124,10 @@ export const difficultConditions: DifficultCondition[] = [
   { key: "strongWind", label: "Silny wiatr", isMet: (p) => p.wind === "strong" },
 ]
 
+export const difficultConditionsText = difficultConditions
+  .map((condition) => condition.label.toLowerCase())
+  .join(", ");
+
 export function isDifficultWeather(weather: Weather): boolean {
   const profile = profileFor(weather)
   return difficultConditions.some((condition) => condition.isMet(profile))

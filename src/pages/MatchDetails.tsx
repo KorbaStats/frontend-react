@@ -130,6 +130,8 @@ const MatchDetails = () => {
           }
           weatherScores={weatherScoresQuery.data}
           weatherScoreCategories={weatherScoreCategoriesQuery.data}
+          isCategoriesPending={weatherScoreCategoriesQuery.isPending}
+          isCategoriesError={weatherScoreCategoriesQuery.isError}
           isWeatherScoresPending={
             weatherScoresQuery.isPending || weatherScoreCategoriesQuery.isPending
           }
