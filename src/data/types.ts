@@ -221,28 +221,6 @@ export type TeamStatsOverTimePoint = {
   avg_shots: string
 }
 
-export type ScheduledMatch = {
-  id: number
-  home_team_id: number
-  away_team_id: number
-  datetime: string
-  stadium_id: number | null
-  season: string | null
-  league_id: number | null
-
-  home_win_odds: number
-  draw_odds: number
-  away_win_odds: number
-
-  created_at: string
-  updated_at: string
-
-  homeTeam: Team
-  awayTeam: Team
-  stadium: Stadium | null
-  league: League | null
-}
-
 // podzbiór kolumn tabeli match_weather (backend: models/MatchWeather.js), wartości dla okna meczu
 export type Weather = {
   match_id: number
