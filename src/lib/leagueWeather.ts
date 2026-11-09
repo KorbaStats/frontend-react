@@ -1,5 +1,5 @@
 import type { MatchWithWeather } from "@/services/matchesService";
-import { precipBandFor } from "./weatherProfile";
+import { profileFor } from "./weatherProfile";
 
 export type LeagueWeatherSummary = {
   avgTemp: number;
@@ -21,9 +21,8 @@ export function computeLeagueWeatherSummary(
     count++;
     tempSum += weather.temperature_c;
     windSum += weather.wind_speed_kmh;
-    if (
-      precipBandFor(weather.precipitation_mm) !== "dry"
-    )
+    const { precip } = profileFor(weather);
+    if (precip !== null && precip !== "none")
       precipCount++;
   }
 

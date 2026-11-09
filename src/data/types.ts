@@ -254,6 +254,16 @@ export type Weather = {
   wind_speed_kmh: number
   humidity_pct: number
   cloud_cover_pct: number
+  // klasyfikacja wg kategorii backendu (helpers/weatherCategories.js), liczona przez API
+  conditions: WeatherConditions
+}
+
+// kategorie pogody meczu; null = brak danej wartości
+export type WeatherConditions = {
+  [F in WeatherFactor]: WeatherScoreCategory[F] | null
+} & {
+  precipitation_type: "rain" | "snow" | "sleet" | null
+  difficult: boolean | null
 }
 
 export type User = {

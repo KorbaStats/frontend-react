@@ -1,94 +1,63 @@
-import type { Weather } from "@/data/types"
+import type { Weather, WeatherFactor, WeatherScoreCategory } from "@/data/types"
 
-export type TempBand = "freezing" | "cold" | "mild" | "warm" | "hot"
-export type PrecipBand = "dry" | "light" | "heavy"
-export type WindBand = "calm" | "breezy" | "strong"
+// Kategorie pogody są zdefiniowane w jednym miejscu - na backendzie (backend/src/helpers/weatherCategories.js),
+// te same służą do weather score, filtrów i analiz. API klasyfikuje każdy mecz (weather.conditions),
+// a frontend tylko z tego korzysta. Zakresy liczbowe kategorii: GET /api/weather-scores/categories.
+
+export type TempBand = WeatherScoreCategory["temperature"]
+export type PrecipBand = WeatherScoreCategory["precipitation"]
+export type WindBand = WeatherScoreCategory["wind"]
 export type PrecipTypeBand = "rain" | "snow" | "sleet"
 
+// null = brak danej wartości pogodowej
 export type WeatherProfile = {
-  temp: TempBand
-  precip: PrecipBand
-  wind: WindBand
+  temp: TempBand | null
+  precip: PrecipBand | null
+  wind: WindBand | null
   precipType: PrecipTypeBand | null
 }
 
-export const weatherThresholds = {
-  temp: { freezing: 0, cold: 8, mild: 18, warm: 28 },
-  precip: { dry: 0.2, light: 2.5 },
-  wind: { calm: 15, breezy: 30 },
-  snowTemp: 0,
-} as const
-
-export function tempBandFor(temperature_c: number): TempBand {
-  const t = weatherThresholds.temp
-  if (temperature_c <= t.freezing) return "freezing"
-  if (temperature_c <= t.cold) return "cold"
-  if (temperature_c <= t.mild) return "mild"
-  if (temperature_c <= t.warm) return "warm"
-  return "hot"
-}
-
-export function precipBandFor(precipitation_mm: number): PrecipBand {
-  const p = weatherThresholds.precip
-  if (precipitation_mm < p.dry) return "dry"
-  if (precipitation_mm < p.light) return "light"
-  return "heavy"
-}
-
-export function precipTypeFor(weather: Weather): PrecipTypeBand | null {
-  if (weather.precipitation_mm < weatherThresholds.precip.dry) return null
-
-  const hasSnow = weather.snowfall_cm > 0
-  const hasRain = weather.rain_mm > 0
-
-  if (hasSnow && hasRain) return "sleet"
-  if (hasSnow) return "snow"
-  if (hasRain) return "rain"
-
-  return weather.temperature_c <= weatherThresholds.snowTemp ? "snow" : "rain"
-}
-
-export function windBandFor(wind_speed_kmh: number): WindBand {
-  const w = weatherThresholds.wind
-  if (wind_speed_kmh < w.calm) return "calm"
-  if (wind_speed_kmh < w.breezy) return "breezy"
-  return "strong"
-}
-// zamniana liczb na pasma pogodowe: freezing, cold, hot itp 
 export function profileFor(weather: Weather): WeatherProfile {
+  const { conditions } = weather
   return {
-    temp: tempBandFor(weather.temperature_c),
-    precip: precipBandFor(weather.precipitation_mm),
-    wind: windBandFor(weather.wind_speed_kmh),
-    precipType: precipTypeFor(weather),
+    temp: conditions.temperature,
+    precip: conditions.precipitation,
+    wind: conditions.wind,
+    precipType: conditions.precipitation_type,
   }
 }
 
+// mróz w sensie fizycznym (poniżej zera) - tylko do opisów i rekordów, nie jest kategorią analiz
+export const FROST_TEMPERATURE_C = 0
+export const isFrost = (temperature_c: number) => temperature_c <= FROST_TEMPERATURE_C
+
 export type WeatherAxisKey = "temp" | "precip" | "precipType" | "wind"
 
+// factor - odpowiadający czynnik backendu (do zakresów liczbowych z /api/weather-scores/categories)
 export const weatherAxes = [
   {
     key: "temp" as const,
-    label: "Temperatura (°C)",
+    factor: "temperature" as WeatherFactor | null,
+    label: "Temperatura",
     bands: [
-      { value: "freezing" as const, label: "≤ 0" },
-      { value: "cold" as const, label: "0 – 8" },
-      { value: "mild" as const, label: "8 – 18" },
-      { value: "warm" as const, label: "18 – 28" },
-      { value: "hot" as const, label: "> 28" },
+      { value: "low" as const, label: "Niska" },
+      { value: "normal" as const, label: "Normalna" },
+      { value: "high" as const, label: "Wysoka" },
     ],
   },
   {
     key: "precip" as const,
+    factor: "precipitation" as WeatherFactor | null,
     label: "Opady",
     bands: [
-      { value: "dry" as const, label: "Brak" },
-      { value: "light" as const, label: "Niskie" },
-      { value: "heavy" as const, label: "Wysokie" },
+      { value: "none" as const, label: "Brak" },
+      { value: "light" as const, label: "Mały deszcz" },
+      { value: "heavy" as const, label: "Duży deszcz" },
     ],
   },
   {
     key: "precipType" as const,
+    factor: null as WeatherFactor | null,
     label: "Rodzaj opadów",
     bands: [
       { value: "rain" as const, label: "Deszcz" },
@@ -98,37 +67,42 @@ export const weatherAxes = [
   },
   {
     key: "wind" as const,
+    factor: "wind" as WeatherFactor | null,
     label: "Wiatr",
     bands: [
-      { value: "calm" as const, label: "Mały" },
-      { value: "breezy" as const, label: "Umiarkowany" },
-      { value: "strong" as const, label: "Porywisty" },
+      { value: "calm" as const, label: "Brak" },
+      { value: "light" as const, label: "Lekki" },
+      { value: "strong" as const, label: "Silny" },
     ],
   },
 ]
 
-export type DifficultConditionKey = "freezing" | "cold" | "hot" | "heavyPrecip" | "snow" | "strongWind"
+export type WeatherConditionKey = "heavyPrecip" | "strongWind" | "lowTemp" | "highTemp" | "snow"
 
-export type DifficultCondition = {
-  key: DifficultConditionKey
+export type WeatherCondition = {
+  key: WeatherConditionKey
   label: string
   isMet: (profile: WeatherProfile) => boolean
 }
 
-export const difficultConditions: DifficultCondition[] = [
-  { key: "freezing", label: "Mróz", isMet: (p) => p.temp === "freezing" },
-  { key: "cold", label: "Zimno", isMet: (p) => p.temp === "cold" },
-  { key: "hot", label: "Upał", isMet: (p) => p.temp === "hot" },
-  { key: "heavyPrecip", label: "Silne opady", isMet: (p) => p.precip === "heavy" },
-  { key: "snow", label: "Śnieg", isMet: (p) => p.precipType === "snow" || p.precipType === "sleet" },
+// Trudna pogoda - te same warunki co DIFFICULT_CONDITIONS na backendzie
+export const difficultConditions: WeatherCondition[] = [
+  { key: "heavyPrecip", label: "Duży deszcz", isMet: (p) => p.precip === "heavy" },
   { key: "strongWind", label: "Silny wiatr", isMet: (p) => p.wind === "strong" },
+]
+
+// warunki do porównań ze zwykłą pogodą (WeatherComparisonChart) - trudne oraz pozostałe skrajne kategorie
+export const comparisonConditions: WeatherCondition[] = [
+  ...difficultConditions,
+  { key: "lowTemp", label: "Niska temperatura", isMet: (p) => p.temp === "low" },
+  { key: "highTemp", label: "Wysoka temperatura", isMet: (p) => p.temp === "high" },
+  { key: "snow", label: "Śnieg", isMet: (p) => p.precipType === "snow" || p.precipType === "sleet" },
 ]
 
 export const difficultConditionsText = difficultConditions
   .map((condition) => condition.label.toLowerCase())
-  .join(", ");
+  .join(" lub ")
 
 export function isDifficultWeather(weather: Weather): boolean {
-  const profile = profileFor(weather)
-  return difficultConditions.some((condition) => condition.isMet(profile))
+  return weather.conditions.difficult === true
 }

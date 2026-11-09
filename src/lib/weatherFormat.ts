@@ -1,6 +1,6 @@
 import type { Weather } from "@/data/types";
 
-export type WeatherMetric = Exclude<keyof Weather, "match_id">;
+export type WeatherMetric = Exclude<keyof Weather, "match_id" | "conditions">;
 
 const metricFormat: Record<WeatherMetric, { decimals: number; unit: string }> = {
   temperature_c: { decimals: 1, unit: "°C" },
