@@ -3,7 +3,7 @@ import type { MatchWithWeather } from "@/services/matchesService";
 import { impliedShares, matchOdds } from "./matchOutcomes";
 import { computeTeamStats } from "./teamStats";
 import { MIN_MATCHES } from "./weatherComparison";
-import { isDifficultWeather, tempBandFor } from "./weatherProfile";
+import { isDifficultWeather, isFrost } from "./weatherProfile";
 
 export const MIN_TEAM_MATCHES = 8;
 export const MIN_HOME_MATCHES = 5;
@@ -273,7 +273,7 @@ export function computeWeatherRecords(matches: MatchWithWeather[]): WeatherRecor
     ),
     biggestFreezingCrowd: matchWithHighest(
       known.filter(
-        (m) => m.attendance && tempBandFor(m.weather.temperature_c) === "freezing",
+        (m) => m.attendance && isFrost(m.weather.temperature_c),
       ),
       (m) => m.attendance ?? 0,
     ),

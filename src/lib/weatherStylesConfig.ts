@@ -1,5 +1,10 @@
 import type { Weather, WeatherFactor } from "@/data/types";
-import { profileFor, type DifficultConditionKey } from "./weatherProfile";
+import {
+  isFrost,
+  profileFor,
+  type WeatherAxisKey,
+  type WeatherConditionKey,
+} from "./weatherProfile";
 import {
   Sun,
   Cloudy,
@@ -9,8 +14,6 @@ import {
   ThermometerSun,
   ThermometerSnowflake,
   Thermometer,
-  Snowflake,
-  Flame,
   CloudDrizzle,
   CloudHail,
   Leaf,
@@ -116,16 +119,18 @@ export const weatherConditionStyles: Record<
 };
 
 const CLOUDY_PCT = 60;
+// tylko do wyboru ikony "upał" - kategoria "wysoka temperatura" zaczyna się dużo niżej
+const HEAT_DISPLAY_C = 28;
 
 export function weatherDisplayFor(weather: Weather): WeatherDisplay {
-  const { temp, precip, precipType, wind } = profileFor(weather);
+  const { precip, precipType, wind } = profileFor(weather);
 
   if (precipType === "sleet") return "sleet";
   if (precipType === "snow") return "snow";
   if (precipType === "rain") return precip === "heavy" ? "rain" : "drizzle";
 
-  if (temp === "hot") return "heat";
-  if (temp === "freezing") return "cold";
+  if (weather.temperature_c >= HEAT_DISPLAY_C) return "heat";
+  if (isFrost(weather.temperature_c)) return "cold";
   if (wind === "strong") return "wind";
 
   return weather.cloud_cover_pct > CLOUDY_PCT ? "clouds" : "clear";
@@ -143,28 +148,18 @@ export function weatherScoreColor(score: number): string {
   return "text-destructive";
 }
 
-export const bandIcons: Record<string, LucideIcon> = {
-  freezing: ThermometerSnowflake,
-  cold: Snowflake,
-  mild: Thermometer,
-  warm: ThermometerSun,
-  hot: Flame,
-  dry: Sun,
-  light: CloudDrizzle,
-  heavy: CloudRainWind,
-  rain: CloudRain,
-  snow: CloudSnow,
-  sleet: CloudHail,
-  calm: Leaf,
-  breezy: Wind,
-  strong: Tornado,
+// ikony pasm per oś - nazwy kategorii się powtarzają (np. "light" przy opadach i wietrze)
+export const bandIcons: Record<WeatherAxisKey, Record<string, LucideIcon>> = {
+  temp: { low: ThermometerSnowflake, normal: Thermometer, high: ThermometerSun },
+  precip: { none: Sun, light: CloudDrizzle, heavy: CloudRainWind },
+  precipType: { rain: CloudRain, snow: CloudSnow, sleet: CloudHail },
+  wind: { calm: Leaf, light: Wind, strong: Tornado },
 };
 
-export const conditionIcons: Record<DifficultConditionKey, LucideIcon> = {
-  freezing: bandIcons.freezing,
-  cold: bandIcons.cold,
-  hot: bandIcons.hot,
-  heavyPrecip: bandIcons.heavy,
-  snow: bandIcons.snow,
-  strongWind: bandIcons.strong,
+export const conditionIcons: Record<WeatherConditionKey, LucideIcon> = {
+  heavyPrecip: bandIcons.precip.heavy,
+  strongWind: bandIcons.wind.strong,
+  lowTemp: bandIcons.temp.low,
+  highTemp: bandIcons.temp.high,
+  snow: bandIcons.precipType.snow,
 };

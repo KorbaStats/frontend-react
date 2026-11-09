@@ -54,9 +54,12 @@ export function matchesBands(match: MatchWithWeather, filters: WeatherBandFilter
   if (match.weather === null) return false
 
   const profile = profileFor(match.weather)
-  if (filters.temp.length > 0 && !filters.temp.includes(profile.temp)) return false
-  if (filters.precip.length > 0 && !filters.precip.includes(profile.precip)) return false
-  if (filters.wind.length > 0 && !filters.wind.includes(profile.wind)) return false
+  // brak danej wartości (null) nie spełnia filtra danej osi
+  const inBands = <T,>(selected: T[], band: T | null) =>
+    selected.length === 0 || (band !== null && selected.includes(band))
+  if (!inBands(filters.temp, profile.temp)) return false
+  if (!inBands(filters.precip, profile.precip)) return false
+  if (!inBands(filters.wind, profile.wind)) return false
   if (
     filters.precipType.length > 0 &&
     (profile.precipType === null ||

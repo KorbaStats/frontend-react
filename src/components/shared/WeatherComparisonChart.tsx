@@ -13,8 +13,8 @@ import { ChartBar } from "lucide-react";
 
 import type { MatchWithWeather } from "@/services/matchesService";
 import {
-  difficultConditions,
-  type DifficultConditionKey,
+  comparisonConditions,
+  type WeatherConditionKey,
 } from "@/lib/weatherProfile";
 import {
   MIN_MATCHES,
@@ -58,9 +58,9 @@ const WeatherComparisonChart = ({
   title,
   description,
 }: WeatherComparisonChartProps) => {
-  const [selectedKey, setSelectedKey] = useState<DifficultConditionKey | null>(null);
+  const [selectedKey, setSelectedKey] = useState<WeatherConditionKey | null>(null);
 
-  const available = difficultConditions
+  const available = comparisonConditions
     .map((condition) => ({ condition, split: splitByCondition(matches, condition) }))
     .filter(({ split }) => split.conditionMatches.length >= MIN_MATCHES);
 
@@ -207,7 +207,7 @@ const WeatherComparisonChart = ({
             </div>
 
             <p className="text-xs text-muted-foreground">
-              {selected.split.normalMatches.length} meczów w normalnych warunkach pogodowych. Warunki mogą się nakładać — mecz w mrozie ze śniegiem liczy się do obu.
+              {selected.split.normalMatches.length} meczów w normalnych warunkach pogodowych. Warunki mogą się nakładać — mecz w deszczu przy silnym wietrze liczy się do obu.
             </p>
           </>
         )}

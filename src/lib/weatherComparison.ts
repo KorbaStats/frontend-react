@@ -9,7 +9,7 @@ import {
   isDifficultWeather,
   profileFor,
   weatherAxes,
-  type DifficultCondition,
+  type WeatherCondition,
   type WeatherAxisKey,
 } from "./weatherProfile";
 
@@ -26,7 +26,7 @@ export type ComparisonRow = {
 
 export function splitByCondition(
   matches: MatchWithWeather[],
-  difficultCondition: DifficultCondition,
+  difficultCondition: WeatherCondition,
 ) {
   const conditionMatches: MatchWithWeather[] = [];
   const normalMatches: MatchWithWeather[] = [];
