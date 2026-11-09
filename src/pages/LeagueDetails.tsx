@@ -10,6 +10,7 @@ import {
   getLeagueMatches,
   type MatchWithWeather,
 } from "@/services/matchesService";
+import { getTeamRankings } from "@/services/teamStatsService";
 import {
   leagueWeatherScoresOptions,
   leaguesOptions,
@@ -19,6 +20,7 @@ import {
 } from "@/hooks/queries";
 
 import { computeLeagueWeatherSummary } from "@/lib/leagueWeather";
+import { buildStandings } from "@/lib/standings";
 import {
   DEFAULT_RANKING_CATEGORY,
   categoryLabel,
@@ -64,6 +66,12 @@ const LeagueDetails = () => {
     enabled: !!selectedSeason,
   });
 
+  const rankingsQuery = useQuery({
+    queryKey: ["team-stats", "rankings", leagueId, selectedSeason],
+    queryFn: () => getTeamRankings(leagueId, selectedSeason ?? undefined),
+    enabled: !!selectedSeason,
+  });
+
   const weatherScoresQuery = useQuery(leagueWeatherScoresOptions(leagueId));
   const teamsQuery = useQuery(teamsOptions);
   const categoriesQuery = useQuery(weatherScoreCategoriesOptions);
@@ -96,6 +104,11 @@ const LeagueDetails = () => {
   const weatherSummary = useMemo(
     () => computeLeagueWeatherSummary(leagueMatches),
     [leagueMatches],
+  );
+
+  const standings = useMemo(
+    () => buildStandings(rankingsQuery.data ?? [], teams, leagueMatches),
+    [rankingsQuery.data, teams, leagueMatches],
   );
 
   const topScores = useMemo(
@@ -140,7 +153,11 @@ const LeagueDetails = () => {
       />
 
       <div className="grid gap-4 grid-cols-3 print:grid-cols-1">
-        <LeagueTable matches={leagueMatches} />
+        <LeagueTable
+          rows={standings}
+          isPending={rankingsQuery.isPending || teamsQuery.isPending}
+          isError={rankingsQuery.isError || teamsQuery.isError}
+        />
         <WeatherScoreRankingCard
           rows={topScores}
           title="Top Weather Score's w lidze"

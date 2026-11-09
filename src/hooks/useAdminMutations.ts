@@ -28,7 +28,7 @@ type QueryKey = readonly string[];
 type SaveVariables<T> = { id: number | null; input: T };
 
 const SESSION_KEYS: QueryKey[] = [["users"], SESSION_KEY];
-const MATCH_KEYS: QueryKey[] = [["matches"], ["match"], ["match-stats"]];
+const MATCH_KEYS: QueryKey[] = [["matches"], ["match"], ["match-stats"], ["team-stats"]];
 
 function useInvalidate(keys: QueryKey[]) {
   const queryClient = useQueryClient();

@@ -10,18 +10,25 @@ import {
   TableCell,
 } from "@/components/ui/table";
 
-import type { Match } from "@/data/types";
-import { computeStandings } from "@/lib/standings";
+import type { StandingRow } from "@/lib/standings";
 import { getTeamShortName } from "@/lib/teamLabel";
 
 import ResultBadge from "@/components/shared/ResultBadge";
 
 interface LeagueTableProps {
-  matches: Match[] | null;
+  rows: StandingRow[];
+  isPending: boolean;
+  isError: boolean;
 }
 
-const LeagueTable = ({ matches }: LeagueTableProps) => {
-  const standingRows = computeStandings(matches ?? []);
+const LeagueTable = ({ rows, isPending, isError }: LeagueTableProps) => {
+  const placeholder = isPending
+    ? "Ładowanie..."
+    : isError
+      ? "Nie udało się pobrać tabeli."
+      : rows.length === 0
+        ? "Brak meczów w tym sezonie."
+        : null;
 
   return (
     <Card className="col-span-2 print:col-span-1">
@@ -48,18 +55,20 @@ const LeagueTable = ({ matches }: LeagueTableProps) => {
           </TableHeader>
 
           <TableBody>
-            {standingRows.length === 0 && (
+            {placeholder && (
               <TableRow className="hover:bg-transparent">
                 <TableCell
                   colSpan={9}
-                  className="py-10 text-center text-muted-foreground"
+                  className={`py-10 text-center ${
+                    isError && !isPending ? "text-destructive" : "text-muted-foreground"
+                  }`}
                 >
-                  Brak meczów w tym sezonie.
+                  {placeholder}
                 </TableCell>
               </TableRow>
             )}
 
-            {standingRows.map((row, idx) => (
+            {!placeholder && rows.map((row, idx) => (
               <TableRow key={row.team.id}>
                 <TableCell className="pl-4 text-center tabular-nums text-muted-foreground">
                   {idx + 1}
