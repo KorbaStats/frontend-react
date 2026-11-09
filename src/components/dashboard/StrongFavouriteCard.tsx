@@ -13,8 +13,8 @@ import {
   type WeatherConditionKind,
 } from "@/lib/weatherStylesConfig";
 
-import DashboardChartCard from "./DashboardChartCard";
-import WeatherConditionLabel from "./WeatherConditionLabel";
+import ChartCard from "@/components/shared/ChartCard";
+import WeatherConditionLabel from "@/components/shared/WeatherConditionLabel";
 
 interface StrongFavouriteCardProps {
   matches: MatchWithWeather[];
@@ -71,7 +71,7 @@ const StrongFavouriteCard = ({
     : 0;
 
   return (
-    <DashboardChartCard
+    <ChartCard
       Icon={Crown}
       title="Mocny faworyt"
       topic={`kursy dawały mu min. ${STRONG_FAVOURITE_PCT}%`}
@@ -99,7 +99,7 @@ const StrongFavouriteCard = ({
           <ResultRow kind="difficult" result={favourite.difficult} />
         </div>
       )}
-    </DashboardChartCard>
+    </ChartCard>
   );
 };
 

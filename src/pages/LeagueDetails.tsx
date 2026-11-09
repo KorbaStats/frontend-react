@@ -31,6 +31,10 @@ import WeatherScoreRankingCard from "@/components/shared/weather-score/WeatherSc
 import LeagueRecentMatches from "@/components/league-details/LeagueRecentMatches";
 import WeatherComparisonChart from "@/components/shared/WeatherComparisonChart";
 import WeatherBandTrendChart from "@/components/league-details/WeatherBandTrendChart";
+import WinsByWeatherChart from "@/components/league-details/WinsByWeatherChart";
+import FavouriteByWeatherChart from "@/components/league-details/FavouriteByWeatherChart";
+import AttendanceByWeatherCard from "@/components/league-details/AttendanceByWeatherCard";
+import UnchangedByWeatherCard from "@/components/league-details/UnchangedByWeatherCard";
 import ExportReportButton from "@/components/shared/ExportReportButton";
 
 const EMPTY_MATCHES: MatchWithWeather[] = [];
@@ -119,6 +123,10 @@ const LeagueDetails = () => {
     );
   }
 
+  const scope = `${league?.name ?? "Liga"}${
+    selectedSeason ? `, sezon ${selectedSeason}` : ""
+  }`;
+
   return (
     <>
       <LeagueHeader
@@ -156,17 +164,20 @@ const LeagueDetails = () => {
         <WeatherComparisonChart
           matches={leagueMatches}
           title="Wpływ warunków pogodowych"
-          description={`${league?.name ?? "Liga"}${
-            selectedSeason ? `, sezon ${selectedSeason}` : ""
-          } — statystyki względem meczów w sprzyjających warunkach pogodowych.`}
+          description={`${scope} — statystyki względem meczów w sprzyjających warunkach pogodowych.`}
         />
 
         <WeatherBandTrendChart
           matches={leagueMatches}
-          description={`${league?.name ?? "Liga"}${
-            selectedSeason ? `, sezon ${selectedSeason}` : ""
-          } — jak zmienia się wybrana statystyka z pogodą.`}
+          description={`${scope} — jak zmienia się wybrana statystyka z pogodą.`}
         />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 print:grid-cols-1">
+        <WinsByWeatherChart matches={leagueMatches} scope={scope} />
+        <FavouriteByWeatherChart matches={leagueMatches} scope={scope} />
+        <AttendanceByWeatherCard matches={leagueMatches} scope={scope} />
+        <UnchangedByWeatherCard matches={leagueMatches} scope={scope} />
       </div>
 
       <LeagueRecentMatches

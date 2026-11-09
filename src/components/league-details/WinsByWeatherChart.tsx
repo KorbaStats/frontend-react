@@ -17,13 +17,12 @@ import {
 import { computeOutcomeSplit, type OutcomeSplit } from "@/lib/matchOutcomes";
 import { weatherConditionStyles } from "@/lib/weatherStylesConfig";
 
-import DashboardChartCard from "./DashboardChartCard";
-import WeatherConditionLabel from "./WeatherConditionLabel";
+import ChartCard from "@/components/shared/ChartCard";
+import WeatherConditionLabel from "@/components/shared/WeatherConditionLabel";
 
 interface WinsByWeatherChartProps {
   matches: MatchWithWeather[];
-  isPending: boolean;
-  isError: boolean;
+  scope: string;
 }
 
 const outcomes: { short: string; key: "home" | "draw" | "away" }[] = [
@@ -47,11 +46,7 @@ const toPcts = (split: OutcomeSplit) => ({
   away: pct(split.awayWins, split.matches),
 });
 
-const WinsByWeatherChart = ({
-  matches,
-  isPending,
-  isError,
-}: WinsByWeatherChartProps) => {
+const WinsByWeatherChart = ({ matches, scope }: WinsByWeatherChartProps) => {
   const normal = computeOutcomeSplit(
     matches.filter((m) => m.weather && !isDifficultWeather(m.weather)),
   );
@@ -71,12 +66,11 @@ const WinsByWeatherChart = ({
   const homeDiff = difficultPcts.home - normalPcts.home;
 
   return (
-    <DashboardChartCard
+    <ChartCard
       Icon={Trophy}
       title="Wyniki meczów a pogoda"
+      scope={scope}
       topic="kto wygrywa"
-      isPending={isPending}
-      isError={isError}
       isEmpty={normal.matches === 0 || difficult.matches === 0}
       insight={
         homeDiff === 0 ? (
@@ -155,7 +149,7 @@ const WinsByWeatherChart = ({
           ))}
         </div>
       </div>
-    </DashboardChartCard>
+    </ChartCard>
   );
 };
 

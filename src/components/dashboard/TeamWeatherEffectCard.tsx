@@ -19,7 +19,7 @@ import { formatNumber } from "@/lib/weatherFormat";
 import { difficultConditionsText } from "@/lib/weatherProfile";
 
 import SegmentedBar from "@/components/shared/SegmentedBar";
-import DashboardChartCard from "./DashboardChartCard";
+import ChartCard from "@/components/shared/ChartCard";
 
 interface TeamWeatherEffectCardProps {
   matches: MatchWithWeather[];
@@ -82,7 +82,7 @@ const TeamWeatherEffectCard = ({
 
   return (
     <div className="col-span-2 grid print:col-span-1">
-      <DashboardChartCard
+      <ChartCard
         Icon={ArrowLeftRight}
         title="Komu pogoda pomaga, a komu szkodzi"
         topic="punkty na mecz w trudnej i normalnej pogodzie"
@@ -152,7 +152,7 @@ const TeamWeatherEffectCard = ({
             />
           </div>
         </div>
-      </DashboardChartCard>
+      </ChartCard>
     </div>
   );
 };

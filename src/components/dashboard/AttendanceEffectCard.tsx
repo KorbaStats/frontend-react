@@ -9,7 +9,7 @@ import {
 } from "@/lib/dashboardIndicators";
 import { polishPlural } from "@/lib/polishPlural";
 
-import DashboardChartCard from "./DashboardChartCard";
+import ChartCard from "@/components/shared/ChartCard";
 
 interface AttendanceEffectCardProps {
   matches: MatchWithWeather[];
@@ -27,7 +27,7 @@ const AttendanceEffectCard = ({
   const drops = useMemo(() => computeBiggestAttendanceDrops(matches), [matches]);
 
   return (
-    <DashboardChartCard
+    <ChartCard
       Icon={Users}
       title="Kibice a pogoda"
       topic="frekwencja u siebie"
@@ -74,7 +74,7 @@ const AttendanceEffectCard = ({
           ))}
         </ul>
       </div>
-    </DashboardChartCard>
+    </ChartCard>
   );
 };
 

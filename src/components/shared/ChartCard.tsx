@@ -9,29 +9,31 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-interface DashboardChartCardProps {
+interface ChartCardProps {
   Icon: LucideIcon;
   title: string;
+  scope?: string;
   topic: string;
-  isPending: boolean;
-  isError: boolean;
+  isPending?: boolean;
+  isError?: boolean;
   isEmpty: boolean;
   insight?: ReactNode;
   footnote: ReactNode;
   children: ReactNode;
 }
 
-const DashboardChartCard = ({
+const ChartCard = ({
   Icon,
   title,
+  scope = "Wszystkie ligi i sezony",
   topic,
-  isPending,
-  isError,
+  isPending = false,
+  isError = false,
   isEmpty,
   insight,
   footnote,
   children,
-}: DashboardChartCardProps) => {
+}: ChartCardProps) => {
   const placeholder = isPending
     ? "Ładowanie..."
     : isError
@@ -47,7 +49,7 @@ const DashboardChartCard = ({
           <Icon className="h-4 w-4 text-primary" />
           {title}
         </CardTitle>
-        <CardDescription>Wszystkie ligi i sezony · {topic}</CardDescription>
+        <CardDescription>{scope} · {topic}</CardDescription>
       </CardHeader>
 
       <CardContent className="flex flex-1 flex-col gap-4">
@@ -73,4 +75,4 @@ const DashboardChartCard = ({
   );
 };
 
-export default DashboardChartCard;
+export default ChartCard;

@@ -3,23 +3,6 @@ import { impliedShares, matchOdds } from "./matchOutcomes";
 import { MIN_MATCHES } from "./weatherComparison";
 import { isDifficultWeather } from "./weatherProfile";
 
-type LeagueGroup = { league: string; matches: MatchWithWeather[] };
-
-function groupByLeague(matches: MatchWithWeather[]): LeagueGroup[] {
-  const groups = new Map<string, MatchWithWeather[]>();
-
-  for (const match of matches) {
-    if (!match.weather || !match.league) continue;
-    const group = groups.get(match.league.name);
-    if (group) group.push(match);
-    else groups.set(match.league.name, [match]);
-  }
-
-  return [...groups]
-    .map(([league, leagueMatches]) => ({ league, matches: leagueMatches }))
-    .sort((a, b) => a.league.localeCompare(b.league, "pl"));
-}
-
 function splitByDifficulty(matches: MatchWithWeather[]) {
   return {
     normal: matches.filter((m) => m.weather && !isDifficultWeather(m.weather)),
@@ -39,7 +22,6 @@ export type FavouriteOutcomes = {
 };
 
 export type LeagueFavouriteOutcomes = {
-  league: string;
   normal: FavouriteOutcomes | null;
   difficult: FavouriteOutcomes | null;
 };
@@ -76,15 +58,12 @@ function favouriteOutcomes(matches: MatchWithWeather[]): FavouriteOutcomes | nul
 
 export function computeFavouriteOutcomes(
   matches: MatchWithWeather[],
-): LeagueFavouriteOutcomes[] {
-  return groupByLeague(matches).map(({ league, matches: leagueMatches }) => {
-    const { normal, difficult } = splitByDifficulty(leagueMatches);
-    return {
-      league,
-      normal: favouriteOutcomes(normal),
-      difficult: favouriteOutcomes(difficult),
-    };
-  });
+): LeagueFavouriteOutcomes {
+  const { normal, difficult } = splitByDifficulty(matches);
+  return {
+    normal: favouriteOutcomes(normal),
+    difficult: favouriteOutcomes(difficult),
+  };
 }
 
 const totalGoals = (match: MatchWithWeather) =>
@@ -129,14 +108,13 @@ export type UnchangedStatRow = {
 };
 
 export type LeagueUnchangedStats = {
-  league: string;
   biggestChange: number;
   rows: UnchangedStatRow[];
 };
 
 export function computeUnchangedStats(
   matches: MatchWithWeather[],
-): LeagueUnchangedStats[] {
+): LeagueUnchangedStats | null {
   const roundedShare = (
     group: MatchWithWeather[],
     stat: (typeof unchangedStats)[number],
@@ -147,31 +125,25 @@ export function computeUnchangedStats(
       : Math.round((counted.filter(stat.isMet).length / counted.length) * 100);
   };
 
-  return groupByLeague(matches).flatMap(({ league, matches: leagueMatches }) => {
-    const { normal, difficult } = splitByDifficulty(leagueMatches);
-    if (normal.length < MIN_MATCHES || difficult.length < MIN_MATCHES) return [];
+  const { normal, difficult } = splitByDifficulty(matches);
+  if (normal.length < MIN_MATCHES || difficult.length < MIN_MATCHES) return null;
 
-    const rows = unchangedStats.map((stat) => ({
-      key: stat.key,
-      label: stat.label,
-      normalPct: roundedShare(normal, stat),
-      difficultPct: roundedShare(difficult, stat),
-    }));
+  const rows = unchangedStats.map((stat) => ({
+    key: stat.key,
+    label: stat.label,
+    normalPct: roundedShare(normal, stat),
+    difficultPct: roundedShare(difficult, stat),
+  }));
 
-    return [
-      {
-        league,
-        rows,
-        biggestChange: Math.max(
-          ...rows.map((row) => Math.abs(row.difficultPct - row.normalPct)),
-        ),
-      },
-    ];
-  });
+  return {
+    rows,
+    biggestChange: Math.max(
+      ...rows.map((row) => Math.abs(row.difficultPct - row.normalPct)),
+    ),
+  };
 }
 
 export type LeagueAttendance = {
-  league: string;
   difficultPerHundred: number;
   normalMatches: number;
   difficultMatches: number;
@@ -189,7 +161,7 @@ function attendanceRatios(
 
 export function computeAttendanceByWeather(
   matches: MatchWithWeather[],
-): LeagueAttendance[] {
+): LeagueAttendance | null {
   const attendanceByHome = new Map<number, number[]>();
   for (const match of matches) {
     if (!match.attendance) continue;
@@ -202,19 +174,14 @@ export function computeAttendanceByWeather(
     [...attendanceByHome].map(([teamId, values]) => [teamId, average(values)]),
   );
 
-  return groupByLeague(matches).flatMap(({ league, matches: leagueMatches }) => {
-    const split = splitByDifficulty(leagueMatches);
-    const normal = attendanceRatios(split.normal, homeAverages);
-    const difficult = attendanceRatios(split.difficult, homeAverages);
-    if (normal.length < MIN_MATCHES || difficult.length < MIN_MATCHES) return [];
+  const split = splitByDifficulty(matches);
+  const normal = attendanceRatios(split.normal, homeAverages);
+  const difficult = attendanceRatios(split.difficult, homeAverages);
+  if (normal.length < MIN_MATCHES || difficult.length < MIN_MATCHES) return null;
 
-    return [
-      {
-        league,
-        difficultPerHundred: (average(difficult) / average(normal)) * 100,
-        normalMatches: normal.length,
-        difficultMatches: difficult.length,
-      },
-    ];
-  });
+  return {
+    difficultPerHundred: (average(difficult) / average(normal)) * 100,
+    normalMatches: normal.length,
+    difficultMatches: difficult.length,
+  };
 }
