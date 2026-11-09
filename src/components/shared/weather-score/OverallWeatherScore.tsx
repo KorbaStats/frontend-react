@@ -49,14 +49,16 @@ const OverallWeatherScore = ({ overall }: OverallWeatherScoreProps) => {
         <div>
           <dt className="text-muted-foreground">Trudna · {difficult.matches_count} meczów</dt>
           <dd className="tabular-nums">
-            {formatPoints(difficult.avg_points)} pkt/mecz · {record(difficult)}
+            <span className="block">{formatPoints(difficult.avg_points)} pkt/mecz</span>
+            <span className="block text-muted-foreground">{record(difficult)}</span>
           </dd>
         </div>
         {normal && (
           <div>
             <dt className="text-muted-foreground">Normalna · {normal.matches_count} meczów</dt>
             <dd className="tabular-nums">
-              {formatPoints(normal.avg_points)} pkt/mecz · {record(normal)}
+              <span className="block">{formatPoints(normal.avg_points)} pkt/mecz</span>
+              <span className="block text-muted-foreground">{record(normal)}</span>
             </dd>
           </div>
         )}
