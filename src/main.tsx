@@ -19,6 +19,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Login from "./pages/Login.tsx";
 import Register from "./pages/Register.tsx";
 import Profile from "./pages/Profile.tsx";
+import Predictions from "./pages/Predictions.tsx";
 import AdminLayout from "./components/admin/AdminLayout.tsx";
 import AdminUsersRoles from "./pages/admin/AdminUsersRoles.tsx";
 import AdminDataLayout from "./components/admin/AdminDataLayout.tsx";
@@ -71,12 +72,7 @@ createRoot(document.getElementById("root")!).render(
                   <Route path="team/:id" element={<TeamDetails />} />
                   <Route path="matches" element={<Matches />} />
                   <Route path="match/:id" element={<MatchDetails />} />
-
-                  {/*TODO: Predykcje*/}
-                  <Route
-                    path="predictions"
-                    element={<div>Predictions page...</div>}
-                  />
+                  <Route path="predictions" element={<Predictions />} />
 
                   <Route path="*" element={<NotFound />} />
                 </Route>

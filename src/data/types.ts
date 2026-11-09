@@ -404,6 +404,8 @@ export type TeamWeatherScores = {
 export type MatchWeatherScoreSide = {
   team_id: number
   team_name: string
+  // false = drużyna bez przeliczonego weather score (np. beniaminek), backend daje neutralne 50
+  scores_computed: boolean
   scores: Partial<Record<WeatherFactor, number>>
   weather_score: number | null
 }
@@ -433,3 +435,42 @@ export type WeatherScoresRecalculation = {
     xg_residual_sd: number
   }
 }
+
+// mecz z terminarza TheSportsDB (backend: models/Fixture.js) - jeszcze nierozegrany
+export type Fixture = {
+  id: number
+  thesportsdb_id: number
+  league_id: number | null
+  season: string | null
+  round: number | null
+  datetime: string
+  status: string
+  home_team_id: number | null
+  away_team_id: number | null
+  stadium_id: number | null
+  venue_name: string | null
+  venue_city: string | null
+  homeTeam: Team | null
+  awayTeam: Team | null
+  stadium: Stadium | null
+  league: League | null
+}
+
+// GET /api/fixtures/weather-scores - prognoza pogody i weather score obu drużyn
+export type FixtureWeatherScore = Omit<MatchWeatherScores, "match_id" | "source"> & {
+  fixture_id: number
+  league_id: number | null
+  round: number | null
+  source: "forecast"
+  forecast_fetched_at: string
+}
+
+// mecz w zasięgu prognozy, dla którego nie udało się jej pobrać (np. brak współrzędnych stadionu)
+export type FixtureWeatherScoreError = {
+  fixture_id: number
+  datetime: string
+  league_id: number | null
+  error: string
+}
+
+export type FixtureWeatherScoreEntry = FixtureWeatherScore | FixtureWeatherScoreError
