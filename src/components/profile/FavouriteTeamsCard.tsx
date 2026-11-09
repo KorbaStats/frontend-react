@@ -36,8 +36,8 @@ const FavouriteTeamsCard = () => {
           Ulubione drużyny
         </CardTitle>
         <CardDescription>
-          Drużyny oznaczone gwiazdką. Ich nadchodzące mecze pojawiają się na
-          dashboardzie.
+          Drużyny oznaczone gwiazdką. Ich nadchodzące mecze odfiltrujesz na
+          stronie Predykcje.
         </CardDescription>
       </CardHeader>
       <CardContent className="px-0">

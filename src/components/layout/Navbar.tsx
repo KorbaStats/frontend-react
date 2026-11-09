@@ -26,11 +26,11 @@ const navLinks: NavLink[] = [
     to: "/leagues",
     isActive: (pathname) => pathname.startsWith("/league"),
   },
-  // {
-  //   label: "Predykcje",
-  //   to: "/predictions",
-  //   isActive: (pathname) => pathname === "/predictions",
-  // },
+  {
+    label: "Predykcje",
+    to: "/predictions",
+    isActive: (pathname) => pathname === "/predictions",
+  },
 ];
 
 interface NavbarProps {
@@ -135,7 +135,7 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
                 size="sm"
                 className="cursor-pointer"
               >
-                <LogOut size={"icon"} />
+                <LogOut />
                 <span className="hidden xl:inline">Wyloguj</span>
               </Button>
             </>

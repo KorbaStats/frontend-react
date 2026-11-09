@@ -106,3 +106,16 @@ export const difficultConditionsText = difficultConditions
 export function isDifficultWeather(weather: Weather): boolean {
   return weather.conditions.difficult === true
 }
+
+// dla samych kategorii czynników (np. prognoza nadchodzącego meczu, bez rodzaju opadów)
+export function isDifficultConditions(conditions: {
+  [F in WeatherFactor]: WeatherScoreCategory[F] | null
+}): boolean {
+  const profile: WeatherProfile = {
+    temp: conditions.temperature,
+    precip: conditions.precipitation,
+    wind: conditions.wind,
+    precipType: null,
+  }
+  return difficultConditions.some((condition) => condition.isMet(profile))
+}
