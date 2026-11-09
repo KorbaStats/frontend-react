@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import { useNavigate } from "react-router";
 
 import { useFavouriteTeams } from "@/hooks/useFavouriteTeams";
 
@@ -9,14 +10,21 @@ interface FavouriteStarProps {
 }
 
 const FavouriteStar = ({ teamId, size = 16, className = "" }: FavouriteStarProps) => {
-  const { isFavourite, toggleFavouriteTeam } = useFavouriteTeams();
+  const { isFavourite, toggleFavouriteTeam, canUseFavourites } = useFavouriteTeams();
+  const navigate = useNavigate();
 
   const favourite = isFavourite(teamId);
-  const label = favourite ? "Usuń z ulubionych" : "Dodaj do ulubionych";
+  const label = !canUseFavourites
+    ? "Zaloguj się, aby dodać do ulubionych"
+    : favourite
+      ? "Usuń z ulubionych"
+      : "Dodaj do ulubionych";
 
   return (
     <button
-      onClick={() => toggleFavouriteTeam(teamId)}
+      onClick={() =>
+        canUseFavourites ? toggleFavouriteTeam(teamId) : navigate("/login")
+      }
       aria-pressed={favourite}
       aria-label={label}
       title={label}

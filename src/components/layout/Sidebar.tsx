@@ -19,9 +19,22 @@ const EMPTY_TEAMS: Team[] = [];
 const EMPTY_LEAGUES: League[] = [];
 const EMPTY_SEASONS: string[] = [];
 
-const FavouriteTeams = ({ teams }: { teams: Team[] }) => (
+const FavouriteTeams = ({
+  teams,
+  canUseFavourites,
+}: {
+  teams: Team[];
+  canUseFavourites: boolean;
+}) => (
   <SidebarSection icon={Star} title="Ulubione drużyny">
-    {teams.length === 0 ? (
+    {!canUseFavourites ? (
+      <p className="text-center text-sm text-muted-foreground">
+        <Link to="/login" className="font-medium text-primary hover:underline">
+          Zaloguj się
+        </Link>
+        , aby zapisywać ulubione drużyny.
+      </p>
+    ) : teams.length === 0 ? (
       <p className="text-center text-sm text-muted-foreground">
         Brak ulubionych drużyn do wyświetlenia.
       </p>
@@ -90,7 +103,7 @@ const Sidebar = ({
   onClose,
 }: SidebarProps) => {
   const { pathname } = useLocation();
-  const { favouriteTeamsIds } = useFavouriteTeams();
+  const { favouriteTeamsIds, canUseFavourites } = useFavouriteTeams();
 
   const teamsQuery = useQuery(teamsOptions);
   const leaguesQuery = useQuery(leaguesOptions);
@@ -126,7 +139,7 @@ const Sidebar = ({
         />
       )}
 
-      <FavouriteTeams teams={favouriteTeams} />
+      <FavouriteTeams teams={favouriteTeams} canUseFavourites={canUseFavourites} />
       <Leagues leagues={leagues} />
     </>
   );
