@@ -62,3 +62,40 @@ export function validateUserForm(values: UserFormValues): AuthFieldErrors {
 export function hasFieldErrors(errors: AuthFieldErrors): boolean {
   return Object.keys(errors).length > 0;
 }
+
+export type AccountFieldErrors = {
+  email?: string;
+  currentPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+};
+
+export type AccountFormValues = {
+  email: string;
+  currentEmail: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
+
+export function validateAccountForm(values: AccountFormValues): AccountFieldErrors {
+  const errors: AccountFieldErrors = {};
+
+  const emailError = getEmailError(values.email);
+  if (emailError) errors.email = emailError;
+
+  if (values.newPassword) {
+    if (values.newPassword.length < MIN_PASSWORD_LENGTH)
+      errors.newPassword = `Hasło musi mieć co najmniej ${MIN_PASSWORD_LENGTH} znaków`;
+    if (values.confirmPassword !== values.newPassword)
+      errors.confirmPassword = "Hasła nie są takie same";
+  }
+
+  const emailChanged = values.email.trim().toLowerCase() !== values.currentEmail.toLowerCase();
+  if (!emailChanged && !values.newPassword)
+    errors.email ??= "Zmień e-mail lub podaj nowe hasło";
+
+  if (!values.currentPassword) errors.currentPassword = "Podaj obecne hasło";
+
+  return errors;
+}

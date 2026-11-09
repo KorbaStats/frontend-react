@@ -1,4 +1,4 @@
-import type { AuthSession, Credentials, User } from "@/data/types";
+import type { AccountUpdate, AuthSession, Credentials, User } from "@/data/types";
 import { apiRequest, setAccessToken } from "@/services/http";
 
 // POST /api/auth/register
@@ -42,4 +42,14 @@ export async function logout(): Promise<void> {
 // GET /api/auth/me
 export async function getCurrentUser(): Promise<User> {
   return apiRequest<User>("/api/auth/me");
+}
+
+// PATCH /api/auth/me - zwraca nowy access token (e-mail jest w jego payloadzie)
+export async function updateAccount(update: AccountUpdate): Promise<AuthSession> {
+  const session = await apiRequest<AuthSession>("/api/auth/me", {
+    method: "PATCH",
+    body: update,
+  });
+  setAccessToken(session.accessToken);
+  return session;
 }
