@@ -368,6 +368,11 @@ export type WeatherFactorDefinitions = Record<
 export type WeatherCategoryScore = {
   score: number
   matches_count: number
+  // bilans drużyny w tej kategorii
+  wins?: number
+  draws?: number
+  losses?: number
+  avg_points?: number | null
 }
 
 export type TeamWeatherScores = {
@@ -376,6 +381,9 @@ export type TeamWeatherScores = {
   computed_at: string
   scores: {
     [F in WeatherFactor]: Record<WeatherScoreCategory[F], WeatherCategoryScore | null>
+  } & {
+    // zbiorczy score: trudna pogoda (duży deszcz lub silny wiatr) vs pozostałe mecze
+    overall?: Record<"difficult" | "normal", WeatherCategoryScore | null>
   }
 }
 

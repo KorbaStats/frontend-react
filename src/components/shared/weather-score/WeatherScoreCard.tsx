@@ -14,6 +14,7 @@ import {
 } from "@/lib/weatherScore";
 import { weatherFactorIcons, weatherScoreColor } from "@/lib/weatherStylesConfig";
 import { getLongDate } from "@/lib/date";
+import OverallWeatherScore from "@/components/shared/weather-score/OverallWeatherScore";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -85,6 +86,7 @@ const WeatherScoreCard = ({
           </p>
         ) : (
           <>
+            {scores.scores.overall && <OverallWeatherScore overall={scores.scores.overall} />}
             <ul className="flex flex-1 flex-col justify-around gap-6">
               {categories[factor].categories.map((category) => {
                 const value = getCategoryScore(scores, {
