@@ -1,5 +1,5 @@
-import { apiGet, apiGetAllPages } from "@/services/http";
-import type { Fixture, FixtureWeatherScoreEntry } from "@/data/types";
+import { apiGet, apiGetAllPages, apiRequest } from "@/services/http";
+import type { Fixture, FixtureSyncStatus, FixtureWeatherScoreEntry } from "@/data/types";
 
 // GET /api/fixtures?league_id=X - nadchodzące mecze z terminarza (wszystkie strony)
 export async function getUpcomingFixtures(leagueId?: number): Promise<Fixture[]> {
@@ -19,4 +19,14 @@ export async function getUpcomingFixtureWeatherScores(
   return apiGet<FixtureWeatherScoreEntry[]>("/api/fixtures/weather-scores", {
     league_id: leagueId,
   });
+}
+
+// POST /api/fixtures/sync - uruchamia synchronizację terminarza z TheSportsDB w tle (uprawnienie fixtures)
+export async function startFixturesSync(): Promise<void> {
+  await apiRequest<void>("/api/fixtures/sync", { method: "POST" });
+}
+
+// GET /api/fixtures/sync-status - stan schedulera i ostatnie synchronizacje
+export async function getFixturesSyncStatus(): Promise<FixtureSyncStatus> {
+  return apiGet<FixtureSyncStatus>("/api/fixtures/sync-status");
 }

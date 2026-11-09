@@ -460,3 +460,43 @@ export type FixtureWeatherScoreError = {
 }
 
 export type FixtureWeatherScoreEntry = FixtureWeatherScore | FixtureWeatherScoreError
+
+// GET /api/fixtures/sync-status - wynik synchronizacji jednej ligi
+export type FixtureSyncLeagueResult = {
+  league_id: number
+  league_name: string
+  season: string | null
+  rounds: number[]
+  fixtures: number
+  upcoming: number
+  without_stadium: number
+}
+
+export type FixtureSyncRun = {
+  id: number
+  trigger: "manual" | "auto"
+  started_at: string
+  finished_at: string | null
+  success: boolean | null
+  // starsze wpisy (sprzed rozbudowy synchronizacji) nie mają wszystkich pól
+  result: {
+    leagues?: FixtureSyncLeagueResult[]
+    linked_teams?: { team_id: number; name: string }[]
+    created_teams?: { team_id: number; name: string }[]
+    created_stadiums?: { stadium_id: number; name: string; has_coordinates: boolean }[]
+  } | null
+  error: string | null
+}
+
+export type FixtureSyncStatus = {
+  running: boolean
+  scheduler: {
+    enabled: boolean
+    disabledReason: string | null
+    lastCheck: string | null
+    nextCheck: string | null
+    sync_interval_hours: number
+    retry_after_hours: number
+  }
+  runs: FixtureSyncRun[]
+}

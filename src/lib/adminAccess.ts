@@ -22,6 +22,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     permissions: DATA_SECTIONS.flatMap((section) => section.permissions),
   },
   { label: "Pogoda", to: "/admin/weather", permissions: ["weather"] },
+  { label: "Terminarz", to: "/admin/fixtures", permissions: ["fixtures"] },
 ];
 
 export function hasPermission(user: User | null, permission: string): boolean {

@@ -22,6 +22,7 @@ import {
 import { deleteMatch, updateMatch } from "@/services/matchesService";
 import { runWeatherFetching } from "@/services/matchWeatherService";
 import { recalculateWeatherScores } from "@/services/weatherScoresService";
+import { startFixturesSync } from "@/services/fixturesService";
 
 type QueryKey = readonly string[];
 
@@ -102,3 +103,10 @@ export function useRecalculateWeatherScores() {
 }
 
 export const useInvalidateMatches = () => useInvalidate(MATCH_KEYS);
+
+export const FIXTURES_SYNC_STATUS_KEY = ["fixtures", "sync-status"] as const;
+
+export function useStartFixturesSync() {
+  const onSuccess = useInvalidate([FIXTURES_SYNC_STATUS_KEY]);
+  return useMutation({ mutationFn: startFixturesSync, onSuccess });
+}
