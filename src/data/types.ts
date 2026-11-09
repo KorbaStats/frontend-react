@@ -273,6 +273,13 @@ export type Credentials = {
   password: string
 }
 
+// PATCH /api/auth/me - zmiana własnego e-maila i/lub hasła
+export type AccountUpdate = {
+  email?: string
+  current_password: string
+  new_password?: string
+}
+
 export type Permission = {
   id: number
   name: string

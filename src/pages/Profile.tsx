@@ -8,6 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import AccountForm from "@/components/profile/AccountForm";
+import FavouriteTeamsCard from "@/components/profile/FavouriteTeamsCard";
 import { useAuth } from "@/hooks/useAuth";
 import { getUserHandle } from "@/lib/userLabel";
 
@@ -27,34 +29,41 @@ const Profile = () => {
   if (!isAuthenticated || !user) return <Navigate to="/login" replace />;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{getUserHandle(user.email)}</CardTitle>
-        <CardDescription>{user.email}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <p className="text-sm text-muted-foreground">Rola</p>
-            <p className="font-medium">{user.role ?? "brak roli"}</p>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>{getUserHandle(user.email)}</CardTitle>
+          <CardDescription>{user.email}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <p className="text-sm text-muted-foreground">Rola</p>
+              <p className="font-medium">{user.role ?? "brak roli"}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Uprawnienia</p>
+              <p className="font-medium">
+                {user.permissions.length > 0
+                  ? user.permissions.join(", ")
+                  : "brak uprawnień"}
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Uprawnienia</p>
-            <p className="font-medium">
-              {user.permissions.length > 0
-                ? user.permissions.join(", ")
-                : "brak uprawnień"}
-            </p>
-          </div>
-        </div>
 
-        <div>
-          <Button variant="outline" onClick={() => logout()}>
-            Wyloguj
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          <div>
+            <Button variant="outline" onClick={() => logout()}>
+              Wyloguj
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <AccountForm user={user} />
+        <FavouriteTeamsCard />
+      </div>
+    </>
   );
 };
 
