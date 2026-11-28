@@ -85,7 +85,7 @@ createRoot(document.getElementById("root")!).render(
       </AuthProvider>
 
 
-      <ReactQueryDevtools initialIsOpen={true} />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </StrictMode>,
 );

@@ -48,8 +48,8 @@ const WeatherScoreCard = ({
         : null;
 
   return (
-    <Card className="break-inside-avoid">
-      <CardHeader className="border-b pb-4">
+    <Card>
+      <CardHeader className="border-b pb-4 break-after-avoid">
         <CardTitle className="flex items-center gap-2 text-base">
           <h1 className="text-center text-md tracking-wider font-bold">
             WEATHER SCORE
@@ -98,7 +98,7 @@ const WeatherScoreCard = ({
                   : "text-muted-foreground";
 
                 return (
-                  <li key={category.name} className="flex flex-col gap-2">
+                  <li key={category.name} className="flex flex-col gap-2 break-inside-avoid">
                     <div className="flex items-end justify-between gap-2">
                       <div className="min-w-0">
                         <p className="font-medium first-letter:uppercase">
@@ -134,7 +134,7 @@ const WeatherScoreCard = ({
               })}
             </ul>
 
-            <div className="flex items-center justify-between gap-2 border-t pt-3 text-xs text-muted-foreground">
+            <div className="flex items-center justify-between gap-2 border-t pt-3 text-xs text-muted-foreground break-inside-avoid">
               <span className="flex items-center gap-1.5">
                 <span className="h-3 w-0.5 rounded-full bg-foreground/50" />
                 50 = jak zwykle

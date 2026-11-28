@@ -25,7 +25,7 @@ const OverallWeatherScore = ({ overall }: OverallWeatherScoreProps) => {
   const color = weatherScoreColor(difficult.score);
 
   return (
-    <section className="flex flex-col gap-2 rounded-lg border bg-muted/40 p-3">
+    <section className="flex flex-col gap-2 rounded-lg border bg-muted/40 p-3 break-inside-avoid">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 font-medium">
